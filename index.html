@@ -568,7 +568,7 @@ function renderAdmin(){
     b.innerHTML=`<div class="card" style="max-width:440px">
       <h3>Accès réservé aux experts</h3>
       <p class="lead" style="margin:8px 0 14px">Chaque expert dispose de son propre code de connexion.</p>
-      <div class="field" style="margin-bottom:14px"><label>Code expert</label><input type="password" id="adm-pw" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" name="nmb-code" placeholder="••••••••" onkeydown="if(event.key==='Enter')unlockAdmin()"></div>
+      <div class="field" style="margin-bottom:14px"><label>Code expert</label><input type="text" id="adm-pw" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="text" style="-webkit-text-security:disc;text-security:disc" placeholder="Votre code" onkeydown="if(event.key==='Enter')unlockAdmin()"></div>
       <button class="btn" onclick="unlockAdmin()">Entrer</button>
     </div>`; return;
   }
