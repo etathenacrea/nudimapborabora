@@ -1,9 +1,11 @@
 # NudiMapBoraBora 🐚
 
 Observatoire participatif des nudibranches du lagon de Bora Bora.
-Prototype cliquable — données du contenu issues de la conférence de **Justine Certain** (Dive N' Smile Bora Bora).
+Contenu d'identification issu de la conférence de **Justine Certain** (Dive N' Smile Bora Bora).
 
-## Ouvrir l'appli
+**En ligne :** https://etathenacrea.github.io/nudimapborabora/
+
+## Ouvrir l'appli en local
 
 Double-clique sur **`index.html`** (il s'ouvre dans ton navigateur). Une connexion internet est nécessaire pour la carte satellite.
 
@@ -11,22 +13,23 @@ Double-clique sur **`index.html`** (il s'ouvre dans ton navigateur). Une connexi
 
 | Onglet | Ce que ça fait |
 |---|---|
-| **Carte** | Toutes les observations sur le lagon. 🟢 vert = validée · 🟠 orange = en attente. Filtres par espèce / année / statut. Clique une épingle pour la fiche. |
-| **Identification** | Les 15 espèces documentées, avec photos et descriptions. Recherche + fiche détaillée au clic. |
-| **Proposer** | Mini-inscription (nom + email), puis formulaire : photo, espèce (ou « je ne sais pas »), position sur la carte, date, heure, profondeur. |
-| **Espace admin** | Validation des observations : attribuer les noms (scientifique / commun / vernaculaire), puis **Valider** (→ vert) ou **Refuser**. |
+| **Carte** | Les observations sur le lagon. 🟢 vert = validée · 🟠 orange = en attente. Filtres par espèce / année / statut. Clique une épingle pour la fiche. La carte démarre **vide**. |
+| **Identification** | La bibliothèque des espèces avec photos et noms scientifiques de référence. Recherche + fiche détaillée au clic. À consulter avant de proposer. |
+| **Proposer** | Mini-inscription (nom + email), puis formulaire. Champs requis : **photo, lieu (+ épingle sur la carte), date, profondeur**. L'espèce est optionnelle (« je ne sais pas »). |
+| **Espace admin** | Deux espaces : **Validation** (attribuer les noms puis Valider → vert / Refuser) et **Bibliothèque** (ajouter de nouvelles espèces, modifier les fiches et les notes). |
 
 **Mot de passe admin (démo) : `borabora`**
 
 ## Bon à savoir
 
-- C'est un **prototype local** : les observations sont enregistrées dans **ton navigateur** uniquement (pas encore de base partagée en ligne). Le bouton « Réinitialiser les données de démo » (dans l'admin) recharge les exemples.
-- Étape suivante pour une vraie mise en ligne : base de données partagée + hébergement + nom de domaine. À discuter.
+- **Clique une photo** (dans l'admin ou sur la carte) pour l'agrandir en plein écran — utile sur téléphone pour bien identifier.
+- C'est un **prototype local** : les observations et les ajouts à la bibliothèque sont enregistrés dans **ton navigateur** uniquement (pas encore de base partagée en ligne).
+- Étape suivante pour une vraie mise en ligne collaborative : base de données partagée + comptes spécialistes. À discuter.
 
 ## Structure
 
 ```
 nudimapborabora/
 ├── index.html              ← l'application (tout est dedans)
-└── assets/species/*.jpg    ← les 15 photos d'espèces
+└── assets/species/*.jpg    ← les photos d'espèces de référence
 ```
