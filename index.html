@@ -259,7 +259,6 @@
 
 </main>
 
-<datalist id="types"><option value="Nudibranche"><option value="Doridacé"><option value="Éolide"><option value="Sacoglosse"><option value="Lièvre de mer"><option value="Ver plat"><option value="Bulle"></datalist>
 <div class="modal-bg" id="modal"><div class="modal" id="modal-content"></div></div>
 <div class="modal-bg" id="sp-editor"><div class="modal" id="sp-editor-content"></div></div>
 <div class="modal-bg" id="notif-modal"><div class="modal" id="notif-content"></div></div>
@@ -322,6 +321,8 @@ const DEFAULT_SPECIES=[
 ].map(s=>({...s,photo:"assets/species/"+s.id+".jpg"}));
 
 const SITE_NAMES=["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Pointe Tahi (Feufeu)","Tapu","Toopua","Toopua Iti","Tupitipiti"];
+const TYPE_OPTS=["Nudibranche","Doridacé","Éolide","Sacoglosse","Lièvre de mer","Ver plat","Bulle"];
+function typeSelect(id,current){ const opts=(current&&!TYPE_OPTS.includes(current))?[current,...TYPE_OPTS]:TYPE_OPTS; return `<select id="${id}"><option value="">— catégorie —</option>${opts.map(o=>`<option value="${esc(o)}" ${o===current?"selected":""}>${esc(o)}</option>`).join("")}</select>`; }
 
 // ---------- État + persistance ----------
 const KEY="nudimap_v4";
@@ -610,7 +611,7 @@ function queueRow(o){
         <div class="autre-box" id="autre-${o.id}">
           <input class="full" id="au-sci-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Nom scientifique *">
           <input id="au-fam-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Famille">
-          <input id="au-esp-${o.id}" list="types" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Espèce (Nudibranche, Ver plat…)">
+          ${typeSelect("au-esp-"+o.id, "")}
           <div class="full" style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--muted);font-weight:600">Rareté</span>${starInput("au-rar-"+o.id,0)}</div>
         </div>
         <label class="chk"><input type="checkbox" id="juv-${o.id}"> 🐣 C'est un juvénile</label>
@@ -698,7 +699,7 @@ function openSpeciesEditor(id){
         <div id="ed-preview">${editorPhoto?`<img class="zoomable" src="${editorPhoto}" style="margin-top:10px;width:180px;height:130px;object-fit:cover;border-radius:10px">`:""}</div></div>
       <div class="field"><label>Nom scientifique <span class="req">*</span></label><input id="ed-sci" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.sci):""}" placeholder="ex. Hypselodoris bullockii"></div>
       <div class="field"><label>Famille</label><input id="ed-family" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.family||""):""}" placeholder="ex. Chromodorididae"></div>
-      <div class="field"><label>Espèce (type)</label><input id="ed-species" list="types" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.species||""):""}" placeholder="ex. Nudibranche, Ver plat, Lièvre de mer…"></div>
+      <div class="field"><label>Espèce (type)</label>${typeSelect("ed-species", s?(s.species||""):"")}</div>
       <div class="field"><label>Rareté</label>${starInput("ed-rarity", s?s.rarity:0)}<span class="hint">Plus d'étoiles = plus rare.</span></div>
       <div class="field"><label>Taille</label><input id="ed-size" value="${s?esc(s.size||""):""}" placeholder="ex. 2 à 4 cm"></div>
       <div class="field"><label>Description (une ligne = un point)</label><textarea id="ed-desc" placeholder="Corps…&#10;Se nourrit de…">${s?esc((s.d||[]).join("\n")):""}</textarea></div>
