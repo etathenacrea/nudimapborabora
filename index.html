@@ -568,7 +568,7 @@ function renderAdmin(){
     b.innerHTML=`<div class="card" style="max-width:440px">
       <h3>Accès réservé aux experts</h3>
       <p class="lead" style="margin:8px 0 14px">Chaque expert dispose de son propre code de connexion.</p>
-      <div class="field" style="margin-bottom:14px"><label>Code expert</label><input type="password" id="adm-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')unlockAdmin()"></div>
+      <div class="field" style="margin-bottom:14px"><label>Code expert</label><input type="password" id="adm-pw" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" name="nmb-code" placeholder="••••••••" onkeydown="if(event.key==='Enter')unlockAdmin()"></div>
       <button class="btn" onclick="unlockAdmin()">Entrer</button>
     </div>`; return;
   }
@@ -611,13 +611,13 @@ function queueRow(o){
       <div class="assign">
         <select id="as-sp-${o.id}" onchange="onAssignChange('${o.id}')"><option value="">— choisir l'espèce —</option>${state.species.map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)} — ${esc(s.species||s.family||"?")}</option>`).join("")}<option value="autre">➕ Autre / nouvelle identification…</option></select>
         <div class="autre-box" id="autre-${o.id}">
-          <input class="full" id="au-sci-${o.id}" placeholder="Nom scientifique *">
-          <input id="au-fam-${o.id}" placeholder="Famille">
-          <input id="au-esp-${o.id}" list="types" placeholder="Espèce (Nudibranche, Ver plat…)">
+          <input class="full" id="au-sci-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Nom scientifique *">
+          <input id="au-fam-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Famille">
+          <input id="au-esp-${o.id}" list="types" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Espèce (Nudibranche, Ver plat…)">
           <div class="full" style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--muted);font-weight:600">Rareté</span>${starInput("au-rar-"+o.id,0)}</div>
         </div>
         <label class="chk"><input type="checkbox" id="juv-${o.id}"> 🐣 C'est un juvénile</label>
-        <input id="ex-note-${o.id}" placeholder="Avis entre experts (ex. à confirmer par Alexandre ?)" value="${esc(o.expertNote||"")}">
+        <input id="ex-note-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="Avis entre experts (ex. à confirmer par Alexandre ?)" value="${esc(o.expertNote||"")}">
       </div>
     </div>
     <div class="acts">
@@ -699,9 +699,9 @@ function openSpeciesEditor(id){
       <div class="field"><label>Photo ${s?"":'<span class="req">*</span>'}</label>
         <input type="file" id="ed-photo" accept="image/*">
         <div id="ed-preview">${editorPhoto?`<img class="zoomable" src="${editorPhoto}" style="margin-top:10px;width:180px;height:130px;object-fit:cover;border-radius:10px">`:""}</div></div>
-      <div class="field"><label>Nom scientifique <span class="req">*</span></label><input id="ed-sci" value="${s?esc(s.sci):""}" placeholder="ex. Hypselodoris bullockii"></div>
-      <div class="field"><label>Famille</label><input id="ed-family" value="${s?esc(s.family||""):""}" placeholder="ex. Chromodorididae"></div>
-      <div class="field"><label>Espèce (type)</label><input id="ed-species" list="types" value="${s?esc(s.species||""):""}" placeholder="ex. Nudibranche, Ver plat, Lièvre de mer…"></div>
+      <div class="field"><label>Nom scientifique <span class="req">*</span></label><input id="ed-sci" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.sci):""}" placeholder="ex. Hypselodoris bullockii"></div>
+      <div class="field"><label>Famille</label><input id="ed-family" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.family||""):""}" placeholder="ex. Chromodorididae"></div>
+      <div class="field"><label>Espèce (type)</label><input id="ed-species" list="types" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.species||""):""}" placeholder="ex. Nudibranche, Ver plat, Lièvre de mer…"></div>
       <div class="field"><label>Rareté</label>${starInput("ed-rarity", s?s.rarity:0)}<span class="hint">Plus d'étoiles = plus rare.</span></div>
       <div class="field"><label>Taille</label><input id="ed-size" value="${s?esc(s.size||""):""}" placeholder="ex. 2 à 4 cm"></div>
       <div class="field"><label>Description (une ligne = un point)</label><textarea id="ed-desc" placeholder="Corps…&#10;Se nourrit de…">${s?esc((s.d||[]).join("\n")):""}</textarea></div>
