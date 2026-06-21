@@ -23,7 +23,7 @@ Double-clique sur **`index.html`** (il s'ouvre dans ton navigateur). Une connexi
 
 - **Nom scientifique** — le binôme latin (ex. *Goniobranchus kuniei*)
 - **Famille** — la famille (ex. Chromodorididae)
-- **Espèce (type)** — la catégorie : Nudibranche, Doridacé, Éolide, Sacoglosse, **Lièvre de mer**, **Ver plat**, Bulle…
+- **Espèce (type)** — menu déroulant : Nudibranche, Doridacé, Éolide, Sacoglosse, **Lièvre de mer**, **Ver plat**, Bulle, ou **Autre…** (avec champ libre pour préciser)
 - **Rareté** — de ★ (commune) à ★★★★★ (très rare)
 
 À la validation, l'expert choisit une espèce existante **ou** « ➕ Autre » pour créer une **nouvelle identification** (nom + famille + espèce + rareté), qui enrichit automatiquement la bibliothèque. Une case **🐣 juvénile** permet de signaler un juvénile (qui ne ressemble pas à l'adulte).

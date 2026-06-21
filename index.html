@@ -322,7 +322,9 @@ const DEFAULT_SPECIES=[
 
 const SITE_NAMES=["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Pointe Tahi (Feufeu)","Tapu","Toopua","Toopua Iti","Tupitipiti"];
 const TYPE_OPTS=["Nudibranche","Doridacé","Éolide","Sacoglosse","Lièvre de mer","Ver plat","Bulle"];
-function typeSelect(id,current){ const opts=(current&&!TYPE_OPTS.includes(current))?[current,...TYPE_OPTS]:TYPE_OPTS; return `<select id="${id}"><option value="">— catégorie —</option>${opts.map(o=>`<option value="${esc(o)}" ${o===current?"selected":""}>${esc(o)}</option>`).join("")}</select>`; }
+function typeSelect(id,current){ const isCustom=current&&!TYPE_OPTS.includes(current); return `<div><select id="${id}" onchange="onTypeChange('${id}')" style="width:100%"><option value="">— catégorie —</option>${TYPE_OPTS.map(o=>`<option value="${esc(o)}" ${o===current?"selected":""}>${esc(o)}</option>`).join("")}<option value="__autre" ${isCustom?"selected":""}>Autre…</option></select><input id="${id}-other" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Préciser la catégorie (optionnel)" value="${isCustom?esc(current):""}" style="width:100%;margin-top:8px;${isCustom?"":"display:none"}"></div>`; }
+function onTypeChange(id){ const o=document.getElementById(id+"-other"); if(o) o.style.display=document.getElementById(id).value==="__autre"?"block":"none"; }
+function getType(id){ const sel=document.getElementById(id); if(!sel)return""; if(sel.value==="__autre")return (val(id+"-other")||"").trim()||"Autre"; return sel.value; }
 
 // ---------- État + persistance ----------
 const KEY="nudimap_v4";
@@ -652,7 +654,7 @@ function validateObs(id){
   if(sel==="autre"){
     const sci=val("au-sci-"+id).trim();
     if(!sci){ toast("Indique au moins le nom scientifique."); return; }
-    o.sp=ensureSpeciesFrom(sci, val("au-fam-"+id).trim(), val("au-esp-"+id).trim(), getStar("au-rar-"+id), obsPhoto(o));
+    o.sp=ensureSpeciesFrom(sci, val("au-fam-"+id).trim(), getType("au-esp-"+id), getStar("au-rar-"+id), obsPhoto(o));
     o.scientific=null;
   } else { o.sp=sel; o.scientific=null; }
   o.juvenile=document.getElementById("juv-"+id)?.checked||false;
@@ -714,7 +716,7 @@ function saveSpecies(){
   const sci=val("ed-sci").trim();
   if(!sci){ toast("Le nom scientifique est requis."); return; }
   const d=val("ed-desc").split("\n").map(x=>x.trim()).filter(Boolean);
-  const data={ sci, family:val("ed-family").trim(), species:val("ed-species").trim(), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), d, note:val("ed-note").trim() };
+  const data={ sci, family:val("ed-family").trim(), species:getType("ed-species"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), d, note:val("ed-note").trim() };
   if(editingSpeciesId){ const s=speciesById(editingSpeciesId); Object.assign(s,data); if(editorPhoto) s.photo=editorPhoto; toast("Fiche mise à jour ✏️"); }
   else { if(!editorPhoto){ toast("Ajoute une photo pour la nouvelle espèce."); return; }
     let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
