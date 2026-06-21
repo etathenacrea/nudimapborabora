@@ -8,7 +8,7 @@
 <style>
   :root{
     --ink:#0f2e3a; --muted:#5b7682; --line:#e2ebef; --bg:#eef5f7;
-    --sea:#1aa0c4; --sea-deep:#0c6580; --sand:#e9dcb8;
+    --sea:#1aa0c4; --sea-deep:#0c6580;
     --green:#1f9d57; --green-bg:#e7f6ed; --orange:#e8920b; --orange-bg:#fdf1dd;
     --red:#d6453f; --red-bg:#fbe9e8; --card:#ffffff;
   }
@@ -20,20 +20,37 @@
   .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
   header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1000}
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 0;flex-wrap:wrap}
-  .brand{display:flex;align-items:center;gap:11px}
+  .brand{display:flex;align-items:center;gap:11px;cursor:pointer}
   .brand .logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(160deg,var(--sea),var(--sea-deep));display:flex;align-items:center;justify-content:center;flex:none}
   .brand h1{font-size:18px;letter-spacing:-.2px}
   .brand small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;letter-spacing:.3px}
   nav{display:flex;gap:4px;flex-wrap:wrap}
-  nav button{font:inherit;font-size:14px;font-weight:500;color:var(--muted);background:none;border:0;padding:8px 13px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:7px}
+  nav button{font:inherit;font-size:14px;font-weight:500;color:var(--muted);background:none;border:0;padding:8px 12px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:6px}
   nav button:hover{background:var(--bg);color:var(--ink)}
   nav button.active{background:var(--sea);color:#fff}
-  nav button.active:hover{background:var(--sea)}
-  .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px}
   .who b{color:var(--ink);font-weight:600}
+  .bell{position:relative;background:none;border:0;cursor:pointer;font-size:18px;padding:2px}
+  .bell .bdg{position:absolute;top:-5px;right:-7px;background:var(--red);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:9px;padding:0 4px;display:flex;align-items:center;justify-content:center}
   .view{display:none;padding:22px 0 60px}
   .view.active{display:block}
-  .lead{color:var(--muted);font-size:15px;margin:6px 0 18px;max-width:720px}
+  .lead{color:var(--muted);font-size:15px;margin:6px 0 18px;max-width:730px}
+  .hero{background:linear-gradient(160deg,#0c6580,#1aa0c4);color:#fff;border-radius:20px;padding:40px 32px;margin-bottom:24px}
+  .hero h2{color:#fff;font-size:30px;letter-spacing:-.5px;max-width:660px}
+  .hero p{font-size:17px;max-width:640px;margin:14px 0 24px;opacity:.96}
+  .hero .cta{display:flex;gap:10px;flex-wrap:wrap}
+  .hero .cta button{font:inherit;font-size:14.5px;font-weight:600;color:var(--sea-deep);background:#fff;border:0;border-radius:11px;padding:11px 18px;cursor:pointer}
+  .hero .cta button.outline{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}
+  .intro{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:24px}
+  .intro .c{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:18px 20px}
+  .intro .c .em{font-size:24px}
+  .intro .c h3{font-size:16px;margin:8px 0 6px}
+  .intro .c p{margin:0;font-size:14px;color:var(--muted)}
+  .share{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .share img{width:150px;height:150px;flex:none;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .share .si{flex:1;min-width:230px}
+  .share .url{font-size:13.5px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:10px 0;word-break:break-all;color:var(--sea-deep)}
+  .credit{font-size:12.5px;color:var(--muted);margin-top:22px;text-align:center}
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
   .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 16px}
   .stat .n{font-size:26px;font-weight:700;letter-spacing:-.5px}
@@ -62,7 +79,7 @@
   .spcard img{width:100%;height:160px;object-fit:cover;display:block;background:#dfeaee}
   .spcard .b{padding:11px 13px 14px}
   .spcard .sci{font-style:italic;font-weight:600;font-size:15px;letter-spacing:-.2px}
-  .spcard .grp{display:inline-block;font-size:11px;font-weight:600;color:var(--sea-deep);background:#e3f3f8;padding:2px 8px;border-radius:20px;margin-top:6px}
+  .spcard .tx{display:inline-block;font-size:11px;font-weight:600;color:var(--sea-deep);background:#e3f3f8;padding:2px 8px;border-radius:20px;margin-top:6px}
   .spcard .obs{font-size:12px;color:var(--muted);margin-top:8px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -86,24 +103,25 @@
   .modal ul{margin:12px 0 0;padding-left:18px;color:var(--ink)}
   .modal ul li{margin:4px 0}
   .modal textarea{width:100%;min-height:84px;resize:vertical}
+  .taxo{font-size:13px;color:var(--sea-deep);margin-top:6px}
+  .taxo b{color:var(--ink)}
   .note{background:#f0f8e9;border-left:3px solid var(--green);padding:9px 13px;border-radius:0 9px 9px 0;font-size:13.5px;margin-top:14px;color:#33581f}
-  .qrow{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;flex-wrap:wrap}
-  .qrow img{width:78px;height:78px;object-fit:cover;border-radius:10px;flex:none;background:#dfeaee}
-  .qrow .qi{flex:1;min-width:200px}
+  .qrow{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;flex-wrap:wrap}
+  .qrow img.thumb{width:78px;height:78px;object-fit:cover;border-radius:10px;flex:none;background:#dfeaee}
+  .qrow .qi{flex:1;min-width:220px}
   .qrow .qi .t{font-weight:600;font-size:14.5px}
   .qrow .qi .s{font-size:12.5px;color:var(--muted);margin-top:2px}
-  .assign{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-top:4px}
-  .assign input,.assign select{font-size:13px;padding:7px 9px}
-  .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .assign{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-top:8px}
+  .assign .full{grid-column:1/-1}
+  .assign input,.assign select{font-size:13px;padding:7px 9px;width:100%}
+  .acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .empty{text-align:center;color:var(--muted);padding:40px 10px;font-size:14px}
-  .pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:#e3f3f8;color:var(--sea-deep)}
   .anat{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:0 0 22px}
   .anat div{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 15px}
   .anat h4{margin:0 0 4px;font-size:14px}
   .anat p{margin:0;font-size:13px;color:var(--muted)}
-  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;z-index:3000;transition:transform .3s;box-shadow:0 8px 30px rgba(0,0,0,.3);max-width:90vw;text-align:center}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;z-index:3000;transition:transform .3s;box-shadow:0 8px 30px rgba(0,0,0,.3);max-width:90vw;text-align:center}
   .toast.show{transform:translateX(-50%) translateY(0)}
-  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:4px}
   .subnav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
   .subnav button{font:inherit;font-size:14px;font-weight:600;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:9px 16px;border-radius:11px;cursor:pointer}
   .subnav button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -114,19 +132,23 @@
   .libcard img{width:100%;height:125px;object-fit:cover;display:block;background:#dfeaee}
   .libcard .lb{padding:10px 12px 12px}
   .libcard .sci{font-style:italic;font-weight:600;font-size:14px}
-  .libcard .grp{font-size:11px;color:var(--sea-deep)}
+  .libcard .fam{font-size:11.5px;color:var(--sea-deep)}
   .libcard .acts{margin-top:9px}
+  .notif{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .notif .ic{font-size:20px}
+  .notif .nt{font-size:14px;font-weight:600}
+  .notif .ns{font-size:12.5px;color:var(--muted);margin-top:2px}
   #lightbox{display:none;position:fixed;inset:0;background:rgba(8,28,36,.93);z-index:4000;align-items:center;justify-content:center;padding:18px;cursor:zoom-out}
   #lightbox.open{display:flex}
   #lightbox img{max-width:100%;max-height:92vh;border-radius:10px}
   #lightbox .lb-close{position:absolute;top:12px;right:18px;color:#fff;font-size:34px;line-height:1;cursor:pointer;background:none;border:0}
-  @media(max-width:620px){.form-grid{grid-template-columns:1fr}.assign{grid-template-columns:1fr}nav button span{display:none}}
+  @media(max-width:620px){.form-grid{grid-template-columns:1fr}.assign{grid-template-columns:1fr}nav button span{display:none}.hero h2{font-size:24px}}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap topbar">
-    <div class="brand">
+    <div class="brand" onclick="goTo('home')">
       <div class="logo">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z" fill="#fff" opacity=".92"/><circle cx="12" cy="10" r="3" fill="#1aa0c4"/></svg>
       </div>
@@ -136,7 +158,8 @@
       </div>
     </div>
     <nav id="nav">
-      <button data-view="carte" class="active">🗺️ <span>Carte</span></button>
+      <button data-view="home" class="active">🐚 <span>Accueil</span></button>
+      <button data-view="carte">🗺️ <span>Carte</span></button>
       <button data-view="ident">🔍 <span>Identification</span></button>
       <button data-view="proposer">📸 <span>Proposer</span></button>
       <button data-view="admin">🔒 <span>Espace admin</span></button>
@@ -147,14 +170,38 @@
 
 <main class="wrap">
 
-  <!-- ============ CARTE ============ -->
-  <section class="view active" id="view-carte">
-    <div class="section-head">
-      <div>
-        <h2>Carte des observations</h2>
-        <p class="lead">Chaque épingle est une rencontre dans le lagon de Bora Bora. <b style="color:var(--green)">Vert</b> = validée par les spécialistes · <b style="color:var(--orange)">orange</b> = en attente de validation.</p>
+  <!-- ============ ACCUEIL ============ -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <h2>Les joyaux cachés du récif de Bora Bora</h2>
+      <p>Le nudibranche, joyau de la Polynésie et garant de la santé du récif. Aide-nous à les recenser : chaque photo compte. Merci de votre participation 🐚</p>
+      <div class="cta">
+        <button onclick="goTo('carte')">Voir la carte</button>
+        <button class="outline" onclick="goTo('ident')">Identifier une photo</button>
+        <button class="outline" onclick="goTo('proposer')">Proposer une observation</button>
       </div>
     </div>
+    <div class="intro">
+      <div class="c"><div class="em">🌈</div><h3>Qu'est-ce qu'un nudibranche ?</h3><p>Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique — dont la Polynésie.</p></div>
+      <div class="c"><div class="em">💚</div><h3>Pourquoi ça compte ?</h3><p>Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie du lagon de Bora Bora.</p></div>
+      <div class="c"><div class="em">📸</div><h3>Comment participer ?</h3><p>Tu plonges, tu photographies, tu déposes : photo + lieu + date + profondeur. Nos experts identifient et valident, et ta rencontre rejoint la carte.</p></div>
+    </div>
+    <div class="share">
+      <img src="assets/qr-nudimapborabora.png" alt="QR code vers l'observatoire">
+      <div class="si">
+        <h3>Partage l'observatoire</h3>
+        <p class="lead" style="margin:6px 0">Scanne ou distribue ce QR code pour ouvrir NudiMapBoraBora sur n'importe quel téléphone.</p>
+        <div class="url">https://etathenacrea.github.io/nudimapborabora/</div>
+        <a class="btn sm" href="assets/qr-nudimapborabora.png" download style="text-decoration:none;display:inline-block">⬇ Télécharger le QR à imprimer</a>
+      </div>
+    </div>
+    <p class="credit">Photos et contenu d'identification : Justine Certain · Dive N' Smile Bora Bora 🌊</p>
+  </section>
+
+  <!-- ============ CARTE ============ -->
+  <section class="view" id="view-carte">
+    <h2>Carte des observations</h2>
+    <p class="lead">Chaque épingle est une rencontre dans le lagon. <b style="color:var(--green)">Vert</b> = validée par les experts · <b style="color:var(--orange)">orange</b> = en attente de validation.</p>
     <div class="stats" id="stats"></div>
     <div class="filters">
       <label>Espèce<select id="f-species"></select></label>
@@ -176,14 +223,14 @@
   <!-- ============ IDENTIFICATION ============ -->
   <section class="view" id="view-ident">
     <h2>Aide à l'identification</h2>
-    <p class="lead">La bibliothèque des espèces du récif de Bora Bora — photos et noms scientifiques de référence. Compare ta photo avant de proposer une observation, et clique une fiche pour le détail.</p>
+    <p class="lead">La bibliothèque des espèces du récif de Bora Bora — photos et taxonomie de référence. Compare ta photo avant de proposer, et clique une fiche pour le détail.</p>
     <div class="anat">
       <div><h4>Rhinophores</h4><p>Les deux « antennes » sur la tête : elles sentent et détectent. Souvent la première chose visible.</p></div>
       <div><h4>Rosette branchiale</h4><p>Le panache de branchies sur le dos. Absente chez certaines familles qui respirent par le manteau.</p></div>
       <div><h4>Manteau</h4><p>Le corps et ses couleurs. Sa forme et ses motifs sont la clé de l'identification.</p></div>
     </div>
     <div class="filters">
-      <input id="ident-search" placeholder="Rechercher une espèce, une couleur, un groupe…" style="flex:1;min-width:220px" />
+      <input id="ident-search" placeholder="Rechercher une espèce, une famille, une couleur…" style="flex:1;min-width:220px" />
     </div>
     <div class="grid" id="species-grid"></div>
   </section>
@@ -191,14 +238,14 @@
   <!-- ============ PROPOSER ============ -->
   <section class="view" id="view-proposer">
     <h2>Proposer une observation</h2>
-    <p class="lead">Partage ta rencontre. Elle apparaîtra en orange sur la carte, puis passera en vert une fois l'espèce validée par les spécialistes.</p>
+    <p class="lead">Partage ta rencontre. Elle apparaîtra en orange sur la carte, puis passera en vert une fois validée par les experts — tu recevras une notification.</p>
     <div id="proposer-body"></div>
   </section>
 
   <!-- ============ ADMIN ============ -->
   <section class="view" id="view-admin">
     <h2>Espace admin</h2>
-    <p class="lead">Réservé à Justine et aux spécialistes : valider les observations et enrichir la bibliothèque d'identification.</p>
+    <p class="lead">Réservé aux experts : valider les observations et enrichir la bibliothèque d'identification.</p>
     <div id="admin-body"></div>
   </section>
 
@@ -206,98 +253,122 @@
 
 <div class="modal-bg" id="modal"><div class="modal" id="modal-content"></div></div>
 <div class="modal-bg" id="sp-editor"><div class="modal" id="sp-editor-content"></div></div>
+<div class="modal-bg" id="notif-modal"><div class="modal" id="notif-content"></div></div>
 <div id="lightbox"><button class="lb-close" aria-label="Fermer">×</button><img alt="photo agrandie"></div>
 <div class="toast" id="toast"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ---------- Espèces de référence (conférence J. Certain, Dive N' Smile Bora Bora) ----------
-const DEFAULT_SPECIES = [
-  {id:"flabellina-exopata",sci:"Flabellina exopata",grp:"Éolide",size:"2 à 4 cm",
+const PROD_URL="https://etathenacrea.github.io/nudimapborabora/";
+// Codes experts (démo — une vraie authentification viendra avec la base en ligne)
+const EXPERTS={ "Borabora1":"Vincent", "Borabora2":"Alizée", "Borabora3":"Alexandre", "Borabora4":"Justine" };
+
+// ---------- Espèces de référence (conférence J. Certain, Dive N' Smile) ----------
+// family pré-rempli au mieux : à vérifier/corriger par les experts via la bibliothèque.
+const DEFAULT_SPECIES=[
+  {id:"flabellina-exopata",sci:"Flabellina exopata",family:"Flabellinidae",species:"exopata",size:"2 à 4 cm",
    d:["Cérates irisées bleu/blanc sur un corps brun-orange","Se nourrit d'hydroïdes","Présente sur les éponges et récifs de Bora Bora"],
    note:"Ses cérates contiennent les cellules urticantes de ses proies — elle se défend avec leur propre arsenal."},
-  {id:"chromodoris-sp3",sci:"Chromodoris sp3",grp:"Doridacé",size:"~ 2 cm",
+  {id:"chromodoris-sp3",sci:"Chromodoris sp3",family:"Chromodorididae",species:"sp. 3 (non décrite)",size:"~ 2 cm",
    d:["Corps blanc-bleu pâle strié de lignes bleu marine","Rhinophores orange vif","Se nourrit d'éponges"],
    note:"Le « sp3 » signifie : espèce pas encore officiellement décrite. Il reste des découvertes à faire à Bora Bora."},
-  {id:"diversidoris-flava",sci:"Diversidoris flava",grp:"Doridacé (juvénile)",size:"quelques mm",
+  {id:"diversidoris-flava",sci:"Diversidoris flava",family:"Chromodorididae",species:"flava (juvénile)",size:"quelques mm",
    d:["Corps jaune translucide — on voit ses organes internes","Quasi invisible à l'œil nu","L'adulte sera très différent : brun tacheté"],
    note:"Celui-ci fait à peine quelques millimètres. Le trouver, c'est déjà une victoire."},
-  {id:"chromodoris-sp1",sci:"Chromodoris sp1",grp:"Doridacé",size:"~ 2 cm",
+  {id:"chromodoris-sp1",sci:"Chromodoris sp1",family:"Chromodorididae",species:"sp. 1 (non décrite)",size:"~ 2 cm",
    d:["Corps blanc nacré, taches brun-or, liseré bleu marine","Rosette branchiale bleu-violet","Se nourrit d'éponges"],
    note:"Comme le sp3 — espèce encore non décrite officiellement. Bora Bora a encore des secrets à livrer."},
-  {id:"gymnodoris-ceylonica",sci:"Gymnodoris ceylonica",grp:"Doridacé",size:"3 à 5 cm",
+  {id:"gymnodoris-ceylonica",sci:"Gymnodoris ceylonica",family:"Gymnodorididae",species:"ceylonica",size:"3 à 5 cm",
    d:["Corps blanc translucide, pois rouge vif, liseré orange","Prédateur — se nourrit d'autres nudibranches","En reproduction : agrégations de dizaines d'individus"],
    note:"Observés par dizaines un matin à Bora Bora avec Dive N' Smile — un événement encore peu documenté en Polynésie."},
-  {id:"micromelo-undatus",sci:"Micromelo undatus",grp:"Bullidae — circumtropical",size:"1 à 2 cm",
+  {id:"micromelo-undatus",sci:"Micromelo undatus",family:"Aplustridae",species:"undatus",size:"1 à 2 cm",
    d:["Manteau translucide bleu-gris, taches blanches, liseré jaune vif","Réseau de lignes rouge bordeaux","Possède encore une coquille interne réduite"],
    note:"Pas tout à fait un nudibranche, pas tout à fait un escargot — la nature aime brouiller les pistes."},
-  {id:"phyllidia-carlsonhoffi",sci:"Phyllidia carlsonhoffi",grp:"Doridacé",size:"3 à 6 cm",
+  {id:"phyllidia-carlsonhoffi",sci:"Phyllidia carlsonhoffi",family:"Phyllidiidae",species:"carlsonhoffi",size:"3 à 6 cm",
    d:["Corps noir intense, tubercules jaune or cerclés de blanc","Pas de rosette : respire par le bord du manteau","Se nourrit d'éponges toxiques et stocke leurs toxines"],
    note:"Son motif noir/jaune est un avertissement : « je suis toxique, ne me mange pas. »"},
-  {id:"goniobranchus-kuniei",sci:"Goniobranchus kuniei",grp:"Doridacé",size:"6 à 8 cm",
+  {id:"goniobranchus-kuniei",sci:"Goniobranchus kuniei",family:"Chromodorididae",species:"kuniei",size:"6 à 8 cm",
    d:["Corps jaune-crème, taches noires, liseré bleu-violet","Rosette branchiale bien développée","Indo-Pacifique, fréquente en Polynésie"],
    note:"Une des plus grandes du récif — même les plongeurs qui ne regardent pas le fond la remarquent !"},
-  {id:"phyllidiella-rosans",sci:"Phyllidiella cf. rosans",grp:"Doridacé",size:"2 à 4 cm",
+  {id:"phyllidiella-rosans",sci:"Phyllidiella cf. rosans",family:"Phyllidiidae",species:"cf. rosans",size:"2 à 4 cm",
    d:["Corps rose-bleu pâle, larges bandes noires","Respire par le bord du manteau (pas de rosette visible)","Se nourrit d'éponges toxiques"],
    note:"Le « cf. » indique une identification non certaine à 100 %."},
-  {id:"phyllidiella-annulata",sci:"Phyllidiella annulata",grp:"Doridacé",size:"2 à 4 cm",
+  {id:"phyllidiella-annulata",sci:"Phyllidiella annulata",family:"Phyllidiidae",species:"annulata",size:"2 à 4 cm",
    d:["Corps noir, gros tubercules rose-saumon","Rhinophores noirs — presque invisibles","Respire par le bord du manteau"],
    note:"Noir et rose, sobre et sophistiquée. La plus élégante du récif ?"},
-  {id:"risbecia-imperialis",sci:"Risbecia imperialis",grp:"Doridacé",size:"5 à 8 cm",
+  {id:"risbecia-imperialis",sci:"Risbecia imperialis",family:"Chromodorididae",species:"imperialis",size:"5 à 8 cm",
    d:["Corps blanc-bleu, pois jaune vif, rhinophores rayés noir/blanc","Comportement de « following » : l'un suit l'autre en touchant sa queue","Se nourrit d'éponges"],
    note:"Le following : une danse lente et silencieuse, museau contre queue."},
-  {id:"pseudoceros-scintillatus",sci:"Pseudoceros scintillatus",grp:"Ver plat (souvent confondu)",size:"quelques mm",
+  {id:"pseudoceros-scintillatus",sci:"Pseudoceros scintillatus",family:"Pseudocerotidae (ver plat)",species:"scintillatus",size:"quelques mm",
    d:["Corps blanc, réseau de lignes et taches noires","Extrémités blanches à pointe orange","Se cache dans les algues et le biofilm"],
    note:"À noter : techniquement un ver plat (plathelminthe), très souvent confondu avec un nudibranche."},
-  {id:"thuridilla-gracilis",sci:"Thuridilla gracilis",grp:"Sacoglosse",size:"2 à 3 cm",
+  {id:"thuridilla-gracilis",sci:"Thuridilla gracilis",family:"Plakobranchidae",species:"gracilis",size:"2 à 3 cm",
    d:["Pattern complexe brun/noir/jaune, points bleu électrique","Aspire le contenu des algues dont elle se nourrit","Stocke les chloroplastes des algues dans ses tissus"],
    note:"Elle vole les chloroplastes des algues et les fait fonctionner — mi-animal, mi-plante. Elle photosynthétise !"},
-  {id:"dolabella-auricularia",sci:"Dolabella auricularia",grp:"Lièvre de mer — Aplysiidae",size:"jusqu'à 15 cm",
+  {id:"dolabella-auricularia",sci:"Dolabella auricularia",family:"Aplysiidae",species:"auricularia",size:"jusqu'à 15 cm",
    d:["Corps brun, parfaitement camouflé dans le sable","Normalement nocturne — le croiser de jour est un privilège","Herbivore : broute les algues et entretient les herbiers"],
    note:"Un discret jardinier du lagon polynésien."},
-  {id:"miamira-miamirana",sci:"Miamira miamirana",grp:"Doridacé",size:"jusqu'à 15 cm",
+  {id:"miamira-miamirana",sci:"Miamira miamirana",family:"Chromodorididae",species:"miamirana",size:"jusqu'à 15 cm",
    d:["Corps crème bosselé, tons kaki et lilas, siphons dressés","Silhouette unique, presque végétale","Rencontre rare à Bora Bora — observée avec Dive N' Smile"],
    note:"Même en la regardant droit dans les yeux, on se demande si c'est bien un animal."},
 ].map(s=>({...s,photo:"assets/species/"+s.id+".jpg"}));
 
-// ---------- Sites de plongée connus (+ option Autre en saisie libre) ----------
-const SITE_NAMES = ["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Pointe Tahi (Feufeu)","Tapu","Toopua","Toopua Iti","Tupitipiti"];
+const SITE_NAMES=["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Pointe Tahi (Feufeu)","Tapu","Toopua","Toopua Iti","Tupitipiti"];
 
 // ---------- État + persistance ----------
-const KEY="nudimap_v2";
+const KEY="nudimap_v3";
 function loadState(){ try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.observations&&s.species) return s;}catch(e){} return null; }
 function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
 let state = loadState() || { user:null, observations:[], species: JSON.parse(JSON.stringify(DEFAULT_SPECIES)) };
-let adminUnlocked=false, adminTab="validation", editingSpeciesId=null, editorPhoto=null;
+let adminUnlocked=false, adminUser=null, adminTab="validation", editingSpeciesId=null, editorPhoto=null;
 
 const speciesById = id => state.species.find(x=>x.id===id);
-function obsSci(o){ if(o.sp){ return speciesById(o.sp)?.sci || o.scientific || "Espèce indéterminée"; } return o.scientific || "Espèce à identifier"; }
+function taxoOf(o){ if(o.sp){ const s=speciesById(o.sp); if(s) return {sci:s.sci,family:s.family||"",species:s.species||""}; } return {sci:o.scientific||"Espèce indéterminée",family:"",species:""}; }
+function obsSci(o){ return taxoOf(o).sci; }
 function obsPhoto(o){ return o.photo || (o.sp?(speciesById(o.sp)?.photo||""):""); }
+function taxoLine(t){ const p=[]; if(t.family)p.push(`<b>Famille</b> ${esc(t.family)}`); if(t.species)p.push(`<b>Espèce</b> ${esc(t.species)}`); return p.join(" · "); }
 function getCSS(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
 // ---------- Navigation ----------
-const views={carte:"view-carte",ident:"view-ident",proposer:"view-proposer",admin:"view-admin"};
-document.getElementById("nav").addEventListener("click",e=>{
-  const b=e.target.closest("button"); if(!b) return;
-  goTo(b.dataset.view);
-});
+const views={home:"view-home",carte:"view-carte",ident:"view-ident",proposer:"view-proposer",admin:"view-admin"};
+document.getElementById("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) goTo(b.dataset.view); });
 function goTo(v){
   document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
   Object.values(views).forEach(id=>document.getElementById(id).classList.remove("active"));
   document.getElementById(views[v]).classList.add("active");
+  window.scrollTo(0,0);
   if(v==="carte"){ ensureMap(); setTimeout(()=>{map.invalidateSize(); renderMarkers();},60); }
   if(v==="proposer") renderProposer();
   if(v==="admin") renderAdmin();
   if(v==="ident") renderSpecies();
 }
 
-// ---------- WHO (mini-inscription) ----------
+// ---------- WHO + notifications ----------
+function unseenCount(){ if(!state.user) return 0; return state.observations.filter(o=>o.byEmail===state.user.email && o.outcome && !o.outcomeSeen).length; }
 function renderWho(){
   const w=document.getElementById("who");
-  if(state.user){ w.innerHTML=`👋 <b>${esc(state.user.name)}</b> · <a href="#" id="logout">se déconnecter</a>`;
+  if(state.user){ const n=unseenCount();
+    w.innerHTML=`<button class="bell" onclick="openNotifications()" title="Mes notifications">🔔${n?`<span class="bdg">${n}</span>`:""}</button> 👋 <b>${esc(state.user.name)}</b> · <a href="#" id="logout">se déconnecter</a>`;
     document.getElementById("logout").onclick=e=>{e.preventDefault(); state.user=null; saveState(); renderWho(); renderProposer();}; }
   else { w.innerHTML=`<span style="opacity:.8">Non inscrit·e</span>`; }
 }
+function myNotifs(){ if(!state.user) return []; return state.observations.filter(o=>o.byEmail===state.user.email && o.outcome).sort((a,b)=>(b.outcomeAt||0)-(a.outcomeAt||0)); }
+function openNotifications(){
+  const list=myNotifs();
+  const rows=list.length?list.map(o=>{ const t=taxoOf(o); const ok=o.outcome==="validated";
+    return `<div class="notif"><div class="ic">${ok?"🎉":"🔎"}</div><div>
+      <div class="nt">${ok?"Votre identification a été validée par nos experts, félicitations !":"Votre demande d'identification n'a pas pu être validée par nos experts."}</div>
+      <div class="ns">${esc(t.sci)} · ${esc(o.site||"site ?")} · ${frDate(o.date)}${ok&&o.validatedBy?` · validée par ${esc(o.validatedBy)}`:""}${!ok&&o.reason?` · motif : ${esc(o.reason)}`:""}</div>
+    </div></div>`; }).join("") : `<div class="empty">Aucune notification pour l'instant.</div>`;
+  document.getElementById("notif-content").innerHTML=`<div class="mb">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2>Mes notifications</h2><button class="btn ghost sm" onclick="closeNotif()">Fermer</button></div>
+    ${rows}</div>`;
+  document.getElementById("notif-modal").classList.add("open");
+  state.observations.forEach(o=>{ if(o.byEmail===state.user.email && o.outcome) o.outcomeSeen=true; });
+  saveState(); renderWho();
+}
+function closeNotif(){ document.getElementById("notif-modal").classList.remove("open"); }
+document.getElementById("notif-modal").addEventListener("click",e=>{ if(e.target.id==="notif-modal") closeNotif(); });
 
 // ---------- CARTE ----------
 let map, markersLayer;
@@ -338,18 +409,19 @@ function renderMarkers(){
     `<div class="empty" style="margin-top:14px">🌊 Aucune observation pour l'instant. Va dans <b>Proposer</b> pour ajouter la première !</div>`;
 }
 function popupHTML(o){
-  const sci=obsSci(o), st=o.status;
+  const t=taxoOf(o), st=o.status;
   const badge = st==="validated"?'<span class="badge v">✓ Validée</span>':'<span class="badge p">⏳ En attente</span>';
-  const names=[]; if(st==="validated"){ if(o.common)names.push("Commun : "+esc(o.common)); if(o.vern)names.push("Reo tahiti : "+esc(o.vern)); }
+  const tx = st==="validated"? taxoLine(t):"";
   return `<div class="pop">
     ${obsPhoto(o)?`<img class="zoomable" src="${obsPhoto(o)}" alt="">`:""}
     ${badge}
-    <div class="sci">${esc(sci)}</div>
-    ${names.length?`<div class="meta">${names.join("<br>")}</div>`:""}
+    <div class="sci">${esc(t.sci)}</div>
+    ${tx?`<div class="meta">${tx}</div>`:""}
     <div class="meta">
       <b>${esc(o.site||"Site non précisé")}</b><br>
       📅 ${frDate(o.date)} · 🕒 ${o.time||"—"}<br>
       🌊 ${o.depth?o.depth+" m":"profondeur n.c."} · 👤 ${esc(o.by||"anonyme")}
+      ${st==="validated"&&o.validatedBy?`<br>✔ validée par ${esc(o.validatedBy)}`:""}
     </div>
   </div>`;
 }
@@ -363,17 +435,17 @@ function renderStats(shown){
   ].map(([l,n])=>`<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
 }
 
-// ---------- IDENTIFICATION (bibliothèque) ----------
+// ---------- IDENTIFICATION ----------
 function renderSpecies(){
   const q=(document.getElementById("ident-search").value||"").toLowerCase().trim();
   const g=document.getElementById("species-grid");
-  const list=state.species.filter(s=>!q||(s.sci+" "+s.grp+" "+(s.d||[]).join(" ")).toLowerCase().includes(q));
+  const list=state.species.filter(s=>!q||(s.sci+" "+s.family+" "+s.species+" "+(s.d||[]).join(" ")).toLowerCase().includes(q));
   const count=id=>state.observations.filter(o=>o.sp===id&&o.status==="validated").length;
   g.innerHTML=list.map(s=>`<div class="spcard" data-id="${s.id}">
     <img src="${s.photo}" alt="${esc(s.sci)}" loading="lazy">
-    <div class="b"><div class="sci">${esc(s.sci)}</div><span class="grp">${esc(s.grp)}</span>
+    <div class="b"><div class="sci">${esc(s.sci)}</div><span class="tx">${esc(s.family||"—")}</span>
     <div class="obs">${count(s.id)} observation(s) · ${esc(s.size||"")}</div></div></div>`).join("")
-    || `<div class="empty">Aucune espèce ne correspond à « ${esc(q)} ».</div>`;
+    || `<div class="empty">Aucune espèce ne correspond à la recherche.</div>`;
   g.querySelectorAll(".spcard").forEach(c=>c.onclick=()=>openSpecies(c.dataset.id));
 }
 document.getElementById("ident-search").addEventListener("input",renderSpecies);
@@ -383,7 +455,7 @@ function openSpecies(id){
     <img class="zoomable" src="${s.photo}" alt="${esc(s.sci)}">
     <div class="mb">
       <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
-        <div><h2 style="font-style:italic">${esc(s.sci)}</h2><span class="grp" style="margin-top:8px">${esc(s.grp)}</span></div>
+        <div><h2 style="font-style:italic">${esc(s.sci)}</h2><div class="taxo">${taxoLine({family:s.family,species:s.species})||""}</div></div>
         <button class="btn ghost sm" onclick="closeModal()">Fermer</button>
       </div>
       <ul>${(s.d||[]).map(x=>`<li>${esc(x)}</li>`).join("")}${s.size?`<li><b>Taille :</b> ${esc(s.size)}</li>`:""}</ul>
@@ -401,12 +473,11 @@ function renderProposer(){
   if(!state.user){
     b.innerHTML=`<div class="card" style="max-width:520px">
       <h3>D'abord, une mini-inscription</h3>
-      <p class="lead" style="margin:8px 0 16px">Pour suivre tes contributions et te recontacter sur une identification. Aucune donnée n'est partagée.</p>
+      <p class="lead" style="margin:8px 0 16px">Pour suivre tes contributions et te prévenir quand une identification est validée. Aucune donnée n'est partagée.</p>
       <div class="field" style="margin-bottom:12px"><label>Ton nom ou pseudo</label><input id="su-name" placeholder="ex. Marama"></div>
       <div class="field" style="margin-bottom:18px"><label>Email</label><input id="su-email" type="email" placeholder="ex. marama@email.pf"></div>
       <button class="btn" onclick="signup()">Créer mon accès</button>
-    </div>`;
-    return;
+    </div>`; return;
   }
   b.innerHTML=`<div class="card">
     <p style="margin:0 0 16px;font-size:13.5px;color:var(--muted)">💡 Pas sûr·e de l'espèce ? <a href="#" onclick="goTo('ident');return false">Regarde d'abord la bibliothèque d'identification</a> — elle est peut-être déjà répertoriée.</p>
@@ -418,7 +489,7 @@ function renderProposer(){
       <div class="field"><label>Connais-tu l'espèce ?</label>
         <select id="p-species"><option value="je-sais-pas">Je ne sais pas — à identifier</option>
         ${state.species.map(s=>`<option value="${s.id}">${esc(s.sci)}</option>`).join("")}</select>
-        <span class="hint">Pas sûr·e ? Laisse « je ne sais pas », les spécialistes trancheront.</span></div>
+        <span class="hint">Pas sûr·e ? Laisse « je ne sais pas », les experts trancheront.</span></div>
       <div class="field"><label>Site / lieu <span class="req">*</span></label>
         <select id="p-site" onchange="onSiteChange()"><option value="">— choisis un site —</option>
         ${SITE_NAMES.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("")}
@@ -441,16 +512,14 @@ function renderProposer(){
   setTimeout(()=>{
     pickMap=L.map("pick-map").setView([-16.5004,-151.7415],12.5);
     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19}).addTo(pickMap);
-    pickMap.on("click",e=>{
-      pickLatLng=e.latlng;
+    pickMap.on("click",e=>{ pickLatLng=e.latlng;
       if(pickMarker) pickMarker.setLatLng(e.latlng); else pickMarker=L.marker(e.latlng).addTo(pickMap);
-      document.getElementById("p-coords").innerHTML=`📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
-    });
+      document.getElementById("p-coords").innerHTML=`📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`; });
     pickMap.invalidateSize();
   },60);
   document.getElementById("p-photo").addEventListener("change",e=>{ const f=e.target.files[0]; if(f) resizeToDataURL(f,d=>{pendingPhoto=d; document.getElementById("p-preview").innerHTML=`<img src="${d}" style="margin-top:10px;width:170px;height:128px;object-fit:cover;border-radius:10px">`;}); });
 }
-function onSiteChange(){ const other=document.getElementById("p-site-other"); other.style.display = val("p-site")==="__autre"?"block":"none"; }
+function onSiteChange(){ document.getElementById("p-site-other").style.display = val("p-site")==="__autre"?"block":"none"; }
 function signup(){
   const n=val("su-name").trim(), em=val("su-email").trim();
   if(!n||!em){ toast("Indique ton nom et ton email."); return; }
@@ -467,11 +536,12 @@ function submitObs(){
   if(!date) miss.push("la date");
   if(depth===""||depth==null) miss.push("la profondeur");
   if(miss.length){ toast("Il manque : "+miss.join(", ")); return; }
-  const o={ id:"u"+Date.now(), sp: spVal==="je-sais-pas"?null:spVal,
+  state.observations.push({ id:"u"+Date.now(), sp: spVal==="je-sais-pas"?null:spVal,
     photo: pendingPhoto, lat:pickLatLng.lat, lng:pickLatLng.lng, site,
-    date, time:val("p-time")||"", depth:Number(depth),
-    note:val("p-note").trim(), by:state.user.name, status:"pending", common:"",vern:"" };
-  state.observations.push(o); saveState();
+    date, time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
+    by:state.user.name, byEmail:state.user.email, status:"pending",
+    outcome:null, outcomeSeen:true, validatedBy:null, expertNote:"" });
+  saveState();
   if(map){ fillFilters(); renderMarkers(); }
   toast("Merci ! Ton observation est en attente de validation ✨");
   goTo("carte");
@@ -482,21 +552,24 @@ function renderAdmin(){
   const b=document.getElementById("admin-body");
   if(!adminUnlocked){
     b.innerHTML=`<div class="card" style="max-width:440px">
-      <h3>Accès réservé</h3>
-      <p class="lead" style="margin:8px 0 14px">Espace de validation et de gestion de la bibliothèque.</p>
-      <div class="field" style="margin-bottom:14px"><label>Mot de passe</label><input type="password" id="adm-pw" placeholder="••••••••"></div>
+      <h3>Accès réservé aux experts</h3>
+      <p class="lead" style="margin:8px 0 14px">Chaque expert dispose de son propre code de connexion.</p>
+      <div class="field" style="margin-bottom:14px"><label>Code expert</label><input type="password" id="adm-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')unlockAdmin()"></div>
       <button class="btn" onclick="unlockAdmin()">Entrer</button>
-      <p class="hint" style="margin-top:12px">Démo : le mot de passe est <b>borabora</b>. (Une vraie authentification sécurisée sera mise en place dans la version finale.)</p>
     </div>`; return;
   }
-  b.innerHTML=`<div class="subnav">
-      <button class="${adminTab==='validation'?'active':''}" onclick="setAdminTab('validation')">✅ Validation</button>
-      <button class="${adminTab==='biblio'?'active':''}" onclick="setAdminTab('biblio')">📚 Bibliothèque d'identification</button>
+  b.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+      <div class="subnav" style="margin:0">
+        <button class="${adminTab==='validation'?'active':''}" onclick="setAdminTab('validation')">✅ Validation</button>
+        <button class="${adminTab==='biblio'?'active':''}" onclick="setAdminTab('biblio')">📚 Bibliothèque</button>
+      </div>
+      <div style="font-size:13px;color:var(--muted)">👩‍🔬 <b style="color:var(--ink)">${esc(adminUser)}</b> · <a href="#" onclick="logoutAdmin();return false">changer d'expert</a></div>
     </div><div id="admin-section"></div>`;
   adminTab==="biblio"? renderAdminBiblio() : renderAdminValidation();
 }
 function setAdminTab(t){ adminTab=t; renderAdmin(); }
-function unlockAdmin(){ if(val("adm-pw")==="borabora"){adminUnlocked=true;renderAdmin();} else toast("Mot de passe incorrect."); }
+function unlockAdmin(){ const name=EXPERTS[val("adm-pw")]; if(name){adminUnlocked=true;adminUser=name;renderAdmin();toast("Bienvenue "+name+" 👩‍🔬");} else toast("Code expert incorrect."); }
+function logoutAdmin(){ adminUnlocked=false; adminUser=null; renderAdmin(); }
 
 function renderAdminValidation(){
   const pend=state.observations.filter(o=>o.status==="pending");
@@ -517,65 +590,70 @@ function renderAdminValidation(){
 function queueRow(o){
   const guessed = o.sp?(speciesById(o.sp)?.sci||o.sp) : "❓ Espèce inconnue (à identifier)";
   return `<div class="qrow">
-    <img class="zoomable" src="${obsPhoto(o)}" alt="" title="Clique pour agrandir">
+    <img class="thumb zoomable" src="${obsPhoto(o)}" alt="" title="Clique pour agrandir">
     <div class="qi">
       <div class="t">${esc(o.site||"Site ?")} · ${o.depth?o.depth+" m":"prof. n.c."}</div>
       <div class="s">📅 ${frDate(o.date)} ${o.time||""} · 👤 ${esc(o.by||"anonyme")} · proposé : <i>${esc(guessed)}</i>${o.note?` · « ${esc(o.note)} »`:""}</div>
       <div class="assign">
-        <select id="as-sp-${o.id}"><option value="">— nom scientifique —</option>${state.species.map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)}</option>`).join("")}<option value="autre">Autre…</option></select>
-        <input id="as-com-${o.id}" placeholder="Nom commun" value="${esc(o.common||"")}">
-        <input id="as-ver-${o.id}" placeholder="Nom vernaculaire (reo tahiti)" value="${esc(o.vern||"")}">
+        <select id="as-sp-${o.id}" class="full"><option value="">— nom scientifique / espèce —</option>${state.species.map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)} — ${esc(s.family||"?")}</option>`).join("")}<option value="autre">Autre (non répertoriée)…</option></select>
+        <input id="ex-note-${o.id}" class="full" placeholder="Avis entre experts (ex. à confirmer par Alexandre ?)" value="${esc(o.expertNote||"")}">
       </div>
     </div>
     <div class="acts">
       <button class="btn green sm" onclick="validateObs('${o.id}')">✓ Valider</button>
       <button class="btn red sm" onclick="rejectObs('${o.id}')">✕ Refuser</button>
+      <button class="btn ghost sm" onclick="saveExpertNote('${o.id}')">💬 Enregistrer l'avis</button>
     </div>
   </div>`;
 }
 function doneRow(o,rejected){
+  const t=taxoOf(o);
   return `<div class="qrow">
-    <img class="zoomable" src="${obsPhoto(o)}" alt="" title="Clique pour agrandir">
+    <img class="thumb zoomable" src="${obsPhoto(o)}" alt="" title="Clique pour agrandir">
     <div class="qi">
-      <div class="t" style="font-style:italic">${esc(obsSci(o))} ${rejected?'<span class="badge r">refusée</span>':'<span class="badge v">✓</span>'}</div>
-      <div class="s">${esc(o.site||"Site ?")} · ${frDate(o.date)} · 👤 ${esc(o.by||"anonyme")}${o.common?` · ${esc(o.common)}`:""}${o.vern?` · ${esc(o.vern)}`:""}${o.reason?` · motif : ${esc(o.reason)}`:""}</div>
+      <div class="t" style="font-style:italic">${esc(t.sci)} ${rejected?'<span class="badge r">refusée</span>':'<span class="badge v">✓</span>'}</div>
+      <div class="s">${taxoLine(t)?taxoLine(t)+" · ":""}${esc(o.site||"Site ?")} · ${frDate(o.date)} · 👤 ${esc(o.by||"anonyme")}${o.validatedBy?` · par ${esc(o.validatedBy)}`:""}${o.reason?` · motif : ${esc(o.reason)}`:""}</div>
     </div>
     <div class="acts"><button class="btn ghost sm" onclick="toPending('${o.id}')">↩ Remettre en attente</button></div>
   </div>`;
 }
+function saveExpertNote(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.expertNote=val("ex-note-"+id).trim(); saveState(); toast("Avis enregistré 💬"); }
 function validateObs(id){
   const o=state.observations.find(x=>x.id===id); if(!o) return;
   const sp=val("as-sp-"+id);
-  if(!sp){ toast("Choisis d'abord un nom scientifique."); return; }
-  if(sp!=="autre"){ o.sp=sp; o.scientific=null; } else { o.sp=null; o.scientific=prompt("Nom scientifique :","")||"Espèce indéterminée"; }
-  o.common=val("as-com-"+id).trim(); o.vern=val("as-ver-"+id).trim();
-  o.status="validated"; saveState(); renderAdmin(); if(map){fillFilters();renderMarkers();}
-  toast("Observation validée — elle passe au vert 🟢");
+  if(!sp){ toast("Choisis d'abord l'espèce (nom scientifique)."); return; }
+  if(sp!=="autre"){ o.sp=sp; o.scientific=null; } else { o.sp=null; o.scientific=prompt("Nom scientifique de l'espèce :","")||"Espèce indéterminée"; }
+  o.expertNote=val("ex-note-"+id).trim();
+  o.status="validated"; o.outcome="validated"; o.outcomeSeen=false; o.outcomeAt=Date.now(); o.validatedBy=adminUser; o.reason=null;
+  saveState(); renderAdmin(); renderWho(); if(map){fillFilters();renderMarkers();}
+  toast("Observation validée par "+adminUser+" — elle passe au vert 🟢");
 }
 function rejectObs(id){
   const o=state.observations.find(x=>x.id===id); if(!o) return;
   const r=prompt("Motif du refus (ex. ce n'est pas un nudibranche) :","hors-sujet");
   if(r===null) return;
-  o.status="rejected"; o.reason=r; saveState(); renderAdmin(); if(map)renderMarkers();
+  o.expertNote=val("ex-note-"+id).trim();
+  o.status="rejected"; o.outcome="rejected"; o.outcomeSeen=false; o.outcomeAt=Date.now(); o.validatedBy=adminUser; o.reason=r;
+  saveState(); renderAdmin(); renderWho(); if(map)renderMarkers();
   toast("Observation refusée.");
 }
-function toPending(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.status="pending"; o.reason=null; saveState(); renderAdmin(); if(map){fillFilters();renderMarkers();} }
+function toPending(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.status="pending"; o.outcome=null; o.reason=null; saveState(); renderAdmin(); renderWho(); if(map){fillFilters();renderMarkers();} }
 
-// ---------- ADMIN · Bibliothèque (CRUD espèces) ----------
+// ---------- ADMIN · Bibliothèque ----------
 function renderAdminBiblio(){
   document.getElementById("admin-section").innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <p class="hint" style="margin:0">${state.species.length} espèces dans la bibliothèque. Ajoute-en de nouvelles ou modifie les fiches existantes.</p>
+      <p class="hint" style="margin:0">${state.species.length} espèces. Familles pré-remplies au mieux — à vérifier et corriger.</p>
       <button class="btn" onclick="openSpeciesEditor()">➕ Ajouter une espèce</button>
     </div>
     <div class="libgrid">${state.species.map(s=>`<div class="libcard">
       <img class="zoomable" src="${s.photo}" alt="${esc(s.sci)}" loading="lazy">
-      <div class="lb"><div class="sci">${esc(s.sci)}</div><div class="grp">${esc(s.grp)}</div>
+      <div class="lb"><div class="sci">${esc(s.sci)}</div><div class="fam">${esc(s.family||"famille ?")}</div>
       <div class="acts"><button class="btn ghost sm" onclick="openSpeciesEditor('${s.id}')">✏️ Modifier</button>
       <button class="btn ghost sm" onclick="deleteSpecies('${s.id}')">🗑️</button></div></div></div>`).join("")}</div>`;
 }
 function openSpeciesEditor(id){
-  editingSpeciesId=id||null; const s=id?speciesById(id):null; editorPhoto = s?s.photo:null;
+  editingSpeciesId=id||null; const s=id?speciesById(id):null; editorPhoto=s?s.photo:null;
   document.getElementById("sp-editor-content").innerHTML=`
     <div class="mb">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
@@ -586,11 +664,12 @@ function openSpeciesEditor(id){
         <input type="file" id="ed-photo" accept="image/*">
         <div id="ed-preview">${editorPhoto?`<img class="zoomable" src="${editorPhoto}" style="margin-top:10px;width:180px;height:130px;object-fit:cover;border-radius:10px">`:""}</div></div>
       <div class="field"><label>Nom scientifique <span class="req">*</span></label><input id="ed-sci" value="${s?esc(s.sci):""}" placeholder="ex. Hypselodoris bullockii"></div>
-      <div class="field"><label>Groupe / famille</label><input id="ed-grp" value="${s?esc(s.grp):""}" placeholder="ex. Doridacé"></div>
+      <div class="field"><label>Famille</label><input id="ed-family" value="${s?esc(s.family||""):""}" placeholder="ex. Chromodorididae"></div>
+      <div class="field"><label>Espèce</label><input id="ed-species" value="${s?esc(s.species||""):""}" placeholder="ex. bullockii"></div>
       <div class="field"><label>Taille</label><input id="ed-size" value="${s?esc(s.size||""):""}" placeholder="ex. 2 à 4 cm"></div>
       <div class="field"><label>Description (une ligne = un point)</label><textarea id="ed-desc" placeholder="Corps…&#10;Se nourrit de…">${s?esc((s.d||[]).join("\n")):""}</textarea></div>
       <div class="field"><label>Note / anecdote</label><textarea id="ed-note" placeholder="Le petit plus à savoir…">${s?esc(s.note||""):""}</textarea></div>
-      <div style="display:flex;gap:10px;margin-top:6px"><button class="btn" onclick="saveSpecies()">${s?"Enregistrer les modifications":"Ajouter à la bibliothèque"}</button></div>
+      <div style="margin-top:6px"><button class="btn" onclick="saveSpecies()">${s?"Enregistrer les modifications":"Ajouter à la bibliothèque"}</button></div>
     </div>`;
   document.getElementById("ed-photo").addEventListener("change",e=>{ const f=e.target.files[0]; if(f) resizeToDataURL(f,d=>{editorPhoto=d; document.getElementById("ed-preview").innerHTML=`<img class="zoomable" src="${d}" style="margin-top:10px;width:180px;height:130px;object-fit:cover;border-radius:10px">`;}); });
   document.getElementById("sp-editor").classList.add("open");
@@ -600,17 +679,11 @@ function saveSpecies(){
   const sci=val("ed-sci").trim();
   if(!sci){ toast("Le nom scientifique est requis."); return; }
   const d=val("ed-desc").split("\n").map(x=>x.trim()).filter(Boolean);
-  const data={ sci, grp:val("ed-grp").trim()||"—", size:val("ed-size").trim(), d, note:val("ed-note").trim() };
-  if(editingSpeciesId){
-    const s=speciesById(editingSpeciesId); Object.assign(s,data); if(editorPhoto) s.photo=editorPhoto;
-    toast("Fiche mise à jour ✏️");
-  } else {
-    if(!editorPhoto){ toast("Ajoute une photo pour la nouvelle espèce."); return; }
-    let base=slugify(sci)||("sp-"+Date.now()); let id=base, i=2;
-    while(speciesById(id)){ id=base+"-"+(i++); }
-    state.species.push({id, ...data, photo:editorPhoto});
-    toast("Espèce ajoutée à la bibliothèque 🐚");
-  }
+  const data={ sci, family:val("ed-family").trim(), species:val("ed-species").trim(), size:val("ed-size").trim(), d, note:val("ed-note").trim() };
+  if(editingSpeciesId){ const s=speciesById(editingSpeciesId); Object.assign(s,data); if(editorPhoto) s.photo=editorPhoto; toast("Fiche mise à jour ✏️"); }
+  else { if(!editorPhoto){ toast("Ajoute une photo pour la nouvelle espèce."); return; }
+    let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
+    state.species.push({id, ...data, photo:editorPhoto}); toast("Espèce ajoutée à la bibliothèque 🐚"); }
   saveState(); closeEditor(); renderAdmin(); renderSpecies();
 }
 function deleteSpecies(id){
@@ -620,7 +693,7 @@ function deleteSpecies(id){
   state.species=state.species.filter(s=>s.id!==id); saveState(); renderAdmin(); renderSpecies(); toast("Espèce supprimée.");
 }
 
-// ---------- Lightbox (clic photo = agrandir) ----------
+// ---------- Lightbox ----------
 function openLightbox(src){ const lb=document.getElementById("lightbox"); lb.querySelector("img").src=src; lb.classList.add("open"); }
 document.getElementById("lightbox").addEventListener("click",()=>document.getElementById("lightbox").classList.remove("open"));
 document.addEventListener("click",e=>{ const z=e.target.closest("img.zoomable"); if(z){ e.stopPropagation(); openLightbox(z.src); } });
@@ -636,9 +709,8 @@ let toastT; function toast(m){ const t=document.getElementById("toast"); t.textC
 
 // ---------- init ----------
 renderWho();
-ensureMap();
-renderMarkers();
 renderSpecies();
+if(unseenCount()>0) setTimeout(()=>toast("🔔 Tu as "+unseenCount()+" réponse(s) à tes observations."),700);
 </script>
 </body>
 </html>
