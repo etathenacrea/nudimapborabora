@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NudiMapBoraBora — observatoire participatif des nudibranches</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root{
+    --ink:#0f2e3a; --muted:#5b7682; --line:#e2ebef; --bg:#eef5f7;
+    --sea:#1aa0c4; --sea-deep:#0c6580; --sand:#e9dcb8;
+    --green:#1f9d57; --green-bg:#e7f6ed; --orange:#e8920b; --orange-bg:#fdf1dd;
+    --red:#d6453f; --red-bg:#fbe9e8; --card:#ffffff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--sea-deep)}
+  h1,h2,h3{font-weight:600;line-height:1.25;margin:0}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+  header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1000}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 0;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand .logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(160deg,var(--sea),var(--sea-deep));display:flex;align-items:center;justify-content:center;flex:none}
+  .brand h1{font-size:18px;letter-spacing:-.2px}
+  .brand small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;letter-spacing:.3px}
+  nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav button{font:inherit;font-size:14px;font-weight:500;color:var(--muted);background:none;border:0;padding:8px 13px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:7px}
+  nav button:hover{background:var(--bg);color:var(--ink)}
+  nav button.active{background:var(--sea);color:#fff}
+  nav button.active:hover{background:var(--sea)}
+  .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .who b{color:var(--ink);font-weight:600}
+  .view{display:none;padding:22px 0 60px}
+  .view.active{display:block}
+  .lead{color:var(--muted);font-size:15px;margin:6px 0 18px;max-width:720px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 16px}
+  .stat .n{font-size:26px;font-weight:700;letter-spacing:-.5px}
+  .stat .l{font-size:12.5px;color:var(--muted);font-weight:500}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .filters label{font-size:12px;color:var(--muted);font-weight:600;display:flex;flex-direction:column;gap:4px}
+  select,input,textarea{font:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none}
+  select:focus,input:focus,textarea:focus{border-color:var(--sea)}
+  .legend{display:flex;gap:16px;align-items:center;font-size:13px;color:var(--muted);margin-left:auto;flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:13px;height:13px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+  #map{height:560px;border-radius:16px;border:1px solid var(--line);overflow:hidden;z-index:1}
+  .map-pin span{display:block;width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);background:var(--c)}
+  .pop{width:230px}
+  .pop img{width:100%;height:140px;object-fit:cover;border-radius:9px;display:block;margin-bottom:8px}
+  .pop .sci{font-style:italic;font-weight:600;font-size:15px}
+  .pop .meta{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5}
+  .pop .meta b{color:var(--ink);font-weight:600}
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px}
+  .badge.v{background:var(--green-bg);color:var(--green)}
+  .badge.p{background:var(--orange-bg);color:var(--orange)}
+  .badge.r{background:var(--red-bg);color:var(--red)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:16px}
+  .spcard{background:var(--card);border:1px solid var(--line);border-radius:15px;overflow:hidden;cursor:pointer;transition:transform .12s,box-shadow .12s}
+  .spcard:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(12,101,128,.13)}
+  .spcard img{width:100%;height:160px;object-fit:cover;display:block;background:#dfeaee}
+  .spcard .b{padding:11px 13px 14px}
+  .spcard .sci{font-style:italic;font-weight:600;font-size:15px;letter-spacing:-.2px}
+  .spcard .grp{display:inline-block;font-size:11px;font-weight:600;color:var(--sea-deep);background:#e3f3f8;padding:2px 8px;border-radius:20px;margin-top:6px}
+  .spcard .obs{font-size:12px;color:var(--muted);margin-top:8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field.full{grid-column:1/-1}
+  .field label{font-size:13px;font-weight:600}
+  .field .hint{font-size:12px;color:var(--muted);font-weight:400}
+  .btn{font:inherit;font-size:14.5px;font-weight:600;color:#fff;background:var(--sea);border:0;border-radius:11px;padding:11px 20px;cursor:pointer}
+  .btn:hover{background:var(--sea-deep)}
+  .btn.green{background:var(--green)} .btn.green:hover{filter:brightness(.93)}
+  .btn.red{background:var(--red)} .btn.red:hover{filter:brightness(.93)}
+  .btn.ghost{background:none;color:var(--muted);border:1px solid var(--line)} .btn.ghost:hover{background:var(--bg);color:var(--ink)}
+  .btn.sm{padding:7px 13px;font-size:13px;border-radius:9px}
+  #pick-map{height:230px;border-radius:12px;border:1px solid var(--line);z-index:1}
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(15,46,58,.55);z-index:2000;align-items:center;justify-content:center;padding:20px}
+  .modal-bg.open{display:flex}
+  .modal{background:var(--card);border-radius:18px;max-width:660px;width:100%;max-height:88vh;overflow:auto}
+  .modal img{width:100%;height:300px;object-fit:cover;display:block;border-radius:18px 18px 0 0;background:#dfeaee}
+  .modal .mb{padding:20px 22px 24px}
+  .modal ul{margin:12px 0 0;padding-left:18px;color:var(--ink)}
+  .modal ul li{margin:4px 0}
+  .note{background:#f0f8e9;border-left:3px solid var(--green);padding:9px 13px;border-radius:0 9px 9px 0;font-size:13.5px;margin-top:14px;color:#33581f}
+  .qrow{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;flex-wrap:wrap}
+  .qrow img{width:78px;height:78px;object-fit:cover;border-radius:10px;flex:none;background:#dfeaee}
+  .qrow .qi{flex:1;min-width:200px}
+  .qrow .qi .t{font-weight:600;font-size:14.5px}
+  .qrow .qi .s{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .assign{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-top:4px}
+  .assign input,.assign select{font-size:13px;padding:7px 9px}
+  .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .empty{text-align:center;color:var(--muted);padding:40px 10px;font-size:14px}
+  .pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:#e3f3f8;color:var(--sea-deep)}
+  .anat{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:0 0 22px}
+  .anat div{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 15px}
+  .anat h4{margin:0 0 4px;font-size:14px}
+  .anat p{margin:0;font-size:13px;color:var(--muted)}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;z-index:3000;transition:transform .3s;box-shadow:0 8px 30px rgba(0,0,0,.3)}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+  @media(max-width:620px){.form-grid{grid-template-columns:1fr}.assign{grid-template-columns:1fr}nav button span{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap topbar">
+    <div class="brand">
+      <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z" fill="#fff" opacity=".92"/><circle cx="12" cy="10" r="3" fill="#1aa0c4"/></svg>
+      </div>
+      <div>
+        <h1>NudiMapBoraBora</h1>
+        <small>OBSERVATOIRE PARTICIPATIF DES NUDIBRANCHES</small>
+      </div>
+    </div>
+    <nav id="nav">
+      <button data-view="carte" class="active">🗺️ <span>Carte</span></button>
+      <button data-view="ident">🔍 <span>Identification</span></button>
+      <button data-view="proposer">📸 <span>Proposer</span></button>
+      <button data-view="admin">🔒 <span>Espace admin</span></button>
+    </nav>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ CARTE ============ -->
+  <section class="view active" id="view-carte">
+    <div class="section-head">
+      <div>
+        <h2>Carte des observations</h2>
+        <p class="lead">Chaque épingle est une rencontre dans le lagon de Bora Bora. <b style="color:var(--green)">Vert</b> = validée par les spécialistes · <b style="color:var(--orange)">orange</b> = en attente de validation.</p>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="filters">
+      <label>Espèce<select id="f-species"></select></label>
+      <label>Année<select id="f-year"></select></label>
+      <label>Statut<select id="f-status">
+        <option value="all">Toutes</option>
+        <option value="validated">Validées</option>
+        <option value="pending">En attente</option>
+      </select></label>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--green)"></span> Validée</span>
+        <span><span class="dot" style="background:var(--orange)"></span> En attente</span>
+      </div>
+    </div>
+    <div id="map"></div>
+  </section>
+
+  <!-- ============ IDENTIFICATION ============ -->
+  <section class="view" id="view-ident">
+    <h2>Aide à l'identification</h2>
+    <p class="lead">Les espèces déjà documentées sur le récif de Bora Bora, d'après la conférence de Justine Certain (Dive N' Smile). Compare ta photo et clique une fiche pour le détail.</p>
+    <div class="anat">
+      <div><h4>Rhinophores</h4><p>Les deux « antennes » sur la tête : elles sentent et détectent. Souvent la première chose visible.</p></div>
+      <div><h4>Rosette branchiale</h4><p>Le panache de branchies sur le dos. Absente chez certaines familles qui respirent par le manteau.</p></div>
+      <div><h4>Manteau</h4><p>Le corps et ses couleurs. Sa forme et ses motifs sont la clé de l'identification.</p></div>
+    </div>
+    <div class="filters">
+      <input id="ident-search" placeholder="Rechercher une espèce, une couleur, un groupe…" style="flex:1;min-width:220px" />
+    </div>
+    <div class="grid" id="species-grid"></div>
+  </section>
+
+  <!-- ============ PROPOSER ============ -->
+  <section class="view" id="view-proposer">
+    <h2>Proposer une observation</h2>
+    <p class="lead">Partage ta rencontre. Elle apparaîtra en orange sur la carte, puis passera en vert une fois l'espèce validée par les spécialistes.</p>
+    <div id="proposer-body"></div>
+  </section>
+
+  <!-- ============ ADMIN ============ -->
+  <section class="view" id="view-admin">
+    <h2>Espace admin · validation</h2>
+    <p class="lead">Réservé à Justine et aux spécialistes. Attribuez les noms (scientifique, commun, vernaculaire) puis validez ✅, ou refusez ❌ les observations hors-sujet.</p>
+    <div id="admin-body"></div>
+  </section>
+
+</main>
+
+<div class="modal-bg" id="modal"><div class="modal" id="modal-content"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ---------- Données espèces (conférence J. Certain, Dive N' Smile Bora Bora) ----------
+const SPECIES = [
+  {slug:"flabellina-exopata",sci:"Flabellina exopata",grp:"Éolide",size:"2 à 4 cm",
+   d:["Cérates irisées bleu/blanc sur un corps brun-orange","Se nourrit d'hydroïdes","Présente sur les éponges et récifs de Bora Bora"],
+   note:"Ses cérates contiennent les cellules urticantes de ses proies — elle se défend avec leur propre arsenal."},
+  {slug:"chromodoris-sp3",sci:"Chromodoris sp3",grp:"Doridacé",size:"~ 2 cm",
+   d:["Corps blanc-bleu pâle strié de lignes bleu marine","Rhinophores orange vif","Se nourrit d'éponges"],
+   note:"Le « sp3 » signifie : espèce pas encore officiellement décrite. Il reste des découvertes à faire à Bora Bora."},
+  {slug:"diversidoris-flava",sci:"Diversidoris flava",grp:"Doridacé (juvénile)",size:"quelques mm",
+   d:["Corps jaune translucide — on voit ses organes internes","Quasi invisible à l'œil nu","L'adulte sera très différent : brun tacheté"],
+   note:"Celui-ci fait à peine quelques millimètres. Le trouver, c'est déjà une victoire."},
+  {slug:"chromodoris-sp1",sci:"Chromodoris sp1",grp:"Doridacé",size:"~ 2 cm",
+   d:["Corps blanc nacré, taches brun-or, liseré bleu marine","Rosette branchiale bleu-violet","Se nourrit d'éponges"],
+   note:"Comme le sp3 — espèce encore non décrite officiellement. Bora Bora a encore des secrets à livrer."},
+  {slug:"gymnodoris-ceylonica",sci:"Gymnodoris ceylonica",grp:"Doridacé",size:"3 à 5 cm",
+   d:["Corps blanc translucide, pois rouge vif, liseré orange","Prédateur — se nourrit d'autres nudibranches","En reproduction : agrégations de dizaines d'individus"],
+   note:"Observés par dizaines un matin à Bora Bora avec Dive N' Smile — un événement encore peu documenté en Polynésie."},
+  {slug:"micromelo-undatus",sci:"Micromelo undatus",grp:"Bullidae — circumtropical",size:"1 à 2 cm",
+   d:["Manteau translucide bleu-gris, taches blanches, liseré jaune vif","Réseau de lignes rouge bordeaux","Possède encore une coquille interne réduite"],
+   note:"Pas tout à fait un nudibranche, pas tout à fait un escargot — la nature aime brouiller les pistes."},
+  {slug:"phyllidia-carlsonhoffi",sci:"Phyllidia carlsonhoffi",grp:"Doridacé",size:"3 à 6 cm",
+   d:["Corps noir intense, tubercules jaune or cerclés de blanc","Pas de rosette : respire par le bord du manteau","Se nourrit d'éponges toxiques et stocke leurs toxines"],
+   note:"Son motif noir/jaune est un avertissement : « je suis toxique, ne me mange pas. »"},
+  {slug:"goniobranchus-kuniei",sci:"Goniobranchus kuniei",grp:"Doridacé",size:"6 à 8 cm",
+   d:["Corps jaune-crème, taches noires, liseré bleu-violet","Rosette branchiale bien développée","Indo-Pacifique, fréquente en Polynésie"],
+   note:"Une des plus grandes du récif — même les plongeurs qui ne regardent pas le fond la remarquent !"},
+  {slug:"phyllidiella-rosans",sci:"Phyllidiella cf. rosans",grp:"Doridacé",size:"2 à 4 cm",
+   d:["Corps rose-bleu pâle, larges bandes noires","Respire par le bord du manteau (pas de rosette visible)","Se nourrit d'éponges toxiques"],
+   note:"Le « cf. » indique une identification non certaine à 100 %."},
+  {slug:"phyllidiella-annulata",sci:"Phyllidiella annulata",grp:"Doridacé",size:"2 à 4 cm",
+   d:["Corps noir, gros tubercules rose-saumon","Rhinophores noirs — presque invisibles","Respire par le bord du manteau"],
+   note:"Noir et rose, sobre et sophistiquée. La plus élégante du récif ?"},
+  {slug:"risbecia-imperialis",sci:"Risbecia imperialis",grp:"Doridacé",size:"5 à 8 cm",
+   d:["Corps blanc-bleu, pois jaune vif, rhinophores rayés noir/blanc","Comportement de « following » : l'un suit l'autre en touchant sa queue","Se nourrit d'éponges"],
+   note:"Le following : une danse lente et silencieuse, museau contre queue."},
+  {slug:"pseudoceros-scintillatus",sci:"Pseudoceros scintillatus",grp:"Ver plat (souvent confondu)",size:"quelques mm",
+   d:["Corps blanc, réseau de lignes et taches noires","Extrémités blanches à pointe orange","Se cache dans les algues et le biofilm"],
+   note:"À noter : techniquement un ver plat (plathelminthe), très souvent confondu avec un nudibranche."},
+  {slug:"thuridilla-gracilis",sci:"Thuridilla gracilis",grp:"Sacoglosse",size:"2 à 3 cm",
+   d:["Pattern complexe brun/noir/jaune, points bleu électrique","Aspire le contenu des algues dont elle se nourrit","Stocke les chloroplastes des algues dans ses tissus"],
+   note:"Elle vole les chloroplastes des algues et les fait fonctionner — mi-animal, mi-plante. Elle photosynthétise !"},
+  {slug:"dolabella-auricularia",sci:"Dolabella auricularia",grp:"Lièvre de mer — Aplysiidae",size:"jusqu'à 15 cm",
+   d:["Corps brun, parfaitement camouflé dans le sable","Normalement nocturne — le croiser de jour est un privilège","Herbivore : broute les algues et entretient les herbiers"],
+   note:"Un discret jardinier du lagon polynésien."},
+  {slug:"miamira-miamirana",sci:"Miamira miamirana",grp:"Doridacé",size:"jusqu'à 15 cm",
+   d:["Corps crème bosselé, tons kaki et lilas, siphons dressés","Silhouette unique, presque végétale","Rencontre rare à Bora Bora — observée avec Dive N' Smile"],
+   note:"Même en la regardant droit dans les yeux, on se demande si c'est bien un animal."},
+];
+const photoOf = s => "assets/species/" + s + ".jpg";
+const speciesBySlug = s => SPECIES.find(x=>x.slug===s);
+
+// ---------- Sites de plongée (coordonnées approximatives) ----------
+const SITES = {
+  "Toopua":[-16.5169,-151.7626], "Tapu":[-16.5072,-151.7795], "Anau":[-16.4767,-151.7106],
+  "Muri Muri":[-16.4895,-151.7820], "Matira":[-16.5430,-151.7570], "Tupitipiti":[-16.5440,-151.7090],
+  "Passe Teavanui":[-16.4930,-151.7840], "Toopua Iti":[-16.5260,-151.7660]
+};
+
+// ---------- Observations d'exemple (seed) ----------
+const SEED = [
+  {id:"s1",slug:"goniobranchus-kuniei",lat:-16.5169,lng:-151.7626,site:"Toopua",date:"2026-03-12",time:"09:42",depth:14,by:"Justine C.",status:"validated",common:"",vern:""},
+  {id:"s2",slug:"risbecia-imperialis",lat:-16.5072,lng:-151.7795,site:"Tapu",date:"2025-11-03",time:"10:15",depth:18,by:"Justine C.",status:"validated",common:"",vern:""},
+  {id:"s3",slug:"phyllidia-carlsonhoffi",lat:-16.4767,lng:-151.7106,site:"Anau",date:"2025-07-21",time:"08:30",depth:12,by:"Teva",status:"validated",common:"",vern:""},
+  {id:"s4",slug:"gymnodoris-ceylonica",lat:-16.4895,lng:-151.7820,site:"Muri Muri",date:"2024-09-05",time:"11:00",depth:8,by:"Dive N' Smile",status:"validated",common:"",vern:""},
+  {id:"s5",slug:"dolabella-auricularia",lat:-16.5430,lng:-151.7570,site:"Matira",date:"2026-01-18",time:"16:20",depth:5,by:"Hina",status:"validated",common:"Lièvre de mer",vern:""},
+  {id:"s6",slug:"miamira-miamirana",lat:-16.5260,lng:-151.7660,site:"Toopua Iti",date:"2025-12-20",time:"09:10",depth:20,by:"Justine C.",status:"validated",common:"",vern:""},
+  {id:"s7",slug:"flabellina-exopata",lat:-16.5440,lng:-151.7090,site:"Tupitipiti",date:"2026-06-02",time:"09:00",depth:22,by:"Marama",status:"pending",common:"",vern:""},
+  {id:"s8",slug:null,guess:"je-sais-pas",photo:"assets/species/chromodoris-sp1.jpg",lat:-16.4930,lng:-151.7840,site:"Passe Teavanui",date:"2026-06-15",time:"10:30",depth:16,by:"Heimana",status:"pending",common:"",vern:""},
+];
+
+// ---------- État + persistance ----------
+const KEY="nudimap_v1";
+function loadState(){ try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.observations) return s;}catch(e){} return null; }
+function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+let state = loadState() || { user:null, observations: JSON.parse(JSON.stringify(SEED)) };
+let adminUnlocked=false;
+
+function obsSci(o){ if(o.slug){return speciesBySlug(o.slug)?.sci || o.scientific || "Espèce indéterminée";} return o.scientific || "Espèce à identifier"; }
+function obsPhoto(o){ return o.photo || (o.slug?photoOf(o.slug):"") ; }
+function obsColor(o){ return o.status==="validated"?getCSS("--green"):getCSS("--orange"); }
+function getCSS(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+// ---------- Navigation ----------
+const views={carte:"view-carte",ident:"view-ident",proposer:"view-proposer",admin:"view-admin"};
+document.getElementById("nav").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  const v=b.dataset.view;
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x===b));
+  Object.values(views).forEach(id=>document.getElementById(id).classList.remove("active"));
+  document.getElementById(views[v]).classList.add("active");
+  if(v==="carte"){ ensureMap(); setTimeout(()=>{map.invalidateSize(); renderMarkers();},60); }
+  if(v==="proposer") renderProposer();
+  if(v==="admin") renderAdmin();
+  if(v==="ident") renderSpecies();
+});
+
+// ---------- WHO (mini-inscription state) ----------
+function renderWho(){
+  const w=document.getElementById("who");
+  if(state.user){ w.innerHTML=`👋 <b>${esc(state.user.name)}</b> · <a href="#" id="logout">se déconnecter</a>`;
+    document.getElementById("logout").onclick=e=>{e.preventDefault(); state.user=null; saveState(); renderWho(); renderProposer();}; }
+  else { w.innerHTML=`<span style="opacity:.8">Non inscrit·e</span>`; }
+}
+
+// ---------- CARTE ----------
+let map, markersLayer;
+function ensureMap(){
+  if(map) return;
+  map=L.map("map",{scrollWheelZoom:true}).setView([-16.5004,-151.7415],13);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {maxZoom:19,attribution:"Imagerie © Esri, Maxar, Earthstar Geographics"}).addTo(map);
+  markersLayer=L.layerGroup().addTo(map);
+  fillFilters();
+}
+function fillFilters(){
+  const fs=document.getElementById("f-species"), fy=document.getElementById("f-year");
+  const sl=[...new Set(state.observations.filter(o=>o.slug).map(o=>o.slug))];
+  fs.innerHTML='<option value="all">Toutes les espèces</option>'+sl.map(s=>`<option value="${s}">${esc(speciesBySlug(s)?.sci||s)}</option>`).join("");
+  const ys=[...new Set(state.observations.map(o=>o.date.slice(0,4)))].sort().reverse();
+  fy.innerHTML='<option value="all">Toutes les années</option>'+ys.map(y=>`<option value="${y}">${y}</option>`).join("");
+  ["f-species","f-year","f-status"].forEach(id=>document.getElementById(id).onchange=renderMarkers);
+}
+function pinIcon(color){ return L.divIcon({className:"map-pin",html:`<span style="--c:${color}"></span>`,iconSize:[18,18],iconAnchor:[9,9],popupAnchor:[0,-9]}); }
+function renderMarkers(){
+  if(!markersLayer) return;
+  markersLayer.clearLayers();
+  const fs=val("f-species"),fy=val("f-year"),fst=val("f-status");
+  let shown=0;
+  state.observations.filter(o=>o.status!=="rejected").forEach(o=>{
+    if(fs!=="all"&&o.slug!==fs) return;
+    if(fy!=="all"&&o.date.slice(0,4)!==fy) return;
+    if(fst!=="all"&&o.status!==fst) return;
+    shown++;
+    const m=L.marker([o.lat,o.lng],{icon:pinIcon(o.status==="validated"?getCSS("--green"):getCSS("--orange"))});
+    m.bindPopup(popupHTML(o),{minWidth:230});
+    markersLayer.addLayer(m);
+  });
+  renderStats(shown);
+}
+function popupHTML(o){
+  const sci=obsSci(o), st=o.status;
+  const badge = st==="validated"?'<span class="badge v">✓ Validée</span>':'<span class="badge p">⏳ En attente</span>';
+  const names=[]; if(st==="validated"){ if(o.common)names.push("Commun : "+esc(o.common)); if(o.vern)names.push("Reo tahiti : "+esc(o.vern)); }
+  return `<div class="pop">
+    ${obsPhoto(o)?`<img src="${obsPhoto(o)}" alt="">`:""}
+    ${badge}
+    <div class="sci">${esc(sci)}</div>
+    ${names.length?`<div class="meta">${names.join("<br>")}</div>`:""}
+    <div class="meta">
+      <b>${esc(o.site||"Site non précisé")}</b><br>
+      📅 ${frDate(o.date)} · 🕒 ${o.time||"—"}<br>
+      🌊 ${o.depth?o.depth+" m":"profondeur n.c."} · 👤 ${esc(o.by||"anonyme")}
+    </div>
+  </div>`;
+}
+function renderStats(shown){
+  const obs=state.observations.filter(o=>o.status!=="rejected");
+  const val=obs.filter(o=>o.status==="validated").length;
+  const pen=obs.filter(o=>o.status==="pending").length;
+  const sp=new Set(obs.filter(o=>o.status==="validated"&&o.slug).map(o=>o.slug)).size;
+  document.getElementById("stats").innerHTML=[
+    ["Observations affichées",shown??obs.length],["Validées",val],["En attente",pen],["Espèces validées",sp]
+  ].map(([l,n])=>`<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+}
+
+// ---------- IDENTIFICATION ----------
+function renderSpecies(){
+  const q=(document.getElementById("ident-search").value||"").toLowerCase().trim();
+  const g=document.getElementById("species-grid");
+  const list=SPECIES.filter(s=>!q||(s.sci+" "+s.grp+" "+s.d.join(" ")).toLowerCase().includes(q));
+  const count=slug=>state.observations.filter(o=>o.slug===slug&&o.status==="validated").length;
+  g.innerHTML=list.map(s=>`<div class="spcard" data-slug="${s.slug}">
+    <img src="${photoOf(s.slug)}" alt="${esc(s.sci)}" loading="lazy">
+    <div class="b"><div class="sci">${esc(s.sci)}</div><span class="grp">${esc(s.grp)}</span>
+    <div class="obs">${count(s.slug)} observation(s) · ${esc(s.size)}</div></div></div>`).join("")
+    || `<div class="empty">Aucune espèce ne correspond à « ${esc(q)} ».</div>`;
+  g.querySelectorAll(".spcard").forEach(c=>c.onclick=()=>openSpecies(c.dataset.slug));
+}
+document.getElementById("ident-search").addEventListener("input",renderSpecies);
+function openSpecies(slug){
+  const s=speciesBySlug(slug); if(!s) return;
+  document.getElementById("modal-content").innerHTML=`
+    <img src="${photoOf(slug)}" alt="${esc(s.sci)}">
+    <div class="mb">
+      <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
+        <div><h2 style="font-style:italic">${esc(s.sci)}</h2><span class="grp" style="margin-top:8px">${esc(s.grp)}</span></div>
+        <button class="btn ghost sm" onclick="closeModal()">Fermer</button>
+      </div>
+      <ul>${s.d.map(x=>`<li>${esc(x)}</li>`).join("")}<li><b>Taille :</b> ${esc(s.size)}</li></ul>
+      <div class="note">${esc(s.note)}</div>
+      <p style="font-size:12.5px;color:var(--muted);margin-top:14px">Photo : Justine Certain · Dive N' Smile Bora Bora</p>
+    </div>`;
+  document.getElementById("modal").classList.add("open");
+}
+function closeModal(){ document.getElementById("modal").classList.remove("open"); }
+document.getElementById("modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeModal(); });
+
+// ---------- PROPOSER ----------
+let pickMap,pickMarker,pickLatLng=null,pendingPhoto=null;
+function renderProposer(){
+  const b=document.getElementById("proposer-body");
+  if(!state.user){
+    b.innerHTML=`<div class="card" style="max-width:520px">
+      <h3>D'abord, une mini-inscription</h3>
+      <p class="lead" style="margin:8px 0 16px">Pour suivre tes contributions et te recontacter sur une identification. Aucune donnée n'est partagée.</p>
+      <div class="field" style="margin-bottom:12px"><label>Ton nom ou pseudo</label><input id="su-name" placeholder="ex. Marama"></div>
+      <div class="field" style="margin-bottom:18px"><label>Email</label><input id="su-email" type="email" placeholder="ex. marama@email.pf"></div>
+      <button class="btn" onclick="signup()">Créer mon accès</button>
+    </div>`;
+    return;
+  }
+  b.innerHTML=`<div class="card">
+    <div class="form-grid">
+      <div class="field full"><label>Photo de l'observation</label>
+        <input type="file" id="p-photo" accept="image/*">
+        <div id="p-preview"></div></div>
+      <div class="field"><label>Connais-tu l'espèce ?</label>
+        <select id="p-species"><option value="je-sais-pas">Je ne sais pas — à identifier</option>
+        ${SPECIES.map(s=>`<option value="${s.slug}">${esc(s.sci)}</option>`).join("")}</select>
+        <span class="hint">Pas sûr·e ? Laisse « je ne sais pas », les spécialistes trancheront.</span></div>
+      <div class="field"><label>Nom du site (optionnel)</label>
+        <input id="p-site" list="sites" placeholder="ex. Toopua, Anau…">
+        <datalist id="sites">${Object.keys(SITES).map(s=>`<option value="${s}">`).join("")}</datalist></div>
+      <div class="field full"><label>Localisation — clique sur la carte pour poser l'épingle</label>
+        <div id="pick-map"></div>
+        <span class="hint" id="p-coords">Aucune position choisie.</span></div>
+      <div class="field"><label>Date</label><input type="date" id="p-date" value="${todayISO()}"></div>
+      <div class="field"><label>Heure</label><input type="time" id="p-time" value="10:00"></div>
+      <div class="field"><label>Profondeur (m)</label><input type="number" id="p-depth" min="0" max="60" placeholder="ex. 14"></div>
+      <div class="field"><label>Commentaire (optionnel)</label><input id="p-note" placeholder="comportement, taille…"></div>
+    </div>
+    <div style="margin-top:18px;display:flex;gap:10px;align-items:center">
+      <button class="btn" onclick="submitObs()">Envoyer l'observation</button>
+      <span class="hint">Elle apparaîtra en <b style="color:var(--orange)">orange</b> sur la carte en attendant validation.</span>
+    </div>
+  </div>`;
+  pickLatLng=null; pendingPhoto=null;
+  setTimeout(()=>{
+    pickMap=L.map("pick-map").setView([-16.5004,-151.7415],12.5);
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19}).addTo(pickMap);
+    pickMap.on("click",e=>{
+      pickLatLng=e.latlng;
+      if(pickMarker) pickMarker.setLatLng(e.latlng); else pickMarker=L.marker(e.latlng).addTo(pickMap);
+      document.getElementById("p-coords").innerHTML=`📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
+    });
+    pickMap.invalidateSize();
+  },60);
+  document.getElementById("p-photo").addEventListener("change",handlePhoto);
+}
+function signup(){
+  const n=val("su-name").trim(), em=val("su-email").trim();
+  if(!n||!em){ toast("Indique ton nom et ton email."); return; }
+  state.user={name:n,email:em}; saveState(); renderWho(); renderProposer(); toast("Bienvenue "+n+" 🐚");
+}
+function handlePhoto(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{ const img=new Image(); img.onload=()=>{
+    const max=1200, sc=Math.min(1,max/Math.max(img.width,img.height));
+    const c=document.createElement("canvas"); c.width=img.width*sc; c.height=img.height*sc;
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    pendingPhoto=c.toDataURL("image/jpeg",0.82);
+    document.getElementById("p-preview").innerHTML=`<img src="${pendingPhoto}" style="margin-top:10px;width:160px;height:120px;object-fit:cover;border-radius:10px">`;
+  }; img.src=ev.target.result; };
+  r.readAsDataURL(f);
+}
+function submitObs(){
+  if(!pickLatLng){ toast("Pose l'épingle sur la carte 📍"); return; }
+  const slug=val("p-species"); const sp= slug==="je-sais-pas"?null:slug;
+  const site=val("p-site").trim();
+  const o={ id:"u"+Date.now(), slug:sp, guess: sp?null:"je-sais-pas",
+    photo: pendingPhoto || (sp?photoOf(sp):""),
+    lat:pickLatLng.lat, lng:pickLatLng.lng, site:site||"(à préciser)",
+    date:val("p-date")||todayISO(), time:val("p-time")||"", depth:Number(val("p-depth"))||null,
+    note:val("p-note").trim(), by:state.user.name, status:"pending", common:"",vern:"" };
+  state.observations.push(o); saveState();
+  if(map){ fillFilters(); renderMarkers(); }
+  toast("Merci ! Ton observation est en attente de validation ✨");
+  document.querySelector('nav button[data-view="carte"]').click();
+}
+
+// ---------- ADMIN ----------
+function renderAdmin(){
+  const b=document.getElementById("admin-body");
+  if(!adminUnlocked){
+    b.innerHTML=`<div class="card" style="max-width:440px">
+      <h3>Accès réservé</h3>
+      <p class="lead" style="margin:8px 0 14px">Espace de validation des observations.</p>
+      <div class="field" style="margin-bottom:14px"><label>Mot de passe</label><input type="password" id="adm-pw" placeholder="••••••••"></div>
+      <button class="btn" onclick="unlockAdmin()">Entrer</button>
+      <p class="hint" style="margin-top:12px">Démo : le mot de passe est <b>borabora</b>. (Une vraie authentification sécurisée sera mise en place dans la version finale.)</p>
+    </div>`; return;
+  }
+  const pend=state.observations.filter(o=>o.status==="pending");
+  const val_=state.observations.filter(o=>o.status==="validated");
+  const rej=state.observations.filter(o=>o.status==="rejected");
+  b.innerHTML=`
+    <div class="stats">
+      <div class="stat"><div class="n" style="color:var(--orange)">${pend.length}</div><div class="l">En attente</div></div>
+      <div class="stat"><div class="n" style="color:var(--green)">${val_.length}</div><div class="l">Validées</div></div>
+      <div class="stat"><div class="n" style="color:var(--red)">${rej.length}</div><div class="l">Refusées</div></div>
+    </div>
+    <h3 style="margin:22px 0 12px">🟠 File d'attente</h3>
+    <div id="queue">${pend.length?pend.map(queueRow).join(""):'<div class="empty">Rien à valider. 🎉</div>'}</div>
+    <h3 style="margin:26px 0 12px">🟢 Validées</h3>
+    <div>${val_.length?val_.map(o=>doneRow(o,"v")).join(""):'<div class="empty">Aucune pour le moment.</div>'}</div>
+    ${rej.length?`<h3 style="margin:26px 0 12px">🔴 Refusées</h3><div>${rej.map(o=>doneRow(o,"r")).join("")}</div>`:""}
+    <div style="margin-top:30px"><button class="btn ghost sm" onclick="resetDemo()">↺ Réinitialiser les données de démo</button></div>`;
+}
+function queueRow(o){
+  const guessed = o.slug?speciesBySlug(o.slug)?.sci : "❓ Espèce inconnue (à identifier)";
+  return `<div class="qrow" data-id="${o.id}">
+    <img src="${obsPhoto(o)}" alt="">
+    <div class="qi">
+      <div class="t">${esc(o.site||"Site ?")} · ${o.depth?o.depth+" m":"prof. n.c."}</div>
+      <div class="s">📅 ${frDate(o.date)} ${o.time||""} · 👤 ${esc(o.by||"anonyme")} · proposé : <i>${esc(guessed)}</i>${o.note?` · « ${esc(o.note)} »`:""}</div>
+      <div class="assign">
+        <select id="as-sp-${o.id}"><option value="">— nom scientifique —</option>${SPECIES.map(s=>`<option value="${s.slug}" ${s.slug===o.slug?"selected":""}>${esc(s.sci)}</option>`).join("")}<option value="autre">Autre…</option></select>
+        <input id="as-com-${o.id}" placeholder="Nom commun" value="${esc(o.common||"")}">
+        <input id="as-ver-${o.id}" placeholder="Nom vernaculaire (reo tahiti)" value="${esc(o.vern||"")}">
+      </div>
+    </div>
+    <div class="acts">
+      <button class="btn green sm" onclick="validateObs('${o.id}')">✓ Valider</button>
+      <button class="btn red sm" onclick="rejectObs('${o.id}')">✕ Refuser</button>
+    </div>
+  </div>`;
+}
+function doneRow(o,kind){
+  return `<div class="qrow" data-id="${o.id}">
+    <img src="${obsPhoto(o)}" alt="">
+    <div class="qi">
+      <div class="t" style="font-style:italic">${esc(obsSci(o))} ${kind==="v"?'<span class="badge v">✓</span>':'<span class="badge r">refusée</span>'}</div>
+      <div class="s">${esc(o.site||"Site ?")} · ${frDate(o.date)} · 👤 ${esc(o.by||"anonyme")}${o.common?` · ${esc(o.common)}`:""}${o.vern?` · ${esc(o.vern)}`:""}${o.reason?` · motif : ${esc(o.reason)}`:""}</div>
+    </div>
+    <div class="acts"><button class="btn ghost sm" onclick="toPending('${o.id}')">↩ Remettre en attente</button></div>
+  </div>`;
+}
+function unlockAdmin(){ if(val("adm-pw")==="borabora"){adminUnlocked=true;renderAdmin();} else toast("Mot de passe incorrect."); }
+function validateObs(id){
+  const o=state.observations.find(x=>x.id===id); if(!o) return;
+  const sp=val("as-sp-"+id);
+  if(!sp){ toast("Choisis d'abord un nom scientifique."); return; }
+  if(sp!=="autre"){ o.slug=sp; } else { o.slug=null; o.scientific=prompt("Nom scientifique :","")||"Espèce indéterminée"; }
+  o.common=val("as-com-"+id).trim(); o.vern=val("as-ver-"+id).trim();
+  o.status="validated"; saveState(); renderAdmin(); if(map){fillFilters();renderMarkers();}
+  toast("Observation validée — elle passe au vert 🟢");
+}
+function rejectObs(id){
+  const o=state.observations.find(x=>x.id===id); if(!o) return;
+  const r=prompt("Motif du refus (ex. ce n'est pas un nudibranche) :","hors-sujet");
+  if(r===null) return;
+  o.status="rejected"; o.reason=r; saveState(); renderAdmin(); if(map)renderMarkers();
+  toast("Observation refusée.");
+}
+function toPending(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.status="pending"; o.reason=null; saveState(); renderAdmin(); if(map){fillFilters();renderMarkers();} }
+function resetDemo(){ if(confirm("Recharger les observations d'exemple ? Tes ajouts locaux seront effacés.")){ state.observations=JSON.parse(JSON.stringify(SEED)); saveState(); renderAdmin(); if(map){fillFilters();renderMarkers();} } }
+
+// ---------- utils ----------
+function val(id){ const el=document.getElementById(id); return el?el.value:""; }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function frDate(iso){ if(!iso)return"—"; const[y,m,d]=iso.split("-"); const M=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."]; return `${+d} ${M[+m-1]} ${y}`; }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+let toastT; function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2600); }
+
+// ---------- init ----------
+renderWho();
+ensureMap();
+renderMarkers();
+renderSpecies();
+</script>
+</body>
+</html>
