@@ -259,7 +259,7 @@
 
 </main>
 
-<datalist id="types"><option value="Nudibranche"><option value="Doridacé"><option value="Éolide"><option value="Sacoglosse"><option value="Lièvre de mer"><option value="Ver plat"><option value="Bulle"><option value="Sous-espèce"></datalist>
+<datalist id="types"><option value="Nudibranche"><option value="Doridacé"><option value="Éolide"><option value="Sacoglosse"><option value="Lièvre de mer"><option value="Ver plat"><option value="Bulle"></datalist>
 <div class="modal-bg" id="modal"><div class="modal" id="modal-content"></div></div>
 <div class="modal-bg" id="sp-editor"><div class="modal" id="sp-editor-content"></div></div>
 <div class="modal-bg" id="notif-modal"><div class="modal" id="notif-content"></div></div>
@@ -588,18 +588,15 @@ function logoutAdmin(){ adminUnlocked=false; adminUser=null; renderAdmin(); }
 function renderAdminValidation(){
   const pend=state.observations.filter(o=>o.status==="pending");
   const v=state.observations.filter(o=>o.status==="validated");
-  const rej=state.observations.filter(o=>o.status==="rejected");
   document.getElementById("admin-section").innerHTML=`
     <div class="stats">
       <div class="stat"><div class="n" style="color:var(--orange)">${pend.length}</div><div class="l">En attente</div></div>
       <div class="stat"><div class="n" style="color:var(--green)">${v.length}</div><div class="l">Validées</div></div>
-      <div class="stat"><div class="n" style="color:var(--red)">${rej.length}</div><div class="l">Refusées</div></div>
     </div>
     <h3 style="margin:22px 0 12px">🟠 File d'attente</h3>
     <div>${pend.length?pend.map(queueRow).join(""):'<div class="empty">Rien à valider dans la file.</div>'}</div>
     <h3 style="margin:26px 0 12px">🟢 Validées</h3>
-    <div>${v.length?v.map(o=>doneRow(o)).join(""):'<div class="empty">Aucune pour le moment.</div>'}</div>
-    ${rej.length?`<h3 style="margin:26px 0 12px">🔴 Refusées</h3><div>${rej.map(o=>doneRow(o,true)).join("")}</div>`:""}`;
+    <div>${v.length?v.map(o=>doneRow(o)).join(""):'<div class="empty">Aucune pour le moment.</div>'}</div>`;
 }
 function queueRow(o){
   const guessed = o.sp?(speciesById(o.sp)?.sci||o.sp) : "❓ Espèce inconnue (à identifier)";
