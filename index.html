@@ -60,6 +60,9 @@
   .hero .cta button{font:inherit;font-size:14.5px;font-weight:600;color:var(--ocean2);background:#fffdf8;border:0;border-radius:12px;padding:12px 20px;cursor:pointer;transition:transform .12s}
   .hero .cta button:hover{transform:translateY(-1px)}
   .hero .cta button.outline{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55)}
+  .hero-in{position:relative;max-width:680px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:5px 13px;border-radius:30px;margin-bottom:18px}
+  .hero-meta{margin-top:22px;font-size:13px;color:rgba(255,255,255,.88);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .intro{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:24px}
   .intro .c{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:18px 20px}
   .intro .c .em{color:var(--sea);margin-bottom:4px;line-height:1}
@@ -206,12 +209,16 @@
   <section class="view active" id="view-home">
     <div class="hero">
       <div class="bubbles inhero" aria-hidden="true"></div>
-      <h2>Les joyaux cachés du récif de Bora Bora</h2>
-      <p>Le nudibranche, joyau de la Polynésie et garant de la santé du récif. Aide-nous à les recenser : chaque photo compte. Merci de votre participation.</p>
-      <div class="cta">
-        <button onclick="goTo('carte')">Voir la carte</button>
-        <button class="outline" onclick="goTo('ident')">Identifier une photo</button>
-        <button class="outline" onclick="goTo('proposer')">Proposer une observation</button>
+      <div class="hero-in">
+        <span class="eyebrow" id="hero-eyebrow"></span>
+        <h2>Les joyaux cachés du récif</h2>
+        <p>Le nudibranche, joyau de la Polynésie et gardien du récif. Photographie, localise, partage : chaque observation compte.</p>
+        <div class="cta">
+          <button onclick="goTo('carte')">Voir la carte</button>
+          <button class="outline" onclick="goTo('ident')">Identifier une photo</button>
+          <button class="outline" onclick="goTo('proposer')">Proposer une observation</button>
+        </div>
+        <div class="hero-meta" id="hero-meta"></div>
       </div>
     </div>
     <div class="intro">
@@ -807,6 +814,8 @@ let toastT; function toast(m){ const t=document.getElementById("toast"); t.textC
 document.querySelectorAll("#nav button").forEach(b=>b.insertAdjacentHTML("afterbegin", icon(NAV_ICON[b.dataset.view])+" "));
 document.querySelectorAll(".intro .em[data-icon]").forEach(e=>e.innerHTML=icon(e.dataset.icon,26));
 document.querySelectorAll(".bubbles").forEach(box=>{ const n=box.classList.contains("inhero")?11:16; let h=""; for(let i=0;i<n;i++){ const sz=(5+Math.random()*12).toFixed(1); h+=`<b style="left:${(Math.random()*100).toFixed(2)}%;width:${sz}px;height:${sz}px;animation-duration:${(8+Math.random()*9).toFixed(1)}s;animation-delay:${(Math.random()*14).toFixed(1)}s"></b>`; } box.innerHTML=h; });
+{ const eb=document.getElementById("hero-eyebrow"); if(eb) eb.innerHTML=icon('waves')+" Science participative · Bora Bora";
+  const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" espèces de référence"; }
 renderWho();
 renderSpecies();
 if(unseenCount()>0) setTimeout(()=>toast("Tu as "+unseenCount()+" réponse(s) à tes observations."),700);
