@@ -15,18 +15,19 @@ Double-clique sur **`index.html`** (il s'ouvre dans ton navigateur). Une connexi
 |---|---|
 | **Accueil** | Présentation grand public + QR code à scanner/imprimer pour partager le lien. |
 | **Carte** | Les observations sur le lagon. 🟢 vert = validée · 🟠 orange = en attente. Filtres espèce / année / statut. Démarre vide. |
-| **Identification** | Bibliothèque des espèces : photo, **nom scientifique · famille · espèce (type)**, **rareté en étoiles**, description. |
-| **Proposer** | Mini-inscription, puis formulaire. Requis : **photo, lieu (+ épingle), date, profondeur**. Notification in-app à la validation. |
-| **Espace admin** | **Validation** (identifier, marquer 🐣 juvénile, Valider/Refuser, avis entre experts) et **Bibliothèque** (ajouter/modifier les fiches). |
+| **Identification** | Bibliothèque des espèces : photo, **nom commun · nom scientifique · classification**, **jour/nuit**, **rareté en étoiles**, description. |
+| **Proposer** | Mini-inscription (nom, email, WhatsApp facultatif), puis formulaire. **Plusieurs photos**, environnement (sable/éponges/coraux…). Requis : **photo(s), lieu (+ épingle), date, profondeur**. Notification in-app à la validation. |
+| **Espace admin** | **Validation** (identifier, 🐣 juvénile, Valider/Refuser, avis entre experts ; **contact email + WhatsApp du déposant** visible) et **Bibliothèque** (ajouter/modifier les fiches). |
 
-### Taxonomie (3 champs distincts)
+### Identification (3 champs)
 
+- **Nom commun** — le nom courant (ex. Doris de Kunié)
 - **Nom scientifique** — le binôme latin (ex. *Goniobranchus kuniei*)
-- **Famille** — la famille (ex. Chromodorididae)
-- **Espèce (type)** — menu déroulant : Nudibranche, Doridacé, Éolide, Sacoglosse, **Lièvre de mer**, **Ver plat**, Bulle, ou **Autre…** (avec champ libre pour préciser)
+- **Classification** — la famille, depuis la liste du répertoire (ex. Chromodorididae) ou **Autre** (champ libre). Plus simple et crédible que de viser famille + espèce sur 5000+ individus.
+- **Jour / nuit** — espèce plutôt diurne ou nocturne
 - **Rareté** — de ★ (commune) à ★★★★★ (très rare)
 
-À la validation, l'expert choisit une espèce existante **ou** « ➕ Autre » pour créer une **nouvelle identification** (nom + famille + espèce + rareté), qui enrichit automatiquement la bibliothèque. Une case **🐣 juvénile** permet de signaler un juvénile (qui ne ressemble pas à l'adulte).
+À la validation, l'expert choisit une espèce existante **ou** « ➕ Autre » pour créer une **nouvelle identification** (nom commun + nom scientifique + classification + rareté), qui enrichit la bibliothèque. Case **🐣 juvénile** pour signaler un juvénile.
 
 ## Codes experts (démo)
 
