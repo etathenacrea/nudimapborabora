@@ -101,6 +101,12 @@
   .badge.p{background:var(--orange-bg);color:var(--orange)}
   .badge.r{background:var(--red-bg);color:var(--red)}
   .juv{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:#e4f4eb;color:#1f8a5e}
+  .dn,.env{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:20px}
+  .dn{color:var(--sea-deep);background:#e0f3f5}
+  .env{color:#8a6a1e;background:#f6ecd4}
+  .pgal{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  .pgal img{width:54px;height:54px;object-fit:cover;border-radius:8px}
+  .contact{display:inline-flex;align-items:center;gap:5px;color:var(--sea-deep);text-decoration:none;font-weight:500}
   .rare{color:var(--star);font-size:13px;letter-spacing:1px;white-space:nowrap}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:16px}
   .spcard{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;box-shadow:0 1px 3px rgba(20,49,56,.05);transition:transform .14s,box-shadow .14s}
@@ -334,7 +340,12 @@ const ICONS={
   checks:'<path d="m3 7 2 2 4-4"/><path d="m3 17 2 2 4-4"/><path d="M13 6h8M13 12h8M13 18h8"/>',
   shield:'<path d="M12 3 4 6v5c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6Z"/><path d="m9 12 2 2 4-4"/>',
   rainbow:'<path d="M22 17a10 10 0 0 0-20 0"/><path d="M18 17a6 6 0 0 0-12 0"/><path d="M14 17a2 2 0 0 0-4 0"/>',
-  heart:'<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 12 5 5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/>'
+  heart:'<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 12 5 5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4-4-9 9"/>',
+  mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 17l-1 4a16 16 0 0 1-15-15z"/>'
 };
 function icon(n,sz){ const s=sz?`width:${sz}px;height:${sz}px;`:""; return `<svg class="icn" style="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||""}</svg>`; }
 const NAV_ICON={home:"waves",carte:"map",ident:"search",proposer:"camera",admin:"lock"};
@@ -387,26 +398,32 @@ const DEFAULT_SPECIES=[
   {id:"miamira-miamirana",sci:"Miamira miamirana",family:"Chromodorididae",species:"Doridacé",rarity:5,size:"jusqu'à 15 cm",
    d:["Corps crème bosselé, tons kaki et lilas, siphons dressés","Silhouette unique, presque végétale","Rencontre rare à Bora Bora — observée avec Dive N' Smile"],
    note:"Même en la regardant droit dans les yeux, on se demande si c'est bien un animal."},
-].map(s=>({...s,photo:"assets/species/"+s.id+".jpg"}));
+].map(s=>({...s,classification:s.classification||s.family||"",commonName:s.commonName||"",dayNight:s.dayNight||"",photo:"assets/species/"+s.id+".jpg"}));
 
 const SITE_NAMES=["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Pointe Tahi (Feufeu)","Tapu","Toopua","Toopua Iti","Tupitipiti"];
-const TYPE_OPTS=["Nudibranche","Doridacé","Éolide","Sacoglosse","Lièvre de mer","Ver plat","Bulle"];
-function typeSelect(id,current){ const isCustom=current&&!TYPE_OPTS.includes(current); return `<div><select id="${id}" onchange="onTypeChange('${id}')" style="width:100%"><option value="">— catégorie —</option>${TYPE_OPTS.map(o=>`<option value="${esc(o)}" ${o===current?"selected":""}>${esc(o)}</option>`).join("")}<option value="__autre" ${isCustom?"selected":""}>Autre…</option></select><input id="${id}-other" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Préciser la catégorie (optionnel)" value="${isCustom?esc(current):""}" style="width:100%;margin-top:8px;${isCustom?"":"display:none"}"></div>`; }
-function onTypeChange(id){ const o=document.getElementById(id+"-other"); if(o) o.style.display=document.getElementById(id).value==="__autre"?"block":"none"; }
-function getType(id){ const sel=document.getElementById(id); if(!sel)return""; if(sel.value==="__autre")return (val(id+"-other")||"").trim()||"Autre"; return sel.value; }
+// Classifications (familles) extraites du répertoire illustré de Justine — à compléter par elle.
+const CLASSIF_LIST=["Abronicidae","Acteonidae","Aeolidiidae","Aglajidae","Aplustridae","Aplysiidae","Babakinidae","Bullidae","Bullinidae","Caliphyllidae","Chromodorididae","Diaphanidae","Dotidae","Embletoniidae","Eubranchidae","Facelinidae","Fionidae","Flabellinidae","Gastropteridae","Gymnodorididae","Haminoeidae","Hermaeidae","Juliidae","Limapontiidae","Mnestiidae","Myrrhinidae","Oxynoidae","Phyllidiidae","Plakobranchidae","Pleurobranchidae","Pleurolidiidae","Pseudocerotidae","Pteropoda","Runcinidae","Samlidae","Scyllaeidae","Thetididae","Trinchesiidae","Tritoniidae","Tylodinidae","Umbraculidae","Unidentidae","Volvatellidae"];
+const DAYNIGHT_OPTS=["Jour","Nuit","Jour et nuit"];
+const ENV_OPTS=["Sable","Éponges","Coraux","Roche","Herbier / algues","Tombant","Épave / structure","Autre"];
+function classifSelect(id,current){ const isCustom=current&&!CLASSIF_LIST.includes(current); return `<div><select id="${id}" onchange="onClassifChange('${id}')" style="width:100%"><option value="">— classification —</option>${CLASSIF_LIST.map(o=>`<option value="${esc(o)}" ${o===current?"selected":""}>${esc(o)}</option>`).join("")}<option value="__autre" ${isCustom?"selected":""}>Autre (préciser)…</option></select><input id="${id}-other" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" placeholder="Préciser la classification" value="${isCustom?esc(current):""}" style="width:100%;margin-top:8px;${isCustom?"":"display:none"}"></div>`; }
+function onClassifChange(id){ const o=document.getElementById(id+"-other"); if(o) o.style.display=document.getElementById(id).value==="__autre"?"block":"none"; }
+function getClassif(id){ const sel=document.getElementById(id); if(!sel)return""; if(sel.value==="__autre")return (val(id+"-other")||"").trim(); return sel.value; }
 
 // ---------- État + persistance ----------
-const KEY="nudimap_v4";
+const KEY="nudimap_v5";
 function loadState(){ try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.observations&&s.species) return s;}catch(e){} return null; }
 function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
 let state = loadState() || { user:null, observations:[], species: JSON.parse(JSON.stringify(DEFAULT_SPECIES)) };
 let adminUnlocked=false, adminUser=null, adminTab="validation", editingSpeciesId=null, editorPhoto=null;
 
 const speciesById = id => state.species.find(x=>x.id===id);
-function taxoOf(o){ if(o.sp){ const s=speciesById(o.sp); if(s) return {sci:s.sci,family:s.family||"",species:s.species||"",rarity:s.rarity||0}; } return {sci:o.scientific||"Espèce indéterminée",family:o.family||"",species:o.speciesType||"",rarity:o.rarity||0}; }
+function taxoOf(o){ if(o.sp){ const s=speciesById(o.sp); if(s) return {sci:s.sci,commonName:s.commonName||"",classification:s.classification||"",rarity:s.rarity||0}; } return {sci:o.scientific||"Espèce indéterminée",commonName:o.commonName||"",classification:o.classification||"",rarity:o.rarity||0}; }
 function obsSci(o){ return taxoOf(o).sci; }
-function obsPhoto(o){ return o.photo || (o.sp?(speciesById(o.sp)?.photo||""):""); }
-function taxoLine(t){ const p=[]; if(t.family)p.push(`<b>Famille</b> ${esc(t.family)}`); if(t.species)p.push(`<b>Espèce</b> ${esc(t.species)}`); return p.join(" · "); }
+function obsPhoto(o){ if(o.photos&&o.photos.length) return o.photos[0]; return o.photo || (o.sp?(speciesById(o.sp)?.photo||""):""); }
+function obsPhotos(o){ if(o.photos&&o.photos.length) return o.photos; if(o.photo) return [o.photo]; const s=o.sp&&speciesById(o.sp); return s&&s.photo?[s.photo]:[]; }
+function taxoLine(t){ const p=[]; if(t.commonName)p.push(`<b>Nom commun</b> ${esc(t.commonName)}`); if(t.classification)p.push(`<b>Classification</b> ${esc(t.classification)}`); return p.join(" · "); }
+function dayNightHtml(dn){ if(!dn) return ""; const ic=dn==="Nuit"?icon('moon'):dn==="Jour"?icon('sun'):icon('sun')+icon('moon'); return `<span class="dn">${ic} ${esc(dn)}</span>`; }
+function envHtml(e){ return e?`<span class="env">${esc(e)}</span>`:""; }
 function starsHtml(n){ n=Math.max(0,Math.min(5,Math.round(n||0))); return n?`<span class="rare" title="Rareté ${n}/5">${"★".repeat(n)}${"☆".repeat(5-n)}</span>`:""; }
 function starInput(id,val){ val=val||0; let h=`<div class="stars" id="${id}" data-val="${val}">`; for(let i=1;i<=5;i++) h+=`<span onclick="setStar('${id}',${i})">${i<=val?"★":"☆"}</span>`; return h+`</div>`; }
 function setStar(id,i){ const el=document.getElementById(id); if(!el)return; el.dataset.val=i; [...el.children].forEach((s,idx)=>s.textContent=idx<i?"★":"☆"); }
@@ -497,13 +514,15 @@ function popupHTML(o){
   const badge = st==="validated"?'<span class="badge v">'+icon('check')+' Validée</span>':'<span class="badge p">'+icon('clock')+' En attente</span>';
   const juv = o.juvenile?'<span class="juv">'+icon('sprout')+' juvénile</span>':"";
   const tx = st==="validated"? taxoLine(t):"";
+  const phs=obsPhotos(o);
   return `<div class="pop">
-    ${obsPhoto(o)?`<img class="zoomable" src="${obsPhoto(o)}" alt="">`:""}
+    ${phs[0]?`<img class="zoomable" src="${phs[0]}" alt="">`:""}
+    ${phs.length>1?`<div class="pgal">${phs.slice(1).map(p=>`<img class="zoomable" src="${p}" alt="">`).join("")}</div>`:""}
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${badge}${juv}${st==="validated"?starsHtml(t.rarity):""}</div>
     <div class="sci" style="margin-top:5px">${esc(t.sci)}</div>
     ${tx?`<div class="meta">${tx}</div>`:""}
     <div class="meta">
-      <b>${esc(o.site||"Site non précisé")}</b><br>
+      <b>${esc(o.site||"Site non précisé")}</b>${o.env?` · ${esc(o.env)}`:""}<br>
       ${icon('calendar')} ${frDate(o.date)} · ${icon('clock')} ${o.time||"—"}<br>
       ${icon('depth')} ${o.depth?o.depth+" m":"profondeur n.c."} · ${icon('user')} ${esc(o.by||"anonyme")}
       ${st==="validated"&&o.validatedBy?`<br>${icon('check')} validée par ${esc(o.validatedBy)}`:""}
@@ -524,12 +543,14 @@ function renderStats(shown){
 function renderSpecies(){
   const q=(document.getElementById("ident-search").value||"").toLowerCase().trim();
   const g=document.getElementById("species-grid");
-  const list=state.species.filter(s=>!q||(s.sci+" "+s.family+" "+s.species+" "+(s.d||[]).join(" ")).toLowerCase().includes(q));
+  const list=state.species.filter(s=>!q||(s.sci+" "+(s.commonName||"")+" "+(s.classification||"")+" "+(s.d||[]).join(" ")).toLowerCase().includes(q));
   const count=id=>state.observations.filter(o=>o.sp===id&&o.status==="validated").length;
   g.innerHTML=list.map(s=>`<div class="spcard" data-id="${s.id}">
     <img src="${s.photo}" alt="${esc(s.sci)}" loading="lazy">
     <div class="b"><div class="sci">${esc(s.sci)}</div>
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:7px"><span class="tx">${esc(s.species||s.family||"—")}</span>${starsHtml(s.rarity)}</div>
+    ${s.commonName?`<div style="font-size:13px;color:var(--muted);margin-top:2px">${esc(s.commonName)}</div>`:""}
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap"><span class="tx">${esc(s.classification||"—")}</span>${starsHtml(s.rarity)}</div>
+    ${s.dayNight?`<div style="margin-top:7px">${dayNightHtml(s.dayNight)}</div>`:""}
     <div class="obs">${count(s.id)} observation(s) · ${esc(s.size||"")}</div></div></div>`).join("")
     || `<div class="empty">Aucune espèce ne correspond à la recherche.</div>`;
   g.querySelectorAll(".spcard").forEach(c=>c.onclick=()=>openSpecies(c.dataset.id));
@@ -541,7 +562,7 @@ function openSpecies(id){
     <img class="zoomable" src="${s.photo}" alt="${esc(s.sci)}">
     <div class="mb">
       <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
-        <div><h2 style="font-style:italic">${esc(s.sci)}</h2><div class="taxo">${taxoLine({family:s.family,species:s.species})}</div><div style="margin-top:6px">${starsHtml(s.rarity)||'<span style="font-size:12px;color:var(--muted)">rareté non renseignée</span>'}</div></div>
+        <div><h2 style="font-style:italic">${esc(s.sci)}</h2><div class="taxo">${taxoLine({commonName:s.commonName,classification:s.classification})}</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${starsHtml(s.rarity)||'<span style="font-size:12px;color:var(--muted)">rareté non renseignée</span>'}${dayNightHtml(s.dayNight)}</div></div>
         <button class="btn ghost sm" onclick="closeModal()">Fermer</button>
       </div>
       <ul>${(s.d||[]).map(x=>`<li>${esc(x)}</li>`).join("")}${s.size?`<li><b>Taille :</b> ${esc(s.size)}</li>`:""}</ul>
@@ -553,7 +574,9 @@ function closeModal(){ document.getElementById("modal").classList.remove("open")
 document.getElementById("modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeModal(); });
 
 // ---------- PROPOSER ----------
-let pickMap,pickMarker,pickLatLng=null,pendingPhoto=null;
+let pickMap,pickMarker,pickLatLng=null,pendingPhotos=[];
+function renderPhotoPreview(){ const p=document.getElementById("p-preview"); if(!p)return; p.innerHTML=pendingPhotos.map((d,i)=>`<span style="position:relative;display:inline-block;line-height:0"><img src="${d}"><button type="button" aria-label="Retirer" onclick="rmPhoto(${i})" style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;border:0;background:var(--red);color:#fff;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center">×</button></span>`).join(""); }
+function rmPhoto(i){ pendingPhotos.splice(i,1); renderPhotoPreview(); }
 function renderProposer(){
   const b=document.getElementById("proposer-body");
   if(!state.user){
@@ -561,21 +584,25 @@ function renderProposer(){
       <h3>D'abord, une mini-inscription</h3>
       <p class="lead" style="margin:8px 0 16px">Pour suivre tes contributions et te prévenir quand une identification est validée. Aucune donnée n'est partagée.</p>
       <div class="field" style="margin-bottom:12px"><label>Ton nom ou pseudo</label><input id="su-name" placeholder="ex. Marama"></div>
-      <div class="field" style="margin-bottom:18px"><label>Email</label><input id="su-email" type="email" placeholder="ex. marama@email.pf"></div>
+      <div class="field" style="margin-bottom:12px"><label>Email</label><input id="su-email" type="email" autocomplete="email" placeholder="ex. marama@email.pf"></div>
+      <div class="field" style="margin-bottom:18px"><label>WhatsApp / téléphone <span class="hint">(facultatif)</span></label><input id="su-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="ex. +689 87 12 34 56"><span class="hint">Permet aux experts de te contacter en cas de découverte particulière.</span></div>
       <button class="btn" onclick="signup()">Créer mon accès</button>
     </div>`; return;
   }
   b.innerHTML=`<div class="card">
     <p style="margin:0 0 16px;font-size:13.5px;color:var(--muted)">${icon('info')} Pas sûr·e de l'espèce ? <a href="#" onclick="goTo('ident');return false">Regarde d'abord la bibliothèque d'identification</a> — elle est peut-être déjà répertoriée.</p>
     <div class="form-grid">
-      <div class="field full"><label>Photo de l'observation <span class="req">*</span></label>
-        <input type="file" id="p-photo" accept="image/*">
-        <span class="hint">Nette et bien cadrée : c'est elle qui permet l'identification.</span>
-        <div id="p-preview"></div></div>
+      <div class="field full"><label>Photos de l'observation <span class="req">*</span></label>
+        <input type="file" id="p-photo" accept="image/*" multiple>
+        <span class="hint">Une ou plusieurs photos, nettes et bien cadrées.</span>
+        <div id="p-preview" class="pgal"></div></div>
       <div class="field"><label>Connais-tu l'espèce ?</label>
         <select id="p-species"><option value="je-sais-pas">Je ne sais pas — à identifier</option>
         ${state.species.map(s=>`<option value="${s.id}">${esc(s.sci)}</option>`).join("")}</select>
         <span class="hint">Pas sûr·e ? Laisse « je ne sais pas », les experts trancheront.</span></div>
+      <div class="field"><label>Environnement</label>
+        <select id="p-env"><option value="">— optionnel —</option>${ENV_OPTS.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("")}</select>
+        <span class="hint">Sable, éponges, coraux… (lié à l'alimentation / au comportement).</span></div>
       <div class="field"><label>Site / lieu <span class="req">*</span></label>
         <select id="p-site" onchange="onSiteChange()"><option value="">— choisis un site —</option>
         ${SITE_NAMES.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("")}
@@ -594,7 +621,7 @@ function renderProposer(){
       <span class="hint"><span class="req">*</span> requis pour une observation scientifiquement utile.</span>
     </div>
   </div>`;
-  pickLatLng=null; pendingPhoto=null;
+  pickLatLng=null; pendingPhotos=[];
   setTimeout(()=>{
     pickMap=L.map("pick-map").setView([-16.5004,-151.7415],12.5);
     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19}).addTo(pickMap);
@@ -603,29 +630,29 @@ function renderProposer(){
       document.getElementById("p-coords").innerHTML=`${icon('pin')} ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`; });
     pickMap.invalidateSize();
   },60);
-  document.getElementById("p-photo").addEventListener("change",e=>{ const f=e.target.files[0]; if(f) resizeToDataURL(f,d=>{pendingPhoto=d; document.getElementById("p-preview").innerHTML=`<img src="${d}" style="margin-top:10px;width:170px;height:128px;object-fit:cover;border-radius:10px">`;}); });
+  document.getElementById("p-photo").addEventListener("change",e=>{ const files=[...e.target.files]; files.forEach(f=>resizeToDataURL(f,d=>{ pendingPhotos.push(d); renderPhotoPreview(); })); e.target.value=""; });
 }
 function onSiteChange(){ document.getElementById("p-site-other").style.display = val("p-site")==="__autre"?"block":"none"; }
 function signup(){
   const n=val("su-name").trim(), em=val("su-email").trim();
   if(!n||!em){ toast("Indique ton nom et ton email."); return; }
-  state.user={name:n,email:em}; saveState(); renderWho(); renderProposer(); toast("Bienvenue "+n+" !");
+  state.user={name:n,email:em,phone:val("su-phone").trim()}; saveState(); renderWho(); renderProposer(); toast("Bienvenue "+n+" !");
 }
 function submitObs(){
   const spVal=val("p-species");
   const siteSel=val("p-site"); let site = siteSel==="__autre"? val("p-site-other").trim() : siteSel;
   const date=val("p-date"), depth=val("p-depth");
   const miss=[];
-  if(!pendingPhoto) miss.push("une photo");
+  if(!pendingPhotos.length) miss.push("au moins une photo");
   if(!siteSel || (siteSel==="__autre"&&!site)) miss.push("le lieu");
   if(!pickLatLng) miss.push("l'emplacement sur la carte");
   if(!date) miss.push("la date");
   if(depth===""||depth==null) miss.push("la profondeur");
   if(miss.length){ toast("Il manque : "+miss.join(", ")); return; }
   state.observations.push({ id:"u"+Date.now(), sp: spVal==="je-sais-pas"?null:spVal,
-    photo: pendingPhoto, lat:pickLatLng.lat, lng:pickLatLng.lng, site,
+    photos: pendingPhotos.slice(), env: val("p-env"), lat:pickLatLng.lat, lng:pickLatLng.lng, site,
     date, time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
-    by:state.user.name, byEmail:state.user.email, status:"pending",
+    by:state.user.name, byEmail:state.user.email, byPhone:state.user.phone||"", status:"pending",
     outcome:null, outcomeSeen:true, validatedBy:null, expertNote:"", juvenile:false });
   saveState();
   if(map){ fillFilters(); renderMarkers(); }
@@ -673,16 +700,17 @@ function renderAdminValidation(){
 function queueRow(o){
   const guessed = o.sp?(speciesById(o.sp)?.sci||o.sp) : "Espèce inconnue (à identifier)";
   return `<div class="qrow">
-    <img class="thumb zoomable" src="${obsPhoto(o)}" alt="" title="Clique pour agrandir">
+    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px" title="Clique pour agrandir">`).join("")}</div>
     <div class="qi">
-      <div class="t">${esc(o.site||"Site ?")} · ${o.depth?o.depth+" m":"prof. n.c."}</div>
+      <div class="t">${esc(o.site||"Site ?")} · ${o.depth?o.depth+" m":"prof. n.c."}${o.env?" · "+esc(o.env):""}</div>
       <div class="s">${icon('calendar')} ${frDate(o.date)} ${o.time||""} · ${icon('user')} ${esc(o.by||"anonyme")} · proposé : <i>${esc(guessed)}</i>${o.note?` · « ${esc(o.note)} »`:""}</div>
+      <div class="s" style="margin-top:3px">${o.byEmail?`<a class="contact" href="mailto:${esc(o.byEmail)}">${icon('mail')} ${esc(o.byEmail)}</a>`:""}${o.byPhone?`&nbsp;&nbsp;<a class="contact" href="https://wa.me/${o.byPhone.replace(/[^0-9]/g,'')}" target="_blank" rel="noopener">${icon('phone')} ${esc(o.byPhone)}</a>`:""}</div>
       <div class="assign">
-        <select id="as-sp-${o.id}" onchange="onAssignChange('${o.id}')"><option value="">— choisir l'espèce —</option>${state.species.map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)} — ${esc(s.species||s.family||"?")}</option>`).join("")}<option value="autre">Autre / nouvelle identification…</option></select>
+        <select id="as-sp-${o.id}" onchange="onAssignChange('${o.id}')"><option value="">— choisir l'espèce —</option>${state.species.map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)}${s.classification?" — "+esc(s.classification):""}</option>`).join("")}<option value="autre">Autre / nouvelle identification…</option></select>
         <div class="autre-box" id="autre-${o.id}">
           <input class="full" id="au-sci-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Nom scientifique *">
-          <input id="au-fam-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Famille">
-          ${typeSelect("au-esp-"+o.id, "")}
+          <input id="au-common-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="Nom commun">
+          ${classifSelect("au-classif-"+o.id, "")}
           <div class="full" style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--muted);font-weight:600">Rareté</span>${starInput("au-rar-"+o.id,0)}</div>
         </div>
         <label class="chk"><input type="checkbox" id="juv-${o.id}"> ${icon('sprout')} C'est un juvénile</label>
@@ -700,20 +728,20 @@ function onAssignChange(id){ document.getElementById("autre-"+id).classList.togg
 function doneRow(o,rejected){
   const t=taxoOf(o);
   return `<div class="qrow">
-    <img class="thumb zoomable" src="${obsPhoto(o)}" alt="" title="Clique pour agrandir">
+    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px" title="Clique pour agrandir">`).join("")}</div>
     <div class="qi">
       <div class="t" style="font-style:italic">${esc(t.sci)} ${rejected?'<span class="badge r">refusée</span>':'<span class="badge v">'+icon('check')+'</span>'}${o.juvenile?' <span class="juv">'+icon('sprout')+' juvénile</span>':""} ${!rejected?starsHtml(t.rarity):""}</div>
-      <div class="s">${taxoLine(t)?taxoLine(t)+" · ":""}${esc(o.site||"Site ?")} · ${frDate(o.date)} · ${icon('user')} ${esc(o.by||"anonyme")}${o.validatedBy?` · par ${esc(o.validatedBy)}`:""}${o.reason?` · motif : ${esc(o.reason)}`:""}</div>
+      <div class="s">${taxoLine(t)?taxoLine(t)+" · ":""}${esc(o.site||"Site ?")}${o.env?" · "+esc(o.env):""} · ${frDate(o.date)} · ${icon('user')} ${esc(o.by||"anonyme")}${o.validatedBy?` · par ${esc(o.validatedBy)}`:""}${o.reason?` · motif : ${esc(o.reason)}`:""}</div>
     </div>
     <div class="acts"><button class="btn ghost sm" onclick="toPending('${o.id}')">${icon('undo')} Remettre en attente</button></div>
   </div>`;
 }
 function saveExpertNote(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.expertNote=val("ex-note-"+id).trim(); saveState(); toast("Avis enregistré."); }
-function ensureSpeciesFrom(sci,family,type,rarity,photo){
+function ensureSpeciesFrom(sci,commonName,classification,rarity,photo){
   const ex=state.species.find(s=>s.sci.toLowerCase()===sci.toLowerCase());
   if(ex) return ex.id;
   let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
-  state.species.push({id,sci,family:family||"",species:type||"",rarity:rarity||0,size:"",d:[],note:"",photo:photo||""});
+  state.species.push({id,sci,commonName:commonName||"",classification:classification||"",dayNight:"",rarity:rarity||0,size:"",d:[],note:"",photo:photo||""});
   return id;
 }
 function validateObs(id){
@@ -723,7 +751,7 @@ function validateObs(id){
   if(sel==="autre"){
     const sci=val("au-sci-"+id).trim();
     if(!sci){ toast("Indique au moins le nom scientifique."); return; }
-    o.sp=ensureSpeciesFrom(sci, val("au-fam-"+id).trim(), getType("au-esp-"+id), getStar("au-rar-"+id), obsPhoto(o));
+    o.sp=ensureSpeciesFrom(sci, val("au-common-"+id).trim(), getClassif("au-classif-"+id), getStar("au-rar-"+id), obsPhoto(o));
     o.scientific=null;
   } else { o.sp=sel; o.scientific=null; }
   o.juvenile=document.getElementById("juv-"+id)?.checked||false;
@@ -748,12 +776,12 @@ function toPending(id){ const o=state.observations.find(x=>x.id===id); if(!o)ret
 function renderAdminBiblio(){
   document.getElementById("admin-section").innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <p class="hint" style="margin:0">${state.species.length} espèces. Familles, type et rareté pré-remplis au mieux — à vérifier et corriger.</p>
+      <p class="hint" style="margin:0">${state.species.length} espèces. Classification et rareté pré-remplies au mieux — à vérifier et compléter (nom commun, jour/nuit…).</p>
       <button class="btn" onclick="openSpeciesEditor()">${icon('plus')} Ajouter une espèce</button>
     </div>
     <div class="libgrid">${state.species.map(s=>`<div class="libcard">
       <img class="zoomable" src="${s.photo}" alt="${esc(s.sci)}" loading="lazy">
-      <div class="lb"><div class="sci">${esc(s.sci)}</div><div class="fam">${esc(s.species||"")}${s.species&&s.family?" · ":""}${esc(s.family||"")} ${starsHtml(s.rarity)}</div>
+      <div class="lb"><div class="sci">${esc(s.sci)}</div><div class="fam">${esc(s.classification||"—")} ${starsHtml(s.rarity)}</div>
       <div class="acts"><button class="btn ghost sm" onclick="openSpeciesEditor('${s.id}')">${icon('edit')} Modifier</button>
       <button class="btn ghost sm" aria-label="Supprimer" onclick="deleteSpecies('${s.id}')">${icon('trash')}</button></div></div></div>`).join("")}</div>`;
 }
@@ -769,8 +797,9 @@ function openSpeciesEditor(id){
         <input type="file" id="ed-photo" accept="image/*">
         <div id="ed-preview">${editorPhoto?`<img class="zoomable" src="${editorPhoto}" style="margin-top:10px;width:180px;height:130px;object-fit:cover;border-radius:10px">`:""}</div></div>
       <div class="field"><label>Nom scientifique <span class="req">*</span></label><input id="ed-sci" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.sci):""}" placeholder="ex. Hypselodoris bullockii"></div>
-      <div class="field"><label>Famille</label><input id="ed-family" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.family||""):""}" placeholder="ex. Chromodorididae"></div>
-      <div class="field"><label>Espèce (type)</label>${typeSelect("ed-species", s?(s.species||""):"")}</div>
+      <div class="field"><label>Nom commun</label><input id="ed-common" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" value="${s?esc(s.commonName||""):""}" placeholder="ex. Doris de Kunié"></div>
+      <div class="field"><label>Classification</label>${classifSelect("ed-classif", s?(s.classification||""):"")}</div>
+      <div class="field"><label>Plutôt de jour ou de nuit ?</label><select id="ed-daynight"><option value="">— non renseigné —</option>${DAYNIGHT_OPTS.map(o=>`<option value="${o}" ${s&&s.dayNight===o?"selected":""}>${esc(o)}</option>`).join("")}</select></div>
       <div class="field"><label>Rareté</label>${starInput("ed-rarity", s?s.rarity:0)}<span class="hint">Plus d'étoiles = plus rare.</span></div>
       <div class="field"><label>Taille</label><input id="ed-size" value="${s?esc(s.size||""):""}" placeholder="ex. 2 à 4 cm"></div>
       <div class="field"><label>Description (une ligne = un point)</label><textarea id="ed-desc" placeholder="Corps…&#10;Se nourrit de…">${s?esc((s.d||[]).join("\n")):""}</textarea></div>
@@ -785,7 +814,7 @@ function saveSpecies(){
   const sci=val("ed-sci").trim();
   if(!sci){ toast("Le nom scientifique est requis."); return; }
   const d=val("ed-desc").split("\n").map(x=>x.trim()).filter(Boolean);
-  const data={ sci, family:val("ed-family").trim(), species:getType("ed-species"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), d, note:val("ed-note").trim() };
+  const data={ sci, commonName:val("ed-common").trim(), classification:getClassif("ed-classif"), dayNight:val("ed-daynight"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), d, note:val("ed-note").trim() };
   if(editingSpeciesId){ const s=speciesById(editingSpeciesId); Object.assign(s,data); if(editorPhoto) s.photo=editorPhoto; toast("Fiche mise à jour."); }
   else { if(!editorPhoto){ toast("Ajoute une photo pour la nouvelle espèce."); return; }
     let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
