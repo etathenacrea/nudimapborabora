@@ -44,7 +44,10 @@
   nav button{font:inherit;font-size:15px;font-weight:500;color:var(--muted);background:none;border:0;padding:9px 14px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:7px}
   nav button:hover{background:var(--bg);color:var(--ink)}
   nav button.active{background:var(--sea-deep);color:#fff}
-  .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;flex:0 0 auto;margin-left:auto}
+  .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;flex:0 0 auto}
+  .langbtn{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex:0 0 auto;margin-left:auto}
+  .lng{font:inherit;font-size:12.5px;font-weight:600;padding:5px 10px;border:0;background:none;color:var(--muted);cursor:pointer}
+  .lng.on{background:var(--sea-deep);color:#fff}
   .who b{color:var(--ink);font-weight:600}
   .bell{position:relative;background:none;border:0;cursor:pointer;font-size:18px;padding:2px}
   .bell .bdg{position:absolute;top:-5px;right:-7px;background:var(--red);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:9px;padding:0 4px;display:flex;align-items:center;justify-content:center}
@@ -198,16 +201,17 @@
       </div>
       <div>
         <h1>NudiMapBoraBora</h1>
-        <small>OBSERVATOIRE PARTICIPATIF DES NUDIBRANCHES</small>
+        <small data-i18n="OBSERVATOIRE PARTICIPATIF DES NUDIBRANCHES">OBSERVATOIRE PARTICIPATIF DES NUDIBRANCHES</small>
       </div>
     </div>
     <nav id="nav">
-      <button data-view="home" class="active"><span>Accueil</span></button>
-      <button data-view="carte"><span>Carte</span></button>
-      <button data-view="ident"><span>Identification</span></button>
-      <button data-view="proposer"><span>Proposer</span></button>
-      <button data-view="admin"><span>Espace admin</span></button>
+      <button data-view="home" class="active"><span data-k="Accueil">Accueil</span></button>
+      <button data-view="carte"><span data-k="Carte">Carte</span></button>
+      <button data-view="ident"><span data-k="Identification">Identification</span></button>
+      <button data-view="proposer"><span data-k="Proposer">Proposer</span></button>
+      <button data-view="admin"><span data-k="Espace admin">Espace admin</span></button>
     </nav>
+    <div id="langbtn" class="langbtn" aria-label="Langue"></div>
     <div class="who" id="who"></div>
   </div>
 </header>
@@ -220,49 +224,49 @@
       <div class="bubbles inhero" aria-hidden="true"></div>
       <div class="hero-in">
         <span class="eyebrow" id="hero-eyebrow"></span>
-        <h2>Les joyaux cachés du récif</h2>
-        <p>Le nudibranche, joyau de la Polynésie et gardien du récif. Photographie, localise, partage : chaque observation compte.</p>
+        <h2 data-i18n="Les joyaux cachés du récif">Les joyaux cachés du récif</h2>
+        <p data-i18n="Le nudibranche, joyau de la Polynésie et gardien du récif. Photographie, localise, partage : chaque observation compte.">Le nudibranche, joyau de la Polynésie et gardien du récif. Photographie, localise, partage : chaque observation compte.</p>
         <div class="cta">
-          <button onclick="goTo('carte')">Voir la carte</button>
-          <button class="outline" onclick="goTo('ident')">Identifier une photo</button>
-          <button class="outline" onclick="goTo('proposer')">Proposer une observation</button>
+          <button data-i18n="Voir la carte" onclick="goTo('carte')">Voir la carte</button>
+          <button class="outline" data-i18n="Identifier une photo" onclick="goTo('ident')">Identifier une photo</button>
+          <button class="outline" data-i18n="Proposer une observation" onclick="goTo('proposer')">Proposer une observation</button>
         </div>
         <div class="hero-meta" id="hero-meta"></div>
       </div>
     </div>
     <div class="intro">
-      <div class="c"><div class="em" data-icon="rainbow"></div><h3>Qu'est-ce qu'un nudibranche ?</h3><p>Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique — dont la Polynésie.</p></div>
-      <div class="c"><div class="em" data-icon="heart"></div><h3>Pourquoi ça compte ?</h3><p>Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie du lagon de Bora Bora.</p></div>
-      <div class="c"><div class="em" data-icon="camera"></div><h3>Comment participer ?</h3><p>Tu plonges, tu photographies, tu déposes : photo + lieu + date + profondeur. Nos experts identifient et valident, et ta rencontre rejoint la carte.</p></div>
+      <div class="c"><div class="em" data-icon="rainbow"></div><h3 data-i18n="Qu'est-ce qu'un nudibranche ?">Qu'est-ce qu'un nudibranche ?</h3><p data-i18n="Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique — dont la Polynésie.">Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique — dont la Polynésie.</p></div>
+      <div class="c"><div class="em" data-icon="heart"></div><h3 data-i18n="Pourquoi ça compte ?">Pourquoi ça compte ?</h3><p data-i18n="Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie du lagon de Bora Bora.">Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie du lagon de Bora Bora.</p></div>
+      <div class="c"><div class="em" data-icon="camera"></div><h3 data-i18n="Comment participer ?">Comment participer ?</h3><p data-i18n="Tu plonges, tu photographies, tu déposes : photo + lieu + date + profondeur. Nos experts identifient et valident, et ta rencontre rejoint la carte.">Tu plonges, tu photographies, tu déposes : photo + lieu + date + profondeur. Nos experts identifient et valident, et ta rencontre rejoint la carte.</p></div>
     </div>
     <div class="share">
       <img src="assets/qr-nudimapborabora.png" alt="QR code vers l'observatoire">
       <div class="si">
-        <h3>Partage l'observatoire</h3>
-        <p class="lead" style="margin:6px 0">Scanne ou distribue ce QR code pour ouvrir NudiMapBoraBora sur n'importe quel téléphone.</p>
+        <h3 data-i18n="Partage l'observatoire">Partage l'observatoire</h3>
+        <p class="lead" style="margin:6px 0" data-i18n="Scanne ou distribue ce QR code pour ouvrir NudiMapBoraBora sur n'importe quel téléphone.">Scanne ou distribue ce QR code pour ouvrir NudiMapBoraBora sur n'importe quel téléphone.</p>
         <div class="url">https://etathenacrea.github.io/nudimapborabora/</div>
-        <a class="btn sm" href="assets/qr-nudimapborabora.png" download style="text-decoration:none;display:inline-flex;align-items:center;gap:6px"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg> Télécharger le QR à imprimer</a>
+        <a class="btn sm" href="assets/qr-nudimapborabora.png" download style="text-decoration:none;display:inline-flex;align-items:center;gap:6px"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg> <span data-i18n="Télécharger le QR à imprimer">Télécharger le QR à imprimer</span></a>
       </div>
     </div>
-    <p class="credit">Photos et contenu d'identification : Justine Certain · Dive N' Smile Bora Bora</p>
+    <p class="credit" data-i18n="Photos et contenu d'identification : Justine Certain · Dive N' Smile Bora Bora">Photos et contenu d'identification : Justine Certain · Dive N' Smile Bora Bora</p>
   </section>
 
   <!-- ============ CARTE ============ -->
   <section class="view" id="view-carte">
-    <h2>Carte des observations</h2>
-    <p class="lead">Chaque épingle est une rencontre dans le lagon. <b style="color:var(--green)">Vert</b> = validée par les experts · <b style="color:var(--orange)">orange</b> = en attente de validation.</p>
+    <h2 data-i18n="Carte des observations">Carte des observations</h2>
+    <p class="lead" data-i18n="Chaque épingle est une rencontre dans le lagon.">Chaque épingle est une rencontre dans le lagon.</p>
     <div class="stats" id="stats"></div>
     <div class="filters">
-      <label>Espèce<select id="f-species"></select></label>
-      <label>Année<select id="f-year"></select></label>
-      <label>Statut<select id="f-status">
-        <option value="all">Toutes</option>
-        <option value="validated">Validées</option>
-        <option value="pending">En attente</option>
+      <label><span data-i18n="Espèce">Espèce</span><select id="f-species"></select></label>
+      <label><span data-i18n="Année">Année</span><select id="f-year"></select></label>
+      <label><span data-i18n="Statut">Statut</span><select id="f-status">
+        <option value="all" data-i18n="Toutes">Toutes</option>
+        <option value="validated" data-i18n="Validées">Validées</option>
+        <option value="pending" data-i18n="En attente">En attente</option>
       </select></label>
       <div class="legend">
-        <span><span class="dot" style="background:var(--green)"></span> Validée</span>
-        <span><span class="dot" style="background:var(--orange)"></span> En attente</span>
+        <span><span class="dot" style="background:var(--green)"></span> <span data-i18n="Validée">Validée</span></span>
+        <span><span class="dot" style="background:var(--orange)"></span> <span data-i18n="En attente">En attente</span></span>
       </div>
     </div>
     <div id="map"></div>
@@ -271,30 +275,30 @@
 
   <!-- ============ IDENTIFICATION ============ -->
   <section class="view" id="view-ident">
-    <h2>Aide à l'identification</h2>
-    <p class="lead">La bibliothèque des espèces du récif de Bora Bora — photo, taxonomie et degré de rareté (★ = plus c'est rare). Compare ta photo avant de proposer.</p>
+    <h2 data-i18n="Aide à l'identification">Aide à l'identification</h2>
+    <p class="lead" data-i18n="La bibliothèque des espèces du récif de Bora Bora — photo, taxonomie et degré de rareté (★ = plus c'est rare). Compare ta photo avant de proposer.">La bibliothèque des espèces du récif de Bora Bora — photo, taxonomie et degré de rareté (★ = plus c'est rare). Compare ta photo avant de proposer.</p>
     <div class="anat">
-      <div><h4>Rhinophores</h4><p>Les deux « antennes » sur la tête : elles sentent et détectent. Souvent la première chose visible.</p></div>
-      <div><h4>Rosette branchiale</h4><p>Le panache de branchies sur le dos. Absente chez certaines familles qui respirent par le manteau.</p></div>
-      <div><h4>Manteau</h4><p>Le corps et ses couleurs. Sa forme et ses motifs sont la clé de l'identification.</p></div>
+      <div><h4 data-i18n="Rhinophores">Rhinophores</h4><p data-i18n="Les deux « antennes » sur la tête : elles sentent et détectent. Souvent la première chose visible.">Les deux « antennes » sur la tête : elles sentent et détectent. Souvent la première chose visible.</p></div>
+      <div><h4 data-i18n="Rosette branchiale">Rosette branchiale</h4><p data-i18n="Le panache de branchies sur le dos. Absente chez certaines familles qui respirent par le manteau.">Le panache de branchies sur le dos. Absente chez certaines familles qui respirent par le manteau.</p></div>
+      <div><h4 data-i18n="Manteau">Manteau</h4><p data-i18n="Le corps et ses couleurs. Sa forme et ses motifs sont la clé de l'identification.">Le corps et ses couleurs. Sa forme et ses motifs sont la clé de l'identification.</p></div>
     </div>
     <div class="filters">
-      <input id="ident-search" placeholder="Rechercher une espèce, une famille, une couleur…" style="flex:1;min-width:220px" />
+      <input id="ident-search" data-i18n-ph="Rechercher une espèce, une famille, une couleur…" placeholder="Rechercher une espèce, une famille, une couleur…" style="flex:1;min-width:220px" />
     </div>
     <div class="grid" id="species-grid"></div>
   </section>
 
   <!-- ============ PROPOSER ============ -->
   <section class="view" id="view-proposer">
-    <h2>Proposer une observation</h2>
-    <p class="lead">Partage ta rencontre. Elle apparaîtra en orange sur la carte, puis passera en vert une fois validée par les experts — tu recevras une notification.</p>
+    <h2 data-i18n="Proposer une observation">Proposer une observation</h2>
+    <p class="lead" data-i18n="Partage ta rencontre. Elle apparaîtra en orange sur la carte, puis passera en vert une fois validée par les experts — tu recevras une notification.">Partage ta rencontre. Elle apparaîtra en orange sur la carte, puis passera en vert une fois validée par les experts — tu recevras une notification.</p>
     <div id="proposer-body"></div>
   </section>
 
   <!-- ============ ADMIN ============ -->
   <section class="view" id="view-admin">
-    <h2>Espace admin</h2>
-    <p class="lead">Réservé aux experts : valider les observations et enrichir la bibliothèque d'identification.</p>
+    <h2 data-i18n="Espace admin">Espace admin</h2>
+    <p class="lead" data-i18n="Réservé aux experts : valider les observations et enrichir la bibliothèque d'identification.">Réservé aux experts : valider les observations et enrichir la bibliothèque d'identification.</p>
     <div id="admin-body"></div>
   </section>
 
@@ -310,6 +314,131 @@
 <script>
 const PROD_URL="https://etathenacrea.github.io/nudimapborabora/";
 const EXPERTS={ "Borabora1":"Vincent", "Borabora2":"Alizée", "Borabora3":"Alexandre", "Borabora4":"Justine" };
+
+// ---------- i18n : FR par défaut, EN pour les touristes (clé = texte français) ----------
+let LANG = localStorage.getItem("nudimap_lang") || "fr";
+const EN = {
+  // Navigation / header
+  "Accueil":"Home","Carte":"Map","Identification":"Identification","Proposer":"Submit","Espace admin":"Admin",
+  "Non inscrit·e":"Not registered","se déconnecter":"sign out",
+  // Accueil
+  "Science participative · Bora Bora":"Citizen science · Bora Bora",
+  "Les joyaux cachés du récif":"The reef's hidden jewels",
+  "Le nudibranche, joyau de la Polynésie et gardien du récif. Photographie, localise, partage : chaque observation compte.":"The nudibranch — jewel of Polynesia and guardian of the reef. Photograph it, locate it, share it: every observation counts.",
+  "Voir la carte":"View the map","Identifier une photo":"Identify a photo","Proposer une observation":"Submit an observation",
+  "espèces de référence":"reference species",
+  "Qu'est-ce qu'un nudibranche ?":"What is a nudibranch?",
+  "Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique — dont la Polynésie.":"A shell-less sea slug, often tiny (from a few millimetres to a few centimetres) and spectacularly colourful. Over 5,000 species worldwide, mostly in the Indo-Pacific — including Polynesia.",
+  "Pourquoi ça compte ?":"Why it matters",
+  "Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie du lagon de Bora Bora.":"Their presence is an indicator of reef health. Tracking them year after year means monitoring the life of the Bora Bora lagoon.",
+  "Comment participer ?":"How to take part",
+  "Tu plonges, tu photographies, tu déposes : photo + lieu + date + profondeur. Nos experts identifient et valident, et ta rencontre rejoint la carte.":"You dive, you photograph, you submit: photo + place + date + depth. Our experts identify and validate, and your sighting joins the map.",
+  "Partage l'observatoire":"Share the observatory",
+  "Scanne ou distribue ce QR code pour ouvrir NudiMapBoraBora sur n'importe quel téléphone.":"Scan or share this QR code to open NudiMapBoraBora on any phone.",
+  "Télécharger le QR à imprimer":"Download the QR code to print",
+  "Photos et contenu d'identification : Justine Certain · Dive N' Smile Bora Bora":"Photos and identification content: Justine Certain · Dive N' Smile Bora Bora",
+  // Carte
+  "Carte des observations":"Observation map",
+  "Chaque épingle est une rencontre dans le lagon.":"Each pin is a sighting in the lagoon.",
+  "Vert":"Green","orange":"orange","= validée par les experts ·":"= validated by experts ·","= en attente de validation.":"= awaiting validation.",
+  "Espèce":"Species","Année":"Year","Statut":"Status","Toutes":"All","Validées":"Validated","En attente":"Pending",
+  "Toutes les espèces":"All species","Toutes les années":"All years",
+  "Validée":"Validated","Observations affichées":"Observations shown","Espèces validées":"Validated species",
+  "Aucune observation pour l'instant. Va dans":"No observations yet. Go to","pour ajouter la première !":"to add the first one!",
+  "Site non précisé":"Location not specified","profondeur n.c.":"depth n/a","anonyme":"anonymous","validée par":"validated by",
+  // Identification
+  "Aide à l'identification":"Identification guide",
+  "La bibliothèque des espèces du récif de Bora Bora — photo, taxonomie et degré de rareté (★ = plus c'est rare). Compare ta photo avant de proposer.":"The species library of the Bora Bora reef — photo, classification and rarity (★ = rarer). Compare your photo before submitting.",
+  "Rhinophores":"Rhinophores","Rosette branchiale":"Gill rosette","Manteau":"Mantle",
+  "Les deux « antennes » sur la tête : elles sentent et détectent. Souvent la première chose visible.":"The two \"antennae\" on the head: they smell and detect. Often the first thing you see.",
+  "Le panache de branchies sur le dos. Absente chez certaines familles qui respirent par le manteau.":"The plume of gills on the back. Absent in some families that breathe through the mantle.",
+  "Le corps et ses couleurs. Sa forme et ses motifs sont la clé de l'identification.":"The body and its colours. Its shape and patterns are the key to identification.",
+  "Rechercher une espèce, une famille, une couleur…":"Search a species, a family, a colour…",
+  "Aucune espèce ne correspond à la recherche.":"No species matches your search.",
+  "observation(s) ·":"observation(s) ·","Fermer":"Close","Nom commun":"Common name","Classification":"Classification",
+  "Taille :":"Size:","rareté non renseignée":"rarity not set",
+  "Jour":"Day","Nuit":"Night","Jour et nuit":"Day and night",
+  // Proposer
+  "Partage ta rencontre. Elle apparaîtra en orange sur la carte, puis passera en vert une fois validée par les experts — tu recevras une notification.":"Share your sighting. It appears in orange on the map, then turns green once validated by the experts — you'll get a notification.",
+  "D'abord, une mini-inscription":"First, a quick sign-up",
+  "Pour suivre tes contributions et te prévenir quand une identification est validée. Aucune donnée n'est partagée.":"To track your contributions and let you know when an identification is validated. No data is shared.",
+  "Ton nom ou pseudo":"Your name or nickname","Email":"Email","WhatsApp / téléphone":"WhatsApp / phone","(facultatif)":"(optional)",
+  "Permet aux experts de te contacter en cas de découverte particulière.":"Lets the experts contact you in case of a notable find.",
+  "Créer mon accès":"Create my access",
+  "Pas sûr·e de l'espèce ?":"Not sure of the species?","Regarde d'abord la bibliothèque d'identification":"Check the identification library first","— elle est peut-être déjà répertoriée.":"— it may already be listed.",
+  "Photos de l'observation":"Observation photos","Une ou plusieurs photos, nettes et bien cadrées.":"One or more photos, sharp and well framed.",
+  "Connais-tu l'espèce ?":"Do you know the species?","Je ne sais pas — à identifier":"I don't know — to be identified",
+  "Pas sûr·e ? Laisse « je ne sais pas », les experts trancheront.":"Not sure? Leave \"I don't know\", the experts will decide.",
+  "Environnement":"Environment","— optionnel —":"— optional —","Sable, éponges, coraux… (lié à l'alimentation / au comportement).":"Sand, sponges, corals… (linked to diet / behaviour).",
+  "Site / lieu":"Site / location","— choisis un site —":"— choose a site —","Autre (préciser)…":"Other (specify)…","Écris le lieu (ex. tombant nord…)":"Type the place (e.g. north drop-off…)",
+  "Emplacement précis — clique sur la carte pour poser l'épingle":"Exact spot — click the map to drop the pin","Aucune position choisie.":"No position chosen.",
+  "Date d'observation":"Observation date","Heure":"Time","Profondeur (m)":"Depth (m)","Environ, ça suffit.":"Roughly is fine.","Commentaire (optionnel)":"Comment (optional)",
+  "comportement, taille…":"behaviour, size…","Envoyer l'observation":"Send the observation","requis pour une observation scientifiquement utile.":"required for a scientifically useful observation.",
+  // Environnement / options
+  "Sable":"Sand","Éponges":"Sponges","Coraux":"Corals","Roche":"Rock","Herbier / algues":"Seagrass / algae","Tombant":"Drop-off","Épave / structure":"Wreck / structure","Autre":"Other",
+  // Admin
+  "Réservé aux experts : valider les observations et enrichir la bibliothèque d'identification.":"Experts only: validate observations and enrich the identification library.",
+  "Accès réservé aux experts":"Experts only","Chaque expert dispose de son propre code de connexion.":"Each expert has their own login code.","Code expert":"Expert code","Votre code":"Your code","Entrer":"Enter","Code expert incorrect.":"Wrong expert code.",
+  "Validation":"Validation","Bibliothèque":"Library","changer d'expert":"switch expert",
+  "File d'attente":"Queue","Rien à valider dans la file.":"Nothing to validate.","Aucune pour le moment.":"None yet.",
+  "Site ?":"Site ?","prof. n.c.":"depth n/a","proposé :":"suggested:","Espèce inconnue (à identifier)":"Unknown species (to identify)",
+  "— choisir l'espèce —":"— choose the species —","Autre / nouvelle identification…":"Other / new identification…",
+  "Nom scientifique *":"Scientific name *","Famille":"Family","Rareté":"Rarity","C'est un juvénile":"It's a juvenile",
+  "Avis entre experts (ex. à confirmer par Alexandre ?)":"Note between experts (e.g. to be confirmed by Alexandre?)",
+  "Valider":"Validate","Refuser":"Reject","Avis":"Note","Remettre en attente":"Back to pending","juvénile":"juvenile","refusée":"rejected","par":"by","motif :":"reason:",
+  "espèces. Classification et rareté pré-remplies au mieux — à vérifier et compléter (nom commun, jour/nuit…).":"species. Classification and rarity pre-filled as best as possible — to check and complete (common name, day/night…).",
+  "Ajouter une espèce":"Add a species","Modifier":"Edit","Supprimer":"Delete",
+  "Modifier l'espèce":"Edit species","Annuler":"Cancel","Photo":"Photo","Nom scientifique":"Scientific name","ex. Hypselodoris bullockii":"e.g. Hypselodoris bullockii","ex. Doris de Kunié":"e.g. Bullock's Hypselodoris",
+  "Plutôt de jour ou de nuit ?":"Mostly day or night?","— non renseigné —":"— not set —","Plus d'étoiles = plus rare.":"More stars = rarer.","Taille":"Size","ex. 2 à 4 cm":"e.g. 2 to 4 cm",
+  "Description (une ligne = un point)":"Description (one line = one bullet)","Note / anecdote":"Note / fun fact","Le petit plus à savoir…":"The little thing to know…",
+  "Enregistrer les modifications":"Save changes","Ajouter à la bibliothèque":"Add to the library","Préciser la classification":"Specify the classification",
+  // Notifications & toasts
+  "Mes notifications":"My notifications","Aucune notification pour l'instant.":"No notifications yet.",
+  "Votre identification a été validée par nos experts, félicitations !":"Your identification has been validated by our experts — congratulations!",
+  "Votre demande d'identification n'a pas pu être validée par nos experts.":"Your identification request could not be validated by our experts.",
+  "site ?":"site ?",
+  "Indique ton nom et ton email.":"Please enter your name and email.","Le nom scientifique est requis.":"Scientific name is required.",
+  "Ajoute une photo pour la nouvelle espèce.":"Add a photo for the new species.","Fiche mise à jour.":"Entry updated.","Espèce ajoutée à la bibliothèque.":"Species added to the library.","Espèce supprimée.":"Species deleted.",
+  "Avis enregistré.":"Note saved.","Merci ! Ton observation est en attente de validation.":"Thank you! Your observation is awaiting validation.",
+  "Choisis l'espèce, ou « Autre » pour en créer une.":"Choose the species, or \"Other\" to create one.","Indique au moins le nom scientifique.":"Enter at least the scientific name.",
+  "Observation refusée.":"Observation rejected.","Pose l'épingle sur la carte":"Drop the pin on the map",
+  "Tu as":"You have","réponse(s) à tes observations.":"reply(ies) to your observations.",
+  "OBSERVATOIRE PARTICIPATIF DES NUDIBRANCHES":"PARTICIPATORY NUDIBRANCH OBSERVATORY",
+  "— classification —":"— classification —",
+  "Il manque :":"Missing:","au moins une photo":"at least one photo","le lieu":"the location","l'emplacement sur la carte":"the spot on the map","la date":"the date","la profondeur":"the depth",
+  "ex. Hypselodoris bullockii":"e.g. Hypselodoris bullockii","ex. Doris de Kunié":"e.g. a common name","ex. 2 à 4 cm":"e.g. 2 to 4 cm","Le petit plus à savoir…":"The little thing worth knowing…",
+  // Descriptions des 15 espèces (conférence J. Certain)
+  "Cérates irisées bleu/blanc sur un corps brun-orange":"Iridescent blue/white cerata on a brown-orange body","Se nourrit d'hydroïdes":"Feeds on hydroids","Présente sur les éponges et récifs de Bora Bora":"Found on the sponges and reefs of Bora Bora","Ses cérates contiennent les cellules urticantes de ses proies — elle se défend avec leur propre arsenal.":"Its cerata hold the stinging cells of its prey — it defends itself with their own arsenal.",
+  "Corps blanc-bleu pâle strié de lignes bleu marine":"Pale blue-white body streaked with navy lines","Rhinophores orange vif":"Bright orange rhinophores","Se nourrit d'éponges":"Feeds on sponges","Le « sp3 » signifie : espèce pas encore officiellement décrite. Il reste des découvertes à faire à Bora Bora.":"\"sp3\" means: a species not yet officially described. There are still discoveries to make in Bora Bora.",
+  "Corps jaune translucide — on voit ses organes internes":"Translucent yellow body — you can see its internal organs","Quasi invisible à l'œil nu":"Almost invisible to the naked eye","L'adulte sera très différent : brun tacheté":"The adult will look very different: spotted brown","Celui-ci fait à peine quelques millimètres. Le trouver, c'est déjà une victoire.":"This one is barely a few millimetres. Finding it is already a victory.",
+  "Corps blanc nacré, taches brun-or, liseré bleu marine":"Pearly white body, brown-gold spots, navy edging","Rosette branchiale bleu-violet":"Blue-violet gill rosette","Comme le sp3 — espèce encore non décrite officiellement. Bora Bora a encore des secrets à livrer.":"Like sp3 — still not officially described. Bora Bora still has secrets to reveal.",
+  "Corps blanc translucide, pois rouge vif, liseré orange":"Translucent white body, bright red dots, orange edging","Prédateur — se nourrit d'autres nudibranches":"Predator — feeds on other nudibranchs","En reproduction : agrégations de dizaines d'individus":"When breeding: aggregations of dozens of individuals","Observés par dizaines un matin à Bora Bora avec Dive N' Smile — un événement encore peu documenté en Polynésie.":"Seen by the dozen one morning in Bora Bora with Dive N' Smile — an event still poorly documented in Polynesia.",
+  "Manteau translucide bleu-gris, taches blanches, liseré jaune vif":"Translucent blue-grey mantle, white spots, bright yellow edging","Réseau de lignes rouge bordeaux":"Network of burgundy-red lines","Possède encore une coquille interne réduite":"Still has a reduced internal shell","Pas tout à fait un nudibranche, pas tout à fait un escargot — la nature aime brouiller les pistes.":"Not quite a nudibranch, not quite a snail — nature loves to blur the lines.",
+  "Corps noir intense, tubercules jaune or cerclés de blanc":"Deep black body, gold-yellow tubercles ringed with white","Pas de rosette : respire par le bord du manteau":"No rosette: breathes through the mantle edge","Se nourrit d'éponges toxiques et stocke leurs toxines":"Feeds on toxic sponges and stores their toxins","Son motif noir/jaune est un avertissement : « je suis toxique, ne me mange pas. »":"Its black/yellow pattern is a warning: \"I'm toxic, don't eat me.\"",
+  "Corps jaune-crème, taches noires, liseré bleu-violet":"Cream-yellow body, black spots, blue-violet edging","Rosette branchiale bien développée":"Well-developed gill rosette","Indo-Pacifique, fréquente en Polynésie":"Indo-Pacific, common in Polynesia","Une des plus grandes du récif — même les plongeurs qui ne regardent pas le fond la remarquent !":"One of the largest on the reef — even divers who don't watch the bottom notice it!",
+  "Corps rose-bleu pâle, larges bandes noires":"Pale pink-blue body, broad black bands","Respire par le bord du manteau (pas de rosette visible)":"Breathes through the mantle edge (no visible rosette)","Le « cf. » indique une identification non certaine à 100 %.":"The \"cf.\" means the identification isn't 100% certain.",
+  "Corps noir, gros tubercules rose-saumon":"Black body, large salmon-pink tubercles","Rhinophores noirs — presque invisibles":"Black rhinophores — almost invisible","Respire par le bord du manteau":"Breathes through the mantle edge","Noir et rose, sobre et sophistiquée. La plus élégante du récif ?":"Black and pink, understated and sophisticated. The most elegant on the reef?",
+  "Corps blanc-bleu, pois jaune vif, rhinophores rayés noir/blanc":"Blue-white body, bright yellow dots, black/white striped rhinophores","Comportement de « following » : l'un suit l'autre en touchant sa queue":"\"Following\" behaviour: one trails the other, touching its tail","Le following : une danse lente et silencieuse, museau contre queue.":"Following: a slow, silent dance, nose to tail.",
+  "Corps blanc, réseau de lignes et taches noires":"White body, network of black lines and spots","Extrémités blanches à pointe orange":"White tips with orange points","Se cache dans les algues et le biofilm":"Hides in algae and biofilm","Techniquement un ver plat (plathelminthe), très souvent confondu avec un nudibranche.":"Technically a flatworm (platyhelminth), very often mistaken for a nudibranch.",
+  "Pattern complexe brun/noir/jaune, points bleu électrique":"Complex brown/black/yellow pattern, electric-blue dots","Aspire le contenu des algues dont elle se nourrit":"Sucks out the contents of the algae it feeds on","Stocke les chloroplastes des algues dans ses tissus":"Stores the algae's chloroplasts in its tissues","Elle vole les chloroplastes des algues et les fait fonctionner — mi-animal, mi-plante. Elle photosynthétise !":"It steals chloroplasts from algae and keeps them working — half animal, half plant. It photosynthesises!",
+  "Corps brun, parfaitement camouflé dans le sable":"Brown body, perfectly camouflaged in the sand","Normalement nocturne — le croiser de jour est un privilège":"Normally nocturnal — meeting one by day is a privilege","Herbivore : broute les algues et entretient les herbiers":"Herbivore: grazes algae and tends the seagrass beds","Un discret jardinier du lagon polynésien.":"A quiet gardener of the Polynesian lagoon.",
+  "Corps crème bosselé, tons kaki et lilas, siphons dressés":"Bumpy cream body, khaki and lilac tones, raised siphons","Silhouette unique, presque végétale":"Unique, almost plant-like silhouette","Rencontre rare à Bora Bora — observée avec Dive N' Smile":"A rare sighting in Bora Bora — seen with Dive N' Smile","Même en la regardant droit dans les yeux, on se demande si c'est bien un animal.":"Even looking it straight in the eye, you wonder whether it's really an animal."
+};
+function t(s){ return (LANG==="en" && EN[s]!==undefined) ? EN[s] : s; }
+function setLang(l){ LANG=l; localStorage.setItem("nudimap_lang",l); document.documentElement.lang=l; applyI18n(); }
+function applyI18n(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{ el.textContent=t(el.getAttribute("data-i18n")); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{ el.setAttribute("placeholder", t(el.getAttribute("data-i18n-ph"))); });
+  document.querySelectorAll("#nav button").forEach(b=>{ const sp=b.querySelector("span"); if(sp) sp.textContent=t(sp.dataset.k||sp.textContent); });
+  renderLangBtn(); renderWho();
+  const eb=document.getElementById("hero-eyebrow"); if(eb) eb.innerHTML=icon('waves')+" "+t("Science participative · Bora Bora");
+  const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" "+t("espèces de référence");
+  renderSpecies();
+  const av=document.getElementById("view-admin"); if(av&&av.classList.contains("active")) renderAdmin();
+  const pv=document.getElementById("view-proposer"); if(pv&&pv.classList.contains("active")) renderProposer();
+  if(map){ fillFilters(); renderMarkers(); }
+}
+function renderLangBtn(){ const el=document.getElementById("langbtn"); if(el) el.innerHTML=`<button class="lng ${LANG==='fr'?'on':''}" onclick="setLang('fr')">FR</button><button class="lng ${LANG==='en'?'on':''}" onclick="setLang('en')">EN</button>`; }
 
 // ---------- Icônes (SVG, courant -> couleur du texte) ----------
 const ICONS={
@@ -405,7 +534,7 @@ const SITE_NAMES=["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Point
 const CLASSIF_LIST=["Abronicidae","Acteonidae","Aeolidiidae","Aglajidae","Aplustridae","Aplysiidae","Babakinidae","Bullidae","Bullinidae","Caliphyllidae","Chromodorididae","Diaphanidae","Dotidae","Embletoniidae","Eubranchidae","Facelinidae","Fionidae","Flabellinidae","Gastropteridae","Gymnodorididae","Haminoeidae","Hermaeidae","Juliidae","Limapontiidae","Mnestiidae","Myrrhinidae","Oxynoidae","Phyllidiidae","Plakobranchidae","Pleurobranchidae","Pleurolidiidae","Pseudocerotidae","Pteropoda","Runcinidae","Samlidae","Scyllaeidae","Thetididae","Trinchesiidae","Tritoniidae","Tylodinidae","Umbraculidae","Unidentidae","Volvatellidae"];
 const DAYNIGHT_OPTS=["Jour","Nuit","Jour et nuit"];
 const ENV_OPTS=["Sable","Éponges","Coraux","Roche","Herbier / algues","Tombant","Épave / structure","Autre"];
-function classifSelect(id,current){ const isCustom=current&&!CLASSIF_LIST.includes(current); return `<div><select id="${id}" onchange="onClassifChange('${id}')" style="width:100%"><option value="">— classification —</option>${CLASSIF_LIST.map(o=>`<option value="${esc(o)}" ${o===current?"selected":""}>${esc(o)}</option>`).join("")}<option value="__autre" ${isCustom?"selected":""}>Autre (préciser)…</option></select><input id="${id}-other" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" placeholder="Préciser la classification" value="${isCustom?esc(current):""}" style="width:100%;margin-top:8px;${isCustom?"":"display:none"}"></div>`; }
+function classifSelect(id,current){ const isCustom=current&&!CLASSIF_LIST.includes(current); return `<div><select id="${id}" onchange="onClassifChange('${id}')" style="width:100%"><option value="">${t("— classification —")||"— classification —"}</option>${CLASSIF_LIST.map(o=>`<option value="${esc(o)}" ${o===current?"selected":""}>${esc(o)}</option>`).join("")}<option value="__autre" ${isCustom?"selected":""}>${t("Autre (préciser)…")}</option></select><input id="${id}-other" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" placeholder="${t("Préciser la classification")}" value="${isCustom?esc(current):""}" style="width:100%;margin-top:8px;${isCustom?"":"display:none"}"></div>`; }
 function onClassifChange(id){ const o=document.getElementById(id+"-other"); if(o) o.style.display=document.getElementById(id).value==="__autre"?"block":"none"; }
 function getClassif(id){ const sel=document.getElementById(id); if(!sel)return""; if(sel.value==="__autre")return (val(id+"-other")||"").trim(); return sel.value; }
 
@@ -421,8 +550,8 @@ function taxoOf(o){ if(o.sp){ const s=speciesById(o.sp); if(s) return {sci:s.sci
 function obsSci(o){ return taxoOf(o).sci; }
 function obsPhoto(o){ if(o.photos&&o.photos.length) return o.photos[0]; return o.photo || (o.sp?(speciesById(o.sp)?.photo||""):""); }
 function obsPhotos(o){ if(o.photos&&o.photos.length) return o.photos; if(o.photo) return [o.photo]; const s=o.sp&&speciesById(o.sp); return s&&s.photo?[s.photo]:[]; }
-function taxoLine(t){ const p=[]; if(t.commonName)p.push(`<b>Nom commun</b> ${esc(t.commonName)}`); if(t.classification)p.push(`<b>Classification</b> ${esc(t.classification)}`); return p.join(" · "); }
-function dayNightHtml(dn){ if(!dn) return ""; const ic=dn==="Nuit"?icon('moon'):dn==="Jour"?icon('sun'):icon('sun')+icon('moon'); return `<span class="dn">${ic} ${esc(dn)}</span>`; }
+function taxoLine(tx){ const p=[]; if(tx.commonName)p.push(`<b>${t('Nom commun')}</b> ${esc(tx.commonName)}`); if(tx.classification)p.push(`<b>${t('Classification')}</b> ${esc(tx.classification)}`); return p.join(" · "); }
+function dayNightHtml(dn){ if(!dn) return ""; const ic=dn==="Nuit"?icon('moon'):dn==="Jour"?icon('sun'):icon('sun')+icon('moon'); return `<span class="dn">${ic} ${esc(t(dn))}</span>`; }
 function envHtml(e){ return e?`<span class="env">${esc(e)}</span>`:""; }
 function starsHtml(n){ n=Math.max(0,Math.min(5,Math.round(n||0))); return n?`<span class="rare" title="Rareté ${n}/5">${"★".repeat(n)}${"☆".repeat(5-n)}</span>`:""; }
 function starInput(id,val){ val=val||0; let h=`<div class="stars" id="${id}" data-val="${val}">`; for(let i=1;i<=5;i++) h+=`<span onclick="setStar('${id}',${i})">${i<=val?"★":"☆"}</span>`; return h+`</div>`; }
@@ -449,20 +578,20 @@ function unseenCount(){ if(!state.user) return 0; return state.observations.filt
 function renderWho(){
   const w=document.getElementById("who");
   if(state.user){ const n=unseenCount();
-    w.innerHTML=`<button class="bell" onclick="openNotifications()" title="Mes notifications">${icon('bell')}${n?`<span class="bdg">${n}</span>`:""}</button> <b>${esc(state.user.name)}</b> · <a href="#" id="logout">se déconnecter</a>`;
+    w.innerHTML=`<button class="bell" onclick="openNotifications()" title="${t('Mes notifications')}">${icon('bell')}${n?`<span class="bdg">${n}</span>`:""}</button> <b>${esc(state.user.name)}</b> · <a href="#" id="logout">${t('se déconnecter')}</a>`;
     document.getElementById("logout").onclick=e=>{e.preventDefault(); state.user=null; saveState(); renderWho(); renderProposer();}; }
-  else { w.innerHTML=`<span style="opacity:.8">Non inscrit·e</span>`; }
+  else { w.innerHTML=`<span style="opacity:.8">${t('Non inscrit·e')}</span>`; }
 }
 function myNotifs(){ if(!state.user) return []; return state.observations.filter(o=>o.byEmail===state.user.email && o.outcome).sort((a,b)=>(b.outcomeAt||0)-(a.outcomeAt||0)); }
 function openNotifications(){
   const list=myNotifs();
-  const rows=list.length?list.map(o=>{ const t=taxoOf(o); const ok=o.outcome==="validated";
+  const rows=list.length?list.map(o=>{ const tx=taxoOf(o); const ok=o.outcome==="validated";
     return `<div class="notif"><div class="ic" style="color:${ok?'var(--green)':'var(--sea)'}">${ok?icon('sparkles'):icon('search')}</div><div>
-      <div class="nt">${ok?"Votre identification a été validée par nos experts, félicitations !":"Votre demande d'identification n'a pas pu être validée par nos experts."}</div>
-      <div class="ns">${esc(t.sci)}${o.juvenile?" (juvénile)":""} · ${esc(o.site||"site ?")} · ${frDate(o.date)}${ok&&o.validatedBy?` · validée par ${esc(o.validatedBy)}`:""}${!ok&&o.reason?` · motif : ${esc(o.reason)}`:""}</div>
-    </div></div>`; }).join("") : `<div class="empty">Aucune notification pour l'instant.</div>`;
+      <div class="nt">${ok?t("Votre identification a été validée par nos experts, félicitations !"):t("Votre demande d'identification n'a pas pu être validée par nos experts.")}</div>
+      <div class="ns">${esc(tx.sci)}${o.juvenile?" ("+t("juvénile")+")":""} · ${esc(o.site||t("site ?"))} · ${frDate(o.date)}${ok&&o.validatedBy?` · ${t("validée par")} ${esc(o.validatedBy)}`:""}${!ok&&o.reason?` · ${t("motif :")} ${esc(o.reason)}`:""}</div>
+    </div></div>`; }).join("") : `<div class="empty">${t("Aucune notification pour l'instant.")}</div>`;
   document.getElementById("notif-content").innerHTML=`<div class="mb">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2>Mes notifications</h2><button class="btn ghost sm" onclick="closeNotif()">Fermer</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2>${t("Mes notifications")}</h2><button class="btn ghost sm" onclick="closeNotif()">${t("Fermer")}</button></div>
     ${rows}</div>`;
   document.getElementById("notif-modal").classList.add("open");
   state.observations.forEach(o=>{ if(o.byEmail===state.user.email && o.outcome) o.outcomeSeen=true; });
@@ -484,9 +613,9 @@ function ensureMap(){
 function fillFilters(){
   const fs=document.getElementById("f-species"), fy=document.getElementById("f-year");
   const ids=[...new Set(state.observations.filter(o=>o.sp).map(o=>o.sp))];
-  fs.innerHTML='<option value="all">Toutes les espèces</option>'+ids.map(id=>`<option value="${id}">${esc(speciesById(id)?.sci||id)}</option>`).join("");
+  fs.innerHTML='<option value="all">'+t("Toutes les espèces")+'</option>'+ids.map(id=>`<option value="${id}">${esc(speciesById(id)?.sci||id)}</option>`).join("");
   const ys=[...new Set(state.observations.map(o=>o.date.slice(0,4)))].sort().reverse();
-  fy.innerHTML='<option value="all">Toutes les années</option>'+ys.map(y=>`<option value="${y}">${y}</option>`).join("");
+  fy.innerHTML='<option value="all">'+t("Toutes les années")+'</option>'+ys.map(y=>`<option value="${y}">${y}</option>`).join("");
   ["f-species","f-year","f-status"].forEach(id=>document.getElementById(id).onchange=renderMarkers);
 }
 function pinIcon(color){ return L.divIcon({className:"map-pin",html:`<span style="--c:${color}"></span>`,iconSize:[18,18],iconAnchor:[9,9],popupAnchor:[0,-9]}); }
@@ -507,12 +636,12 @@ function renderMarkers(){
   renderStats(shown);
   const total=state.observations.filter(o=>o.status!=="rejected").length;
   document.getElementById("map-empty").innerHTML = total? "" :
-    `<div class="empty" style="margin-top:14px">${icon('waves')} Aucune observation pour l'instant. Va dans <b>Proposer</b> pour ajouter la première !</div>`;
+    `<div class="empty" style="margin-top:14px">${icon('waves')} ${t("Aucune observation pour l'instant. Va dans")} <b>${t('Proposer')}</b> ${t("pour ajouter la première !")}</div>`;
 }
 function popupHTML(o){
   const t=taxoOf(o), st=o.status;
-  const badge = st==="validated"?'<span class="badge v">'+icon('check')+' Validée</span>':'<span class="badge p">'+icon('clock')+' En attente</span>';
-  const juv = o.juvenile?'<span class="juv">'+icon('sprout')+' juvénile</span>':"";
+  const badge = st==="validated"?'<span class="badge v">'+icon('check')+' '+t('Validée')+'</span>':'<span class="badge p">'+icon('clock')+' '+t('En attente')+'</span>';
+  const juv = o.juvenile?'<span class="juv">'+icon('sprout')+' '+t('juvénile')+'</span>':"";
   const tx = st==="validated"? taxoLine(t):"";
   const phs=obsPhotos(o);
   return `<div class="pop">
@@ -522,10 +651,10 @@ function popupHTML(o){
     <div class="sci" style="margin-top:5px">${esc(t.sci)}</div>
     ${tx?`<div class="meta">${tx}</div>`:""}
     <div class="meta">
-      <b>${esc(o.site||"Site non précisé")}</b>${o.env?` · ${esc(o.env)}`:""}<br>
+      <b>${esc(o.site||t("Site non précisé"))}</b>${o.env?` · ${esc(t(o.env))}`:""}<br>
       ${icon('calendar')} ${frDate(o.date)} · ${icon('clock')} ${o.time||"—"}<br>
-      ${icon('depth')} ${o.depth?o.depth+" m":"profondeur n.c."} · ${icon('user')} ${esc(o.by||"anonyme")}
-      ${st==="validated"&&o.validatedBy?`<br>${icon('check')} validée par ${esc(o.validatedBy)}`:""}
+      ${icon('depth')} ${o.depth?o.depth+" m":t("profondeur n.c.")} · ${icon('user')} ${esc(o.by||t("anonyme"))}
+      ${st==="validated"&&o.validatedBy?`<br>${icon('check')} ${t('validée par')} ${esc(o.validatedBy)}`:""}
     </div>
   </div>`;
 }
@@ -535,7 +664,7 @@ function renderStats(shown){
   const pen=obs.filter(o=>o.status==="pending").length;
   const sp=new Set(obs.filter(o=>o.status==="validated"&&o.sp).map(o=>o.sp)).size;
   document.getElementById("stats").innerHTML=[
-    ["Observations affichées",shown],["Validées",v],["En attente",pen],["Espèces validées",sp]
+    [t("Observations affichées"),shown],[t("Validées"),v],[t("En attente"),pen],[t("Espèces validées"),sp]
   ].map(([l,n])=>`<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
 }
 
@@ -551,8 +680,8 @@ function renderSpecies(){
     ${s.commonName?`<div style="font-size:13px;color:var(--muted);margin-top:2px">${esc(s.commonName)}</div>`:""}
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap"><span class="tx">${esc(s.classification||"—")}</span>${starsHtml(s.rarity)}</div>
     ${s.dayNight?`<div style="margin-top:7px">${dayNightHtml(s.dayNight)}</div>`:""}
-    <div class="obs">${count(s.id)} observation(s) · ${esc(s.size||"")}</div></div></div>`).join("")
-    || `<div class="empty">Aucune espèce ne correspond à la recherche.</div>`;
+    <div class="obs">${count(s.id)} ${t("observation(s) ·")} ${esc(szT(s.size))}</div></div></div>`).join("")
+    || `<div class="empty">${t("Aucune espèce ne correspond à la recherche.")}</div>`;
   g.querySelectorAll(".spcard").forEach(c=>c.onclick=()=>openSpecies(c.dataset.id));
 }
 document.getElementById("ident-search").addEventListener("input",renderSpecies);
@@ -562,11 +691,11 @@ function openSpecies(id){
     <img class="zoomable" src="${s.photo}" alt="${esc(s.sci)}">
     <div class="mb">
       <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
-        <div><h2 style="font-style:italic">${esc(s.sci)}</h2><div class="taxo">${taxoLine({commonName:s.commonName,classification:s.classification})}</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${starsHtml(s.rarity)||'<span style="font-size:12px;color:var(--muted)">rareté non renseignée</span>'}${dayNightHtml(s.dayNight)}</div></div>
-        <button class="btn ghost sm" onclick="closeModal()">Fermer</button>
+        <div><h2 style="font-style:italic">${esc(s.sci)}</h2><div class="taxo">${taxoLine({commonName:s.commonName,classification:s.classification})}</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${starsHtml(s.rarity)||`<span style="font-size:12px;color:var(--muted)">${t('rareté non renseignée')}</span>`}${dayNightHtml(s.dayNight)}</div></div>
+        <button class="btn ghost sm" onclick="closeModal()">${t('Fermer')}</button>
       </div>
-      <ul>${(s.d||[]).map(x=>`<li>${esc(x)}</li>`).join("")}${s.size?`<li><b>Taille :</b> ${esc(s.size)}</li>`:""}</ul>
-      ${s.note?`<div class="note">${esc(s.note)}</div>`:""}
+      <ul>${(s.d||[]).map(x=>`<li>${esc(t(x))}</li>`).join("")}${s.size?`<li><b>${t('Taille :')}</b> ${esc(szT(s.size))}</li>`:""}</ul>
+      ${s.note?`<div class="note">${esc(t(s.note))}</div>`:""}
     </div>`;
   document.getElementById("modal").classList.add("open");
 }
@@ -581,44 +710,44 @@ function renderProposer(){
   const b=document.getElementById("proposer-body");
   if(!state.user){
     b.innerHTML=`<div class="card" style="max-width:520px">
-      <h3>D'abord, une mini-inscription</h3>
-      <p class="lead" style="margin:8px 0 16px">Pour suivre tes contributions et te prévenir quand une identification est validée. Aucune donnée n'est partagée.</p>
-      <div class="field" style="margin-bottom:12px"><label>Ton nom ou pseudo</label><input id="su-name" placeholder="ex. Marama"></div>
-      <div class="field" style="margin-bottom:12px"><label>Email</label><input id="su-email" type="email" autocomplete="email" placeholder="ex. marama@email.pf"></div>
-      <div class="field" style="margin-bottom:18px"><label>WhatsApp / téléphone <span class="hint">(facultatif)</span></label><input id="su-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="ex. +689 87 12 34 56"><span class="hint">Permet aux experts de te contacter en cas de découverte particulière.</span></div>
-      <button class="btn" onclick="signup()">Créer mon accès</button>
+      <h3>${t("D'abord, une mini-inscription")}</h3>
+      <p class="lead" style="margin:8px 0 16px">${t("Pour suivre tes contributions et te prévenir quand une identification est validée. Aucune donnée n'est partagée.")}</p>
+      <div class="field" style="margin-bottom:12px"><label>${t("Ton nom ou pseudo")}</label><input id="su-name" placeholder="ex. Marama"></div>
+      <div class="field" style="margin-bottom:12px"><label>${t("Email")}</label><input id="su-email" type="email" autocomplete="email" placeholder="ex. marama@email.pf"></div>
+      <div class="field" style="margin-bottom:18px"><label>${t("WhatsApp / téléphone")} <span class="hint">${t("(facultatif)")}</span></label><input id="su-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="ex. +689 87 12 34 56"><span class="hint">${t("Permet aux experts de te contacter en cas de découverte particulière.")}</span></div>
+      <button class="btn" onclick="signup()">${t("Créer mon accès")}</button>
     </div>`; return;
   }
   b.innerHTML=`<div class="card">
-    <p style="margin:0 0 16px;font-size:13.5px;color:var(--muted)">${icon('info')} Pas sûr·e de l'espèce ? <a href="#" onclick="goTo('ident');return false">Regarde d'abord la bibliothèque d'identification</a> — elle est peut-être déjà répertoriée.</p>
+    <p style="margin:0 0 16px;font-size:13.5px;color:var(--muted)">${icon('info')} ${t("Pas sûr·e de l'espèce ?")} <a href="#" onclick="goTo('ident');return false">${t("Regarde d'abord la bibliothèque d'identification")}</a> ${t("— elle est peut-être déjà répertoriée.")}</p>
     <div class="form-grid">
-      <div class="field full"><label>Photos de l'observation <span class="req">*</span></label>
+      <div class="field full"><label>${t("Photos de l'observation")} <span class="req">*</span></label>
         <input type="file" id="p-photo" accept="image/*" multiple>
-        <span class="hint">Une ou plusieurs photos, nettes et bien cadrées.</span>
+        <span class="hint">${t("Une ou plusieurs photos, nettes et bien cadrées.")}</span>
         <div id="p-preview" class="pgal"></div></div>
-      <div class="field"><label>Connais-tu l'espèce ?</label>
-        <select id="p-species"><option value="je-sais-pas">Je ne sais pas — à identifier</option>
+      <div class="field"><label>${t("Connais-tu l'espèce ?")}</label>
+        <select id="p-species"><option value="je-sais-pas">${t("Je ne sais pas — à identifier")}</option>
         ${state.species.map(s=>`<option value="${s.id}">${esc(s.sci)}</option>`).join("")}</select>
-        <span class="hint">Pas sûr·e ? Laisse « je ne sais pas », les experts trancheront.</span></div>
-      <div class="field"><label>Environnement</label>
-        <select id="p-env"><option value="">— optionnel —</option>${ENV_OPTS.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("")}</select>
-        <span class="hint">Sable, éponges, coraux… (lié à l'alimentation / au comportement).</span></div>
-      <div class="field"><label>Site / lieu <span class="req">*</span></label>
-        <select id="p-site" onchange="onSiteChange()"><option value="">— choisis un site —</option>
+        <span class="hint">${t("Pas sûr·e ? Laisse « je ne sais pas », les experts trancheront.")}</span></div>
+      <div class="field"><label>${t("Environnement")}</label>
+        <select id="p-env"><option value="">${t("— optionnel —")}</option>${ENV_OPTS.map(e=>`<option value="${esc(e)}">${esc(t(e))}</option>`).join("")}</select>
+        <span class="hint">${t("Sable, éponges, coraux… (lié à l'alimentation / au comportement).")}</span></div>
+      <div class="field"><label>${t("Site / lieu")} <span class="req">*</span></label>
+        <select id="p-site" onchange="onSiteChange()"><option value="">${t("— choisis un site —")}</option>
         ${SITE_NAMES.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("")}
-        <option value="__autre">Autre (préciser)…</option></select>
-        <input id="p-site-other" placeholder="Écris le lieu (ex. tombant nord…)" style="display:none;margin-top:8px"></div>
-      <div class="field full"><label>Emplacement précis — clique sur la carte pour poser l'épingle <span class="req">*</span></label>
+        <option value="__autre">${t("Autre (préciser)…")}</option></select>
+        <input id="p-site-other" placeholder="${t("Écris le lieu (ex. tombant nord…)")}" style="display:none;margin-top:8px"></div>
+      <div class="field full"><label>${t("Emplacement précis — clique sur la carte pour poser l'épingle")} <span class="req">*</span></label>
         <div id="pick-map"></div>
-        <span class="hint" id="p-coords">Aucune position choisie.</span></div>
-      <div class="field"><label>Date d'observation <span class="req">*</span></label><input type="date" id="p-date" value="${todayISO()}"></div>
-      <div class="field"><label>Heure</label><input type="time" id="p-time" value="10:00"></div>
-      <div class="field"><label>Profondeur (m) <span class="req">*</span></label><input type="number" id="p-depth" min="0" max="60" placeholder="ex. 14"><span class="hint">Environ, ça suffit.</span></div>
-      <div class="field"><label>Commentaire (optionnel)</label><input id="p-note" placeholder="comportement, taille…"></div>
+        <span class="hint" id="p-coords">${t("Aucune position choisie.")}</span></div>
+      <div class="field"><label>${t("Date d'observation")} <span class="req">*</span></label><input type="date" id="p-date" value="${todayISO()}"></div>
+      <div class="field"><label>${t("Heure")}</label><input type="time" id="p-time" value="10:00"></div>
+      <div class="field"><label>${t("Profondeur (m)")} <span class="req">*</span></label><input type="number" id="p-depth" min="0" max="60" placeholder="ex. 14"><span class="hint">${t("Environ, ça suffit.")}</span></div>
+      <div class="field"><label>${t("Commentaire (optionnel)")}</label><input id="p-note" placeholder="${t("comportement, taille…")}"></div>
     </div>
     <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <button class="btn" onclick="submitObs()">Envoyer l'observation</button>
-      <span class="hint"><span class="req">*</span> requis pour une observation scientifiquement utile.</span>
+      <button class="btn" onclick="submitObs()">${t("Envoyer l'observation")}</button>
+      <span class="hint"><span class="req">*</span> ${t("requis pour une observation scientifiquement utile.")}</span>
     </div>
   </div>`;
   pickLatLng=null; pendingPhotos=[];
@@ -635,20 +764,20 @@ function renderProposer(){
 function onSiteChange(){ document.getElementById("p-site-other").style.display = val("p-site")==="__autre"?"block":"none"; }
 function signup(){
   const n=val("su-name").trim(), em=val("su-email").trim();
-  if(!n||!em){ toast("Indique ton nom et ton email."); return; }
-  state.user={name:n,email:em,phone:val("su-phone").trim()}; saveState(); renderWho(); renderProposer(); toast("Bienvenue "+n+" !");
+  if(!n||!em){ toast(t("Indique ton nom et ton email.")); return; }
+  state.user={name:n,email:em,phone:val("su-phone").trim()}; saveState(); renderWho(); renderProposer(); toast((LANG==='en'?"Welcome ":"Bienvenue ")+n+" !");
 }
 function submitObs(){
   const spVal=val("p-species");
   const siteSel=val("p-site"); let site = siteSel==="__autre"? val("p-site-other").trim() : siteSel;
   const date=val("p-date"), depth=val("p-depth");
   const miss=[];
-  if(!pendingPhotos.length) miss.push("au moins une photo");
-  if(!siteSel || (siteSel==="__autre"&&!site)) miss.push("le lieu");
-  if(!pickLatLng) miss.push("l'emplacement sur la carte");
-  if(!date) miss.push("la date");
-  if(depth===""||depth==null) miss.push("la profondeur");
-  if(miss.length){ toast("Il manque : "+miss.join(", ")); return; }
+  if(!pendingPhotos.length) miss.push(t("au moins une photo"));
+  if(!siteSel || (siteSel==="__autre"&&!site)) miss.push(t("le lieu"));
+  if(!pickLatLng) miss.push(t("l'emplacement sur la carte"));
+  if(!date) miss.push(t("la date"));
+  if(depth===""||depth==null) miss.push(t("la profondeur"));
+  if(miss.length){ toast(t("Il manque :")+" "+miss.join(", ")); return; }
   state.observations.push({ id:"u"+Date.now(), sp: spVal==="je-sais-pas"?null:spVal,
     photos: pendingPhotos.slice(), env: val("p-env"), lat:pickLatLng.lat, lng:pickLatLng.lng, site,
     date, time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
@@ -656,7 +785,7 @@ function submitObs(){
     outcome:null, outcomeSeen:true, validatedBy:null, expertNote:"", juvenile:false });
   saveState();
   if(map){ fillFilters(); renderMarkers(); }
-  toast("Merci ! Ton observation est en attente de validation.");
+  toast(t("Merci ! Ton observation est en attente de validation."));
   goTo("carte");
 }
 
@@ -665,23 +794,23 @@ function renderAdmin(){
   const b=document.getElementById("admin-body");
   if(!adminUnlocked){
     b.innerHTML=`<div class="card" style="max-width:440px">
-      <h3>Accès réservé aux experts</h3>
-      <p class="lead" style="margin:8px 0 14px">Chaque expert dispose de son propre code de connexion.</p>
-      <div class="field" style="margin-bottom:14px"><label>Code expert</label><input type="text" id="adm-pw" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="text" style="-webkit-text-security:disc;text-security:disc" placeholder="Votre code" onkeydown="if(event.key==='Enter')unlockAdmin()"></div>
-      <button class="btn" onclick="unlockAdmin()">Entrer</button>
+      <h3>${t("Accès réservé aux experts")}</h3>
+      <p class="lead" style="margin:8px 0 14px">${t("Chaque expert dispose de son propre code de connexion.")}</p>
+      <div class="field" style="margin-bottom:14px"><label>${t("Code expert")}</label><input type="text" id="adm-pw" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="text" style="-webkit-text-security:disc;text-security:disc" placeholder="${t("Votre code")}" onkeydown="if(event.key==='Enter')unlockAdmin()"></div>
+      <button class="btn" onclick="unlockAdmin()">${t("Entrer")}</button>
     </div>`; return;
   }
   b.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px">
       <div class="subnav" style="margin:0">
-        <button class="${adminTab==='validation'?'active':''}" onclick="setAdminTab('validation')">${icon('checks')} Validation</button>
-        <button class="${adminTab==='biblio'?'active':''}" onclick="setAdminTab('biblio')">${icon('book')} Bibliothèque</button>
+        <button class="${adminTab==='validation'?'active':''}" onclick="setAdminTab('validation')">${icon('checks')} ${t("Validation")}</button>
+        <button class="${adminTab==='biblio'?'active':''}" onclick="setAdminTab('biblio')">${icon('book')} ${t("Bibliothèque")}</button>
       </div>
-      <div style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px">${icon('shield')} <b style="color:var(--ink)">${esc(adminUser)}</b> · <a href="#" onclick="logoutAdmin();return false">changer d'expert</a></div>
+      <div style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px">${icon('shield')} <b style="color:var(--ink)">${esc(adminUser)}</b> · <a href="#" onclick="logoutAdmin();return false">${t("changer d'expert")}</a></div>
     </div><div id="admin-section"></div>`;
   adminTab==="biblio"? renderAdminBiblio() : renderAdminValidation();
 }
 function setAdminTab(t){ adminTab=t; renderAdmin(); }
-function unlockAdmin(){ const name=EXPERTS[val("adm-pw")]; if(name){adminUnlocked=true;adminUser=name;renderAdmin();toast("Bienvenue "+name+" !");} else toast("Code expert incorrect."); }
+function unlockAdmin(){ const name=EXPERTS[val("adm-pw")]; if(name){adminUnlocked=true;adminUser=name;renderAdmin();toast((LANG==='en'?"Welcome ":"Bienvenue ")+name+" !");} else toast(t("Code expert incorrect.")); }
 function logoutAdmin(){ adminUnlocked=false; adminUser=null; renderAdmin(); }
 
 function renderAdminValidation(){
@@ -689,54 +818,54 @@ function renderAdminValidation(){
   const v=state.observations.filter(o=>o.status==="validated");
   document.getElementById("admin-section").innerHTML=`
     <div class="stats">
-      <div class="stat"><div class="n" style="color:var(--orange)">${pend.length}</div><div class="l">En attente</div></div>
-      <div class="stat"><div class="n" style="color:var(--green)">${v.length}</div><div class="l">Validées</div></div>
+      <div class="stat"><div class="n" style="color:var(--orange)">${pend.length}</div><div class="l">${t("En attente")}</div></div>
+      <div class="stat"><div class="n" style="color:var(--green)">${v.length}</div><div class="l">${t("Validées")}</div></div>
     </div>
-    <h3 style="margin:22px 0 12px"><span class="hdot" style="background:var(--orange)"></span> File d'attente</h3>
-    <div>${pend.length?pend.map(queueRow).join(""):'<div class="empty">Rien à valider dans la file.</div>'}</div>
-    <h3 style="margin:26px 0 12px"><span class="hdot" style="background:var(--green)"></span> Validées</h3>
-    <div>${v.length?v.map(o=>doneRow(o)).join(""):'<div class="empty">Aucune pour le moment.</div>'}</div>`;
+    <h3 style="margin:22px 0 12px"><span class="hdot" style="background:var(--orange)"></span> ${t("File d'attente")}</h3>
+    <div>${pend.length?pend.map(queueRow).join(""):`<div class="empty">${t("Rien à valider dans la file.")}</div>`}</div>
+    <h3 style="margin:26px 0 12px"><span class="hdot" style="background:var(--green)"></span> ${t("Validées")}</h3>
+    <div>${v.length?v.map(o=>doneRow(o)).join(""):`<div class="empty">${t("Aucune pour le moment.")}</div>`}</div>`;
 }
 function queueRow(o){
-  const guessed = o.sp?(speciesById(o.sp)?.sci||o.sp) : "Espèce inconnue (à identifier)";
+  const guessed = o.sp?(speciesById(o.sp)?.sci||o.sp) : t("Espèce inconnue (à identifier)");
   return `<div class="qrow">
-    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px" title="Clique pour agrandir">`).join("")}</div>
+    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`).join("")}</div>
     <div class="qi">
-      <div class="t">${esc(o.site||"Site ?")} · ${o.depth?o.depth+" m":"prof. n.c."}${o.env?" · "+esc(o.env):""}</div>
-      <div class="s">${icon('calendar')} ${frDate(o.date)} ${o.time||""} · ${icon('user')} ${esc(o.by||"anonyme")} · proposé : <i>${esc(guessed)}</i>${o.note?` · « ${esc(o.note)} »`:""}</div>
+      <div class="t">${esc(o.site||t("Site ?"))} · ${o.depth?o.depth+" m":t("prof. n.c.")}${o.env?" · "+esc(t(o.env)):""}</div>
+      <div class="s">${icon('calendar')} ${frDate(o.date)} ${o.time||""} · ${icon('user')} ${esc(o.by||t("anonyme"))} · ${t("proposé :")} <i>${esc(guessed)}</i>${o.note?` · « ${esc(o.note)} »`:""}</div>
       <div class="s" style="margin-top:3px">${o.byEmail?`<a class="contact" href="mailto:${esc(o.byEmail)}">${icon('mail')} ${esc(o.byEmail)}</a>`:""}${o.byPhone?`&nbsp;&nbsp;<a class="contact" href="https://wa.me/${o.byPhone.replace(/[^0-9]/g,'')}" target="_blank" rel="noopener">${icon('phone')} ${esc(o.byPhone)}</a>`:""}</div>
       <div class="assign">
-        <select id="as-sp-${o.id}" onchange="onAssignChange('${o.id}')"><option value="">— choisir l'espèce —</option>${state.species.map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)}${s.classification?" — "+esc(s.classification):""}</option>`).join("")}<option value="autre">Autre / nouvelle identification…</option></select>
+        <select id="as-sp-${o.id}" onchange="onAssignChange('${o.id}')"><option value="">${t("— choisir l'espèce —")}</option>${state.species.map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)}${s.classification?" — "+esc(s.classification):""}</option>`).join("")}<option value="autre">${t("Autre / nouvelle identification…")}</option></select>
         <div class="autre-box" id="autre-${o.id}">
-          <input class="full" id="au-sci-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Nom scientifique *">
-          <input id="au-common-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="Nom commun">
+          <input class="full" id="au-sci-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="${t("Nom scientifique *")}">
+          <input id="au-common-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Nom commun")}">
           ${classifSelect("au-classif-"+o.id, "")}
-          <div class="full" style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--muted);font-weight:600">Rareté</span>${starInput("au-rar-"+o.id,0)}</div>
+          <div class="full" style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--muted);font-weight:600">${t("Rareté")}</span>${starInput("au-rar-"+o.id,0)}</div>
         </div>
-        <label class="chk"><input type="checkbox" id="juv-${o.id}"> ${icon('sprout')} C'est un juvénile</label>
-        <input id="ex-note-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="Avis entre experts (ex. à confirmer par Alexandre ?)" value="${esc(o.expertNote||"")}">
+        <label class="chk"><input type="checkbox" id="juv-${o.id}"> ${icon('sprout')} ${t("C'est un juvénile")}</label>
+        <input id="ex-note-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Avis entre experts (ex. à confirmer par Alexandre ?)")}" value="${esc(o.expertNote||"")}">
       </div>
     </div>
     <div class="acts">
-      <button class="btn green sm" onclick="validateObs('${o.id}')">${icon('check')} Valider</button>
-      <button class="btn red sm" onclick="rejectObs('${o.id}')">${icon('x')} Refuser</button>
-      <button class="btn ghost sm" onclick="saveExpertNote('${o.id}')">${icon('message')} Avis</button>
+      <button class="btn green sm" onclick="validateObs('${o.id}')">${icon('check')} ${t("Valider")}</button>
+      <button class="btn red sm" onclick="rejectObs('${o.id}')">${icon('x')} ${t("Refuser")}</button>
+      <button class="btn ghost sm" onclick="saveExpertNote('${o.id}')">${icon('message')} ${t("Avis")}</button>
     </div>
   </div>`;
 }
 function onAssignChange(id){ document.getElementById("autre-"+id).classList.toggle("open", val("as-sp-"+id)==="autre"); }
 function doneRow(o,rejected){
-  const t=taxoOf(o);
+  const tx=taxoOf(o);
   return `<div class="qrow">
-    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px" title="Clique pour agrandir">`).join("")}</div>
+    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`).join("")}</div>
     <div class="qi">
-      <div class="t" style="font-style:italic">${esc(t.sci)} ${rejected?'<span class="badge r">refusée</span>':'<span class="badge v">'+icon('check')+'</span>'}${o.juvenile?' <span class="juv">'+icon('sprout')+' juvénile</span>':""} ${!rejected?starsHtml(t.rarity):""}</div>
-      <div class="s">${taxoLine(t)?taxoLine(t)+" · ":""}${esc(o.site||"Site ?")}${o.env?" · "+esc(o.env):""} · ${frDate(o.date)} · ${icon('user')} ${esc(o.by||"anonyme")}${o.validatedBy?` · par ${esc(o.validatedBy)}`:""}${o.reason?` · motif : ${esc(o.reason)}`:""}</div>
+      <div class="t" style="font-style:italic">${esc(tx.sci)} ${rejected?'<span class="badge r">'+t("refusée")+'</span>':'<span class="badge v">'+icon('check')+'</span>'}${o.juvenile?' <span class="juv">'+icon('sprout')+' '+t("juvénile")+'</span>':""} ${!rejected?starsHtml(tx.rarity):""}</div>
+      <div class="s">${taxoLine(tx)?taxoLine(tx)+" · ":""}${esc(o.site||t("Site ?"))}${o.env?" · "+esc(t(o.env)):""} · ${frDate(o.date)} · ${icon('user')} ${esc(o.by||t("anonyme"))}${o.validatedBy?` · ${t("par")} ${esc(o.validatedBy)}`:""}${o.reason?` · ${t("motif :")} ${esc(o.reason)}`:""}</div>
     </div>
-    <div class="acts"><button class="btn ghost sm" onclick="toPending('${o.id}')">${icon('undo')} Remettre en attente</button></div>
+    <div class="acts"><button class="btn ghost sm" onclick="toPending('${o.id}')">${icon('undo')} ${t("Remettre en attente")}</button></div>
   </div>`;
 }
-function saveExpertNote(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.expertNote=val("ex-note-"+id).trim(); saveState(); toast("Avis enregistré."); }
+function saveExpertNote(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.expertNote=val("ex-note-"+id).trim(); saveState(); toast(t("Avis enregistré.")); }
 function ensureSpeciesFrom(sci,commonName,classification,rarity,photo){
   const ex=state.species.find(s=>s.sci.toLowerCase()===sci.toLowerCase());
   if(ex) return ex.id;
@@ -747,10 +876,10 @@ function ensureSpeciesFrom(sci,commonName,classification,rarity,photo){
 function validateObs(id){
   const o=state.observations.find(x=>x.id===id); if(!o) return;
   const sel=val("as-sp-"+id);
-  if(!sel){ toast("Choisis l'espèce, ou « Autre » pour en créer une."); return; }
+  if(!sel){ toast(t("Choisis l'espèce, ou « Autre » pour en créer une.")); return; }
   if(sel==="autre"){
     const sci=val("au-sci-"+id).trim();
-    if(!sci){ toast("Indique au moins le nom scientifique."); return; }
+    if(!sci){ toast(t("Indique au moins le nom scientifique.")); return; }
     o.sp=ensureSpeciesFrom(sci, val("au-common-"+id).trim(), getClassif("au-classif-"+id), getStar("au-rar-"+id), obsPhoto(o));
     o.scientific=null;
   } else { o.sp=sel; o.scientific=null; }
@@ -758,17 +887,17 @@ function validateObs(id){
   o.expertNote=val("ex-note-"+id).trim();
   o.status="validated"; o.outcome="validated"; o.outcomeSeen=false; o.outcomeAt=Date.now(); o.validatedBy=adminUser; o.reason=null;
   saveState(); renderAdmin(); renderSpecies(); renderWho(); if(map){fillFilters();renderMarkers();}
-  toast("Observation validée par "+adminUser+" — elle passe au vert.");
+  toast(LANG==='en'?("Validated by "+adminUser+" — it turns green."):("Observation validée par "+adminUser+" — elle passe au vert."));
 }
 function rejectObs(id){
   const o=state.observations.find(x=>x.id===id); if(!o) return;
-  const r=prompt("Motif du refus (ex. ce n'est pas un nudibranche) :","hors-sujet");
+  const r=prompt(LANG==='en'?"Reason for rejection (e.g. not a nudibranch):":"Motif du refus (ex. ce n'est pas un nudibranche) :", LANG==='en'?"off-topic":"hors-sujet");
   if(r===null) return;
   o.juvenile=document.getElementById("juv-"+id)?.checked||false;
   o.expertNote=val("ex-note-"+id).trim();
   o.status="rejected"; o.outcome="rejected"; o.outcomeSeen=false; o.outcomeAt=Date.now(); o.validatedBy=adminUser; o.reason=r;
   saveState(); renderAdmin(); renderWho(); if(map)renderMarkers();
-  toast("Observation refusée.");
+  toast(t("Observation refusée."));
 }
 function toPending(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.status="pending"; o.outcome=null; o.reason=null; saveState(); renderAdmin(); renderWho(); if(map){fillFilters();renderMarkers();} }
 
@@ -776,35 +905,35 @@ function toPending(id){ const o=state.observations.find(x=>x.id===id); if(!o)ret
 function renderAdminBiblio(){
   document.getElementById("admin-section").innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <p class="hint" style="margin:0">${state.species.length} espèces. Classification et rareté pré-remplies au mieux — à vérifier et compléter (nom commun, jour/nuit…).</p>
-      <button class="btn" onclick="openSpeciesEditor()">${icon('plus')} Ajouter une espèce</button>
+      <p class="hint" style="margin:0">${state.species.length} ${t("espèces. Classification et rareté pré-remplies au mieux — à vérifier et compléter (nom commun, jour/nuit…).")}</p>
+      <button class="btn" onclick="openSpeciesEditor()">${icon('plus')} ${t("Ajouter une espèce")}</button>
     </div>
     <div class="libgrid">${state.species.map(s=>`<div class="libcard">
       <img class="zoomable" src="${s.photo}" alt="${esc(s.sci)}" loading="lazy">
       <div class="lb"><div class="sci">${esc(s.sci)}</div><div class="fam">${esc(s.classification||"—")} ${starsHtml(s.rarity)}</div>
-      <div class="acts"><button class="btn ghost sm" onclick="openSpeciesEditor('${s.id}')">${icon('edit')} Modifier</button>
-      <button class="btn ghost sm" aria-label="Supprimer" onclick="deleteSpecies('${s.id}')">${icon('trash')}</button></div></div></div>`).join("")}</div>`;
+      <div class="acts"><button class="btn ghost sm" onclick="openSpeciesEditor('${s.id}')">${icon('edit')} ${t("Modifier")}</button>
+      <button class="btn ghost sm" aria-label="${t("Supprimer")}" onclick="deleteSpecies('${s.id}')">${icon('trash')}</button></div></div></div>`).join("")}</div>`;
 }
 function openSpeciesEditor(id){
   editingSpeciesId=id||null; const s=id?speciesById(id):null; editorPhoto=s?s.photo:null;
   document.getElementById("sp-editor-content").innerHTML=`
     <div class="mb">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <h2>${s?"Modifier l'espèce":"Ajouter une espèce"}</h2>
-        <button class="btn ghost sm" onclick="closeEditor()">Annuler</button>
+        <h2>${s?t("Modifier l'espèce"):t("Ajouter une espèce")}</h2>
+        <button class="btn ghost sm" onclick="closeEditor()">${t("Annuler")}</button>
       </div>
-      <div class="field"><label>Photo ${s?"":'<span class="req">*</span>'}</label>
+      <div class="field"><label>${t("Photo")} ${s?"":'<span class="req">*</span>'}</label>
         <input type="file" id="ed-photo" accept="image/*">
         <div id="ed-preview">${editorPhoto?`<img class="zoomable" src="${editorPhoto}" style="margin-top:10px;width:180px;height:130px;object-fit:cover;border-radius:10px">`:""}</div></div>
-      <div class="field"><label>Nom scientifique <span class="req">*</span></label><input id="ed-sci" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.sci):""}" placeholder="ex. Hypselodoris bullockii"></div>
-      <div class="field"><label>Nom commun</label><input id="ed-common" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" value="${s?esc(s.commonName||""):""}" placeholder="ex. Doris de Kunié"></div>
-      <div class="field"><label>Classification</label>${classifSelect("ed-classif", s?(s.classification||""):"")}</div>
-      <div class="field"><label>Plutôt de jour ou de nuit ?</label><select id="ed-daynight"><option value="">— non renseigné —</option>${DAYNIGHT_OPTS.map(o=>`<option value="${o}" ${s&&s.dayNight===o?"selected":""}>${esc(o)}</option>`).join("")}</select></div>
-      <div class="field"><label>Rareté</label>${starInput("ed-rarity", s?s.rarity:0)}<span class="hint">Plus d'étoiles = plus rare.</span></div>
-      <div class="field"><label>Taille</label><input id="ed-size" value="${s?esc(s.size||""):""}" placeholder="ex. 2 à 4 cm"></div>
-      <div class="field"><label>Description (une ligne = un point)</label><textarea id="ed-desc" placeholder="Corps…&#10;Se nourrit de…">${s?esc((s.d||[]).join("\n")):""}</textarea></div>
-      <div class="field"><label>Note / anecdote</label><textarea id="ed-note" placeholder="Le petit plus à savoir…">${s?esc(s.note||""):""}</textarea></div>
-      <div style="margin-top:6px"><button class="btn" onclick="saveSpecies()">${s?"Enregistrer les modifications":"Ajouter à la bibliothèque"}</button></div>
+      <div class="field"><label>${t("Nom scientifique")} <span class="req">*</span></label><input id="ed-sci" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.sci):""}" placeholder="${t("ex. Hypselodoris bullockii")}"></div>
+      <div class="field"><label>${t("Nom commun")}</label><input id="ed-common" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" value="${s?esc(s.commonName||""):""}" placeholder="${t("ex. Doris de Kunié")}"></div>
+      <div class="field"><label>${t("Classification")}</label>${classifSelect("ed-classif", s?(s.classification||""):"")}</div>
+      <div class="field"><label>${t("Plutôt de jour ou de nuit ?")}</label><select id="ed-daynight"><option value="">${t("— non renseigné —")}</option>${DAYNIGHT_OPTS.map(o=>`<option value="${o}" ${s&&s.dayNight===o?"selected":""}>${esc(t(o))}</option>`).join("")}</select></div>
+      <div class="field"><label>${t("Rareté")}</label>${starInput("ed-rarity", s?s.rarity:0)}<span class="hint">${t("Plus d'étoiles = plus rare.")}</span></div>
+      <div class="field"><label>${t("Taille")}</label><input id="ed-size" value="${s?esc(s.size||""):""}" placeholder="${t("ex. 2 à 4 cm")}"></div>
+      <div class="field"><label>${t("Description (une ligne = un point)")}</label><textarea id="ed-desc">${s?esc((s.d||[]).join("\n")):""}</textarea></div>
+      <div class="field"><label>${t("Note / anecdote")}</label><textarea id="ed-note" placeholder="${t("Le petit plus à savoir…")}">${s?esc(s.note||""):""}</textarea></div>
+      <div style="margin-top:6px"><button class="btn" onclick="saveSpecies()">${s?t("Enregistrer les modifications"):t("Ajouter à la bibliothèque")}</button></div>
     </div>`;
   document.getElementById("ed-photo").addEventListener("change",e=>{ const f=e.target.files[0]; if(f) resizeToDataURL(f,d=>{editorPhoto=d; document.getElementById("ed-preview").innerHTML=`<img class="zoomable" src="${d}" style="margin-top:10px;width:180px;height:130px;object-fit:cover;border-radius:10px">`;}); });
   document.getElementById("sp-editor").classList.add("open");
@@ -812,20 +941,20 @@ function openSpeciesEditor(id){
 function closeEditor(){ document.getElementById("sp-editor").classList.remove("open"); }
 function saveSpecies(){
   const sci=val("ed-sci").trim();
-  if(!sci){ toast("Le nom scientifique est requis."); return; }
+  if(!sci){ toast(t("Le nom scientifique est requis.")); return; }
   const d=val("ed-desc").split("\n").map(x=>x.trim()).filter(Boolean);
   const data={ sci, commonName:val("ed-common").trim(), classification:getClassif("ed-classif"), dayNight:val("ed-daynight"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), d, note:val("ed-note").trim() };
-  if(editingSpeciesId){ const s=speciesById(editingSpeciesId); Object.assign(s,data); if(editorPhoto) s.photo=editorPhoto; toast("Fiche mise à jour."); }
-  else { if(!editorPhoto){ toast("Ajoute une photo pour la nouvelle espèce."); return; }
+  if(editingSpeciesId){ const s=speciesById(editingSpeciesId); Object.assign(s,data); if(editorPhoto) s.photo=editorPhoto; toast(t("Fiche mise à jour.")); }
+  else { if(!editorPhoto){ toast(t("Ajoute une photo pour la nouvelle espèce.")); return; }
     let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
-    state.species.push({id, ...data, photo:editorPhoto}); toast("Espèce ajoutée à la bibliothèque."); }
+    state.species.push({id, ...data, photo:editorPhoto}); toast(t("Espèce ajoutée à la bibliothèque.")); }
   saveState(); closeEditor(); renderAdmin(); renderSpecies();
 }
 function deleteSpecies(id){
   const used=state.observations.filter(o=>o.sp===id).length;
-  if(used){ toast("Impossible : "+used+" observation(s) utilisent cette espèce."); return; }
-  if(!confirm("Supprimer « "+(speciesById(id)?.sci||"")+" » de la bibliothèque ?")) return;
-  state.species=state.species.filter(s=>s.id!==id); saveState(); renderAdmin(); renderSpecies(); toast("Espèce supprimée.");
+  if(used){ toast(LANG==='en'?("Cannot delete: "+used+" observation(s) use this species."):("Impossible : "+used+" observation(s) utilisent cette espèce.")); return; }
+  if(!confirm(LANG==='en'?('Delete "'+(speciesById(id)?.sci||"")+'" from the library?'):("Supprimer « "+(speciesById(id)?.sci||"")+" » de la bibliothèque ?"))) return;
+  state.species=state.species.filter(s=>s.id!==id); saveState(); renderAdmin(); renderSpecies(); toast(t("Espèce supprimée."));
 }
 
 // ---------- Lightbox ----------
@@ -838,19 +967,18 @@ function resizeToDataURL(file,cb){ const r=new FileReader(); r.onload=ev=>{ cons
 function slugify(s){ return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,""); }
 function val(id){ const el=document.getElementById(id); return el?el.value:""; }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
-function frDate(iso){ if(!iso)return"—"; const[y,m,d]=iso.split("-"); const M=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."]; return `${+d} ${M[+m-1]} ${y}`; }
+function frDate(iso){ if(!iso)return"—"; const[y,m,d]=iso.split("-"); const M=LANG==="en"?["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]:["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."]; return `${+d} ${M[+m-1]} ${y}`; }
 function todayISO(){ return new Date().toISOString().slice(0,10); }
+function szT(s){ return LANG==="en"?String(s||"").replace(/ à /g," to "):(s||""); }
 let toastT; function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2800); }
 
 // ---------- init ----------
 document.querySelectorAll("#nav button").forEach(b=>b.insertAdjacentHTML("afterbegin", icon(NAV_ICON[b.dataset.view])+" "));
 document.querySelectorAll(".intro .em[data-icon]").forEach(e=>e.innerHTML=icon(e.dataset.icon,26));
 document.querySelectorAll(".bubbles").forEach(box=>{ const n=box.classList.contains("inhero")?11:16; let h=""; for(let i=0;i<n;i++){ const sz=(5+Math.random()*12).toFixed(1); h+=`<b style="left:${(Math.random()*100).toFixed(2)}%;width:${sz}px;height:${sz}px;animation-duration:${(8+Math.random()*9).toFixed(1)}s;animation-delay:${(Math.random()*14).toFixed(1)}s"></b>`; } box.innerHTML=h; });
-{ const eb=document.getElementById("hero-eyebrow"); if(eb) eb.innerHTML=icon('waves')+" Science participative · Bora Bora";
-  const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" espèces de référence"; }
-renderWho();
-renderSpecies();
-if(unseenCount()>0) setTimeout(()=>toast("Tu as "+unseenCount()+" réponse(s) à tes observations."),700);
+document.documentElement.lang=LANG;
+applyI18n();
+if(unseenCount()>0) setTimeout(()=>toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")),700);
 </script>
 </body>
 </html>
