@@ -376,6 +376,8 @@ const EN = {
   "comportement, taille…":"behaviour, size…","Envoyer l'observation":"Send the observation","requis pour une observation scientifiquement utile.":"required for a scientifically useful observation.",
   // Environnement / options
   "Sable":"Sand","Éponges":"Sponges","Coraux":"Corals","Roche":"Rock","Herbier / algues":"Seagrass / algae","Tombant":"Drop-off","Épave / structure":"Wreck / structure","Autre":"Other",
+  "Nudibranche":"Nudibranch","Doridacé":"Dorid","Éolide":"Aeolid","Sacoglosse":"Sacoglossan","Lièvre de mer":"Sea hare","Ver plat":"Flatworm","Bulle":"Bubble snail",
+  "— famille —":"— family —","Préciser":"Specify",
   // Admin
   "Réservé aux experts : valider les observations et enrichir la bibliothèque d'identification.":"Experts only: validate observations and enrich the identification library.",
   "Accès réservé aux experts":"Experts only","Chaque expert dispose de son propre code de connexion.":"Each expert has their own login code.","Code expert":"Expert code","Votre code":"Your code","Entrer":"Enter","Code expert incorrect.":"Wrong expert code.",
@@ -527,30 +529,35 @@ const DEFAULT_SPECIES=[
   {id:"miamira-miamirana",sci:"Miamira miamirana",family:"Chromodorididae",species:"Doridacé",rarity:5,size:"jusqu'à 15 cm",
    d:["Corps crème bosselé, tons kaki et lilas, siphons dressés","Silhouette unique, presque végétale","Rencontre rare à Bora Bora — observée avec Dive N' Smile"],
    note:"Même en la regardant droit dans les yeux, on se demande si c'est bien un animal."},
-].map(s=>({...s,classification:s.classification||s.family||"",commonName:s.commonName||"",dayNight:s.dayNight||"",photo:"assets/species/"+s.id+".jpg"}));
+].map(s=>({...s,classification:s.species||"",family:s.family||"",commonName:s.commonName||"",dayNight:s.dayNight||"",photo:"assets/species/"+s.id+".jpg"}));
 
 const SITE_NAMES=["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Pointe Tahi (Feufeu)","Tapu","Toopua","Toopua Iti","Tupitipiti"];
 // Classifications (familles) extraites du répertoire illustré de Justine — à compléter par elle.
-const CLASSIF_LIST=["Abronicidae","Acteonidae","Aeolidiidae","Aglajidae","Aplustridae","Aplysiidae","Babakinidae","Bullidae","Bullinidae","Caliphyllidae","Chromodorididae","Diaphanidae","Dotidae","Embletoniidae","Eubranchidae","Facelinidae","Fionidae","Flabellinidae","Gastropteridae","Gymnodorididae","Haminoeidae","Hermaeidae","Juliidae","Limapontiidae","Mnestiidae","Myrrhinidae","Oxynoidae","Phyllidiidae","Plakobranchidae","Pleurobranchidae","Pleurolidiidae","Pseudocerotidae","Pteropoda","Runcinidae","Samlidae","Scyllaeidae","Thetididae","Trinchesiidae","Tritoniidae","Tylodinidae","Umbraculidae","Unidentidae","Volvatellidae"];
+const CLASSIF_LIST=["Nudibranche","Doridacé","Éolide","Sacoglosse","Lièvre de mer","Ver plat","Bulle"];
+const FAMILY_LIST=["Abronicidae","Acteonidae","Aeolidiidae","Aglajidae","Aplustridae","Aplysiidae","Babakinidae","Bullidae","Bullinidae","Caliphyllidae","Chromodorididae","Diaphanidae","Dotidae","Embletoniidae","Eubranchidae","Facelinidae","Fionidae","Flabellinidae","Gastropteridae","Gymnodorididae","Haminoeidae","Hermaeidae","Juliidae","Limapontiidae","Mnestiidae","Myrrhinidae","Oxynoidae","Phyllidiidae","Plakobranchidae","Pleurobranchidae","Pleurolidiidae","Pseudocerotidae","Pteropoda","Runcinidae","Samlidae","Scyllaeidae","Thetididae","Trinchesiidae","Tritoniidae","Tylodinidae","Umbraculidae","Unidentidae","Volvatellidae"];
 const DAYNIGHT_OPTS=["Jour","Nuit","Jour et nuit"];
 const ENV_OPTS=["Sable","Éponges","Coraux","Roche","Herbier / algues","Tombant","Épave / structure","Autre"];
-function classifSelect(id,current){ const isCustom=current&&!CLASSIF_LIST.includes(current); return `<div><select id="${id}" onchange="onClassifChange('${id}')" style="width:100%"><option value="">${t("— classification —")||"— classification —"}</option>${CLASSIF_LIST.map(o=>`<option value="${esc(o)}" ${o===current?"selected":""}>${esc(o)}</option>`).join("")}<option value="__autre" ${isCustom?"selected":""}>${t("Autre (préciser)…")}</option></select><input id="${id}-other" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" placeholder="${t("Préciser la classification")}" value="${isCustom?esc(current):""}" style="width:100%;margin-top:8px;${isCustom?"":"display:none"}"></div>`; }
-function onClassifChange(id){ const o=document.getElementById(id+"-other"); if(o) o.style.display=document.getElementById(id).value==="__autre"?"block":"none"; }
-function getClassif(id){ const sel=document.getElementById(id); if(!sel)return""; if(sel.value==="__autre")return (val(id+"-other")||"").trim(); return sel.value; }
+function listSelect(id,list,current,labelKey){ const isCustom=current&&!list.includes(current); return `<div><select id="${id}" onchange="onListChange('${id}')" style="width:100%"><option value="">${t(labelKey)}</option>${list.map(o=>`<option value="${esc(o)}" ${o===current?"selected":""}>${esc(t(o))}</option>`).join("")}<option value="__autre" ${isCustom?"selected":""}>${t("Autre (préciser)…")}</option></select><input id="${id}-other" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" placeholder="${t("Préciser")}" value="${isCustom?esc(current):""}" style="width:100%;margin-top:8px;${isCustom?"":"display:none"}"></div>`; }
+function onListChange(id){ const o=document.getElementById(id+"-other"); if(o) o.style.display=document.getElementById(id).value==="__autre"?"block":"none"; }
+function getList(id){ const sel=document.getElementById(id); if(!sel)return""; if(sel.value==="__autre")return (val(id+"-other")||"").trim(); return sel.value; }
+function classifSelect(id,current){ return listSelect(id,CLASSIF_LIST,current,"— classification —"); }
+function familySelect(id,current){ return listSelect(id,FAMILY_LIST,current,"— famille —"); }
+function getClassif(id){ return getList(id); }
+function getFamily(id){ return getList(id); }
 
 // ---------- État + persistance ----------
-const KEY="nudimap_v5";
+const KEY="nudimap_v6";
 function loadState(){ try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.observations&&s.species) return s;}catch(e){} return null; }
 function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
 let state = loadState() || { user:null, observations:[], species: JSON.parse(JSON.stringify(DEFAULT_SPECIES)) };
 let adminUnlocked=false, adminUser=null, adminTab="validation", editingSpeciesId=null, editorPhoto=null;
 
 const speciesById = id => state.species.find(x=>x.id===id);
-function taxoOf(o){ if(o.sp){ const s=speciesById(o.sp); if(s) return {sci:s.sci,commonName:s.commonName||"",classification:s.classification||"",rarity:s.rarity||0}; } return {sci:o.scientific||"Espèce indéterminée",commonName:o.commonName||"",classification:o.classification||"",rarity:o.rarity||0}; }
+function taxoOf(o){ if(o.sp){ const s=speciesById(o.sp); if(s) return {sci:s.sci,commonName:s.commonName||"",classification:s.classification||"",family:s.family||"",rarity:s.rarity||0}; } return {sci:o.scientific||"Espèce indéterminée",commonName:o.commonName||"",classification:o.classification||"",family:o.family||"",rarity:o.rarity||0}; }
 function obsSci(o){ return taxoOf(o).sci; }
 function obsPhoto(o){ if(o.photos&&o.photos.length) return o.photos[0]; return o.photo || (o.sp?(speciesById(o.sp)?.photo||""):""); }
 function obsPhotos(o){ if(o.photos&&o.photos.length) return o.photos; if(o.photo) return [o.photo]; const s=o.sp&&speciesById(o.sp); return s&&s.photo?[s.photo]:[]; }
-function taxoLine(tx){ const p=[]; if(tx.commonName)p.push(`<b>${t('Nom commun')}</b> ${esc(tx.commonName)}`); if(tx.classification)p.push(`<b>${t('Classification')}</b> ${esc(tx.classification)}`); return p.join(" · "); }
+function taxoLine(tx){ const p=[]; if(tx.classification)p.push(`<b>${t('Classification')}</b> ${esc(t(tx.classification))}`); if(tx.family)p.push(`<b>${t('Famille')}</b> ${esc(tx.family)}`); if(tx.commonName)p.push(`<b>${t('Nom commun')}</b> ${esc(tx.commonName)}`); return p.join(" · "); }
 function dayNightHtml(dn){ if(!dn) return ""; const ic=dn==="Nuit"?icon('moon'):dn==="Jour"?icon('sun'):icon('sun')+icon('moon'); return `<span class="dn">${ic} ${esc(t(dn))}</span>`; }
 function envHtml(e){ return e?`<span class="env">${esc(e)}</span>`:""; }
 function starsHtml(n){ n=Math.max(0,Math.min(5,Math.round(n||0))); return n?`<span class="rare" title="Rareté ${n}/5">${"★".repeat(n)}${"☆".repeat(5-n)}</span>`:""; }
@@ -678,8 +685,8 @@ function renderSpecies(){
     <img src="${s.photo}" alt="${esc(s.sci)}" loading="lazy">
     <div class="b"><div class="sci">${esc(s.sci)}</div>
     ${s.commonName?`<div style="font-size:13px;color:var(--muted);margin-top:2px">${esc(s.commonName)}</div>`:""}
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap"><span class="tx">${esc(s.classification||"—")}</span>${starsHtml(s.rarity)}</div>
-    ${s.dayNight?`<div style="margin-top:7px">${dayNightHtml(s.dayNight)}</div>`:""}
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap"><span class="tx">${esc(t(s.classification))||"—"}</span>${starsHtml(s.rarity)}</div>
+    ${(s.family||s.dayNight)?`<div style="margin-top:7px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">${s.family?`<span style="font-size:12.5px;color:var(--muted)">${esc(s.family)}</span>`:""}${dayNightHtml(s.dayNight)}</div>`:""}
     <div class="obs">${count(s.id)} ${t("observation(s) ·")} ${esc(szT(s.size))}</div></div></div>`).join("")
     || `<div class="empty">${t("Aucune espèce ne correspond à la recherche.")}</div>`;
   g.querySelectorAll(".spcard").forEach(c=>c.onclick=()=>openSpecies(c.dataset.id));
@@ -691,7 +698,7 @@ function openSpecies(id){
     <img class="zoomable" src="${s.photo}" alt="${esc(s.sci)}">
     <div class="mb">
       <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
-        <div><h2 style="font-style:italic">${esc(s.sci)}</h2><div class="taxo">${taxoLine({commonName:s.commonName,classification:s.classification})}</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${starsHtml(s.rarity)||`<span style="font-size:12px;color:var(--muted)">${t('rareté non renseignée')}</span>`}${dayNightHtml(s.dayNight)}</div></div>
+        <div><h2 style="font-style:italic">${esc(s.sci)}</h2><div class="taxo">${taxoLine({classification:s.classification,family:s.family,commonName:s.commonName})}</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${starsHtml(s.rarity)||`<span style="font-size:12px;color:var(--muted)">${t('rareté non renseignée')}</span>`}${dayNightHtml(s.dayNight)}</div></div>
         <button class="btn ghost sm" onclick="closeModal()">${t('Fermer')}</button>
       </div>
       <ul>${(s.d||[]).map(x=>`<li>${esc(t(x))}</li>`).join("")}${s.size?`<li><b>${t('Taille :')}</b> ${esc(szT(s.size))}</li>`:""}</ul>
@@ -838,8 +845,9 @@ function queueRow(o){
         <select id="as-sp-${o.id}" onchange="onAssignChange('${o.id}')"><option value="">${t("— choisir l'espèce —")}</option>${state.species.map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)}${s.classification?" — "+esc(s.classification):""}</option>`).join("")}<option value="autre">${t("Autre / nouvelle identification…")}</option></select>
         <div class="autre-box" id="autre-${o.id}">
           <input class="full" id="au-sci-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="${t("Nom scientifique *")}">
-          <input id="au-common-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Nom commun")}">
           ${classifSelect("au-classif-"+o.id, "")}
+          ${familySelect("au-family-"+o.id, "")}
+          <input class="full" id="au-common-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Nom commun")}">
           <div class="full" style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--muted);font-weight:600">${t("Rareté")}</span>${starInput("au-rar-"+o.id,0)}</div>
         </div>
         <label class="chk"><input type="checkbox" id="juv-${o.id}"> ${icon('sprout')} ${t("C'est un juvénile")}</label>
@@ -866,11 +874,11 @@ function doneRow(o,rejected){
   </div>`;
 }
 function saveExpertNote(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.expertNote=val("ex-note-"+id).trim(); saveState(); toast(t("Avis enregistré.")); }
-function ensureSpeciesFrom(sci,commonName,classification,rarity,photo){
+function ensureSpeciesFrom(sci,commonName,classification,family,rarity,photo){
   const ex=state.species.find(s=>s.sci.toLowerCase()===sci.toLowerCase());
   if(ex) return ex.id;
   let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
-  state.species.push({id,sci,commonName:commonName||"",classification:classification||"",dayNight:"",rarity:rarity||0,size:"",d:[],note:"",photo:photo||""});
+  state.species.push({id,sci,commonName:commonName||"",classification:classification||"",family:family||"",dayNight:"",rarity:rarity||0,size:"",d:[],note:"",photo:photo||""});
   return id;
 }
 function validateObs(id){
@@ -880,7 +888,7 @@ function validateObs(id){
   if(sel==="autre"){
     const sci=val("au-sci-"+id).trim();
     if(!sci){ toast(t("Indique au moins le nom scientifique.")); return; }
-    o.sp=ensureSpeciesFrom(sci, val("au-common-"+id).trim(), getClassif("au-classif-"+id), getStar("au-rar-"+id), obsPhoto(o));
+    o.sp=ensureSpeciesFrom(sci, val("au-common-"+id).trim(), getClassif("au-classif-"+id), getFamily("au-family-"+id), getStar("au-rar-"+id), obsPhoto(o));
     o.scientific=null;
   } else { o.sp=sel; o.scientific=null; }
   o.juvenile=document.getElementById("juv-"+id)?.checked||false;
@@ -910,7 +918,7 @@ function renderAdminBiblio(){
     </div>
     <div class="libgrid">${state.species.map(s=>`<div class="libcard">
       <img class="zoomable" src="${s.photo}" alt="${esc(s.sci)}" loading="lazy">
-      <div class="lb"><div class="sci">${esc(s.sci)}</div><div class="fam">${esc(s.classification||"—")} ${starsHtml(s.rarity)}</div>
+      <div class="lb"><div class="sci">${esc(s.sci)}</div><div class="fam">${esc(t(s.classification))||"—"}${s.family?" · "+esc(s.family):""} ${starsHtml(s.rarity)}</div>
       <div class="acts"><button class="btn ghost sm" onclick="openSpeciesEditor('${s.id}')">${icon('edit')} ${t("Modifier")}</button>
       <button class="btn ghost sm" aria-label="${t("Supprimer")}" onclick="deleteSpecies('${s.id}')">${icon('trash')}</button></div></div></div>`).join("")}</div>`;
 }
@@ -926,8 +934,9 @@ function openSpeciesEditor(id){
         <input type="file" id="ed-photo" accept="image/*">
         <div id="ed-preview">${editorPhoto?`<img class="zoomable" src="${editorPhoto}" style="margin-top:10px;width:180px;height:130px;object-fit:cover;border-radius:10px">`:""}</div></div>
       <div class="field"><label>${t("Nom scientifique")} <span class="req">*</span></label><input id="ed-sci" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${s?esc(s.sci):""}" placeholder="${t("ex. Hypselodoris bullockii")}"></div>
-      <div class="field"><label>${t("Nom commun")}</label><input id="ed-common" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" value="${s?esc(s.commonName||""):""}" placeholder="${t("ex. Doris de Kunié")}"></div>
       <div class="field"><label>${t("Classification")}</label>${classifSelect("ed-classif", s?(s.classification||""):"")}</div>
+      <div class="field"><label>${t("Famille")}</label>${familySelect("ed-family", s?(s.family||""):"")}</div>
+      <div class="field"><label>${t("Nom commun")}</label><input id="ed-common" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" value="${s?esc(s.commonName||""):""}" placeholder="${t("ex. Doris de Kunié")}"></div>
       <div class="field"><label>${t("Plutôt de jour ou de nuit ?")}</label><select id="ed-daynight"><option value="">${t("— non renseigné —")}</option>${DAYNIGHT_OPTS.map(o=>`<option value="${o}" ${s&&s.dayNight===o?"selected":""}>${esc(t(o))}</option>`).join("")}</select></div>
       <div class="field"><label>${t("Rareté")}</label>${starInput("ed-rarity", s?s.rarity:0)}<span class="hint">${t("Plus d'étoiles = plus rare.")}</span></div>
       <div class="field"><label>${t("Taille")}</label><input id="ed-size" value="${s?esc(s.size||""):""}" placeholder="${t("ex. 2 à 4 cm")}"></div>
@@ -943,7 +952,7 @@ function saveSpecies(){
   const sci=val("ed-sci").trim();
   if(!sci){ toast(t("Le nom scientifique est requis.")); return; }
   const d=val("ed-desc").split("\n").map(x=>x.trim()).filter(Boolean);
-  const data={ sci, commonName:val("ed-common").trim(), classification:getClassif("ed-classif"), dayNight:val("ed-daynight"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), d, note:val("ed-note").trim() };
+  const data={ sci, commonName:val("ed-common").trim(), classification:getClassif("ed-classif"), family:getFamily("ed-family"), dayNight:val("ed-daynight"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), d, note:val("ed-note").trim() };
   if(editingSpeciesId){ const s=speciesById(editingSpeciesId); Object.assign(s,data); if(editorPhoto) s.photo=editorPhoto; toast(t("Fiche mise à jour.")); }
   else { if(!editorPhoto){ toast(t("Ajoute une photo pour la nouvelle espèce.")); return; }
     let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
