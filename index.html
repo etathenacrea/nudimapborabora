@@ -646,16 +646,16 @@ function renderMarkers(){
     `<div class="empty" style="margin-top:14px">${icon('waves')} ${t("Aucune observation pour l'instant. Va dans")} <b>${t('Proposer')}</b> ${t("pour ajouter la première !")}</div>`;
 }
 function popupHTML(o){
-  const t=taxoOf(o), st=o.status;
+  const to=taxoOf(o), st=o.status;
   const badge = st==="validated"?'<span class="badge v">'+icon('check')+' '+t('Validée')+'</span>':'<span class="badge p">'+icon('clock')+' '+t('En attente')+'</span>';
   const juv = o.juvenile?'<span class="juv">'+icon('sprout')+' '+t('juvénile')+'</span>':"";
-  const tx = st==="validated"? taxoLine(t):"";
+  const tx = st==="validated"? taxoLine(to):"";
   const phs=obsPhotos(o);
   return `<div class="pop">
     ${phs[0]?`<img class="zoomable" src="${phs[0]}" alt="">`:""}
     ${phs.length>1?`<div class="pgal">${phs.slice(1).map(p=>`<img class="zoomable" src="${p}" alt="">`).join("")}</div>`:""}
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${badge}${juv}${st==="validated"?starsHtml(t.rarity):""}</div>
-    <div class="sci" style="margin-top:5px">${esc(t.sci)}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${badge}${juv}${st==="validated"?starsHtml(to.rarity):""}</div>
+    <div class="sci" style="margin-top:5px">${esc(to.sci)}</div>
     ${tx?`<div class="meta">${tx}</div>`:""}
     <div class="meta">
       <b>${esc(o.site||t("Site non précisé"))}</b>${o.env?` · ${esc(t(o.env))}`:""}<br>
