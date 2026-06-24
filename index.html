@@ -134,7 +134,7 @@
   #pick-map{height:230px;border-radius:12px;border:1px solid var(--line);z-index:1}
   .modal-bg{display:none;position:fixed;inset:0;background:rgba(15,46,58,.55);z-index:2000;align-items:center;justify-content:center;padding:20px}
   .modal-bg.open{display:flex}
-  .modal{background:var(--card);border-radius:18px;max-width:660px;width:100%;max-height:88vh;overflow:auto}
+  .modal{background:var(--card);border-radius:18px;max-width:660px;width:100%;max-height:88vh;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   .modal>img{width:100%;height:300px;object-fit:cover;display:block;border-radius:18px 18px 0 0;background:#dfeef0}
   .modal .mb{padding:20px 22px 24px}
   .modal .mb .field{margin-bottom:13px}
@@ -585,10 +585,10 @@ function unseenCount(){ if(!state.user) return 0; return state.observations.filt
 function renderWho(){
   const w=document.getElementById("who");
   if(state.user){ const n=unseenCount();
-    w.innerHTML=`<button class="bell" onclick="openNotifications()" title="${t('Mes notifications')}">${icon('bell')}${n?`<span class="bdg">${n}</span>`:""}</button> <b>${esc(state.user.name)}</b> · <a href="#" id="logout">${t('se déconnecter')}</a>`;
-    document.getElementById("logout").onclick=e=>{e.preventDefault(); state.user=null; saveState(); renderWho(); renderProposer();}; }
+    w.innerHTML=`<button class="bell" onclick="openNotifications()" title="${t('Mes notifications')}">${icon('bell')}${n?`<span class="bdg">${n}</span>`:""}</button> <b>${esc(state.user.name)}</b> · <a href="#" id="logout" onclick="logoutUser();return false">${t('se déconnecter')}</a>`; }
   else { w.innerHTML=`<span style="opacity:.8">${t('Non inscrit·e')}</span>`; }
 }
+function logoutUser(){ state.user=null; saveState(); renderWho(); renderProposer(); goTo("home"); toast(LANG==='en'?"Signed out.":"Tu es déconnecté·e."); }
 function myNotifs(){ if(!state.user) return []; return state.observations.filter(o=>o.byEmail===state.user.email && o.outcome).sort((a,b)=>(b.outcomeAt||0)-(a.outcomeAt||0)); }
 function openNotifications(){
   const list=myNotifs();
@@ -942,7 +942,9 @@ function openSpeciesEditor(id){
       <div class="field"><label>${t("Taille")}</label><input id="ed-size" value="${s?esc(s.size||""):""}" placeholder="${t("ex. 2 à 4 cm")}"></div>
       <div class="field"><label>${t("Description (une ligne = un point)")}</label><textarea id="ed-desc">${s?esc((s.d||[]).join("\n")):""}</textarea></div>
       <div class="field"><label>${t("Note / anecdote")}</label><textarea id="ed-note" placeholder="${t("Le petit plus à savoir…")}">${s?esc(s.note||""):""}</textarea></div>
-      <div style="margin-top:6px"><button class="btn" onclick="saveSpecies()">${s?t("Enregistrer les modifications"):t("Ajouter à la bibliothèque")}</button></div>
+      <div style="position:sticky;bottom:0;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;background:var(--card);padding:13px 0 4px;margin-top:14px;border-top:1px solid var(--line);z-index:2">
+        <button class="btn ghost" onclick="closeEditor()">${t("Annuler")}</button>
+        <button class="btn" onclick="saveSpecies()">${s?t("Enregistrer les modifications"):t("Ajouter à la bibliothèque")}</button></div>
     </div>`;
   document.getElementById("ed-photo").addEventListener("change",e=>{ const f=e.target.files[0]; if(f) resizeToDataURL(f,d=>{editorPhoto=d; document.getElementById("ed-preview").innerHTML=`<img class="zoomable" src="${d}" style="margin-top:10px;width:180px;height:130px;object-fit:cover;border-radius:10px">`;}); });
   document.getElementById("sp-editor").classList.add("open");
@@ -970,6 +972,8 @@ function deleteSpecies(id){
 function openLightbox(src){ const lb=document.getElementById("lightbox"); lb.querySelector("img").src=src; lb.classList.add("open"); }
 document.getElementById("lightbox").addEventListener("click",()=>document.getElementById("lightbox").classList.remove("open"));
 document.addEventListener("click",e=>{ const z=e.target.closest("img.zoomable"); if(z){ e.stopPropagation(); openLightbox(z.src); } });
+// Toucher le fond sombre d'une fenêtre ferme la fenêtre (jamais bloqué·e)
+document.querySelectorAll(".modal-bg").forEach(bg=>bg.addEventListener("click",e=>{ if(e.target===bg) bg.classList.remove("open"); }));
 
 // ---------- utils ----------
 function resizeToDataURL(file,cb){ const r=new FileReader(); r.onload=ev=>{ const img=new Image(); img.onload=()=>{ const max=1200, sc=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext("2d").drawImage(img,0,0,c.width,c.height); cb(c.toDataURL("image/jpeg",0.82)); }; img.src=ev.target.result; }; r.readAsDataURL(file); }
