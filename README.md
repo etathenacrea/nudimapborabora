@@ -16,7 +16,7 @@ Double-clique sur **`index.html`** (il s'ouvre dans ton navigateur). Une connexi
 | **Accueil** | Présentation grand public + QR code à scanner/imprimer pour partager le lien. |
 | **Carte** | Les observations sur le lagon. 🟢 vert = validée · 🟠 orange = en attente. Filtres espèce / année / statut. Démarre vide. |
 | **Identification** | Bibliothèque des espèces : photo, **nom commun · nom scientifique · classification**, **jour/nuit**, **rareté en étoiles**, description. |
-| **Proposer** | Mini-inscription (nom, email, WhatsApp facultatif), puis formulaire. **Plusieurs photos**, environnement (sable/éponges/coraux…). Requis : **photo(s), lieu (+ épingle), date, profondeur**. Notification in-app à la validation. |
+| **Proposer** | Mini-inscription (nom, email, WhatsApp facultatif), puis formulaire. **Plusieurs photos**, environnement (sable/éponges/coraux…). Espèce : liste, « Je ne sais pas », ou **« Nouvelle proposition »** pour suggérer un nom (vérifié par un expert avant affichage). Requis : **photo(s), lieu (+ épingle), date, profondeur**. Notification in-app à la validation. |
 | **Espace admin** | **Validation** (identifier, 🐣 juvénile, Valider/Refuser, avis entre experts ; **contact email + WhatsApp du déposant** visible) et **Bibliothèque** (ajouter/modifier les fiches). |
 
 ### Identification (3 champs)
@@ -28,6 +28,8 @@ Double-clique sur **`index.html`** (il s'ouvre dans ton navigateur). Une connexi
 - **Rareté** — de ★ (commune) à ★★★★★ (très rare)
 
 À la validation, l'expert choisit une espèce existante **ou** « ➕ Autre » pour créer une **nouvelle identification** (nom commun + nom scientifique + classification + rareté), qui enrichit la bibliothèque. Case **🐣 juvénile** pour signaler un juvénile.
+
+Si le déposant a fait une **« Nouvelle proposition »** de nom, elle apparaît dans la file (« proposition du déposant ») et **pré-remplit** le champ « Autre » : l'expert peut donc valider sa suggestion en un clic. Tant que ce n'est pas validé, l'observation reste **« Espèce indéterminée »** sur la carte.
 
 ## Codes experts (démo)
 
