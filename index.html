@@ -384,7 +384,7 @@ const EN = {
   "Validation":"Validation","Bibliothèque":"Library","changer d'expert":"switch expert",
   "File d'attente":"Queue","Rien à valider dans la file.":"Nothing to validate.","Aucune pour le moment.":"None yet.",
   "Site ?":"Site ?","prof. n.c.":"depth n/a","proposé :":"suggested:","Espèce inconnue (à identifier)":"Unknown species (to identify)",
-  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion",
+  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species",
   "— choisir l'espèce —":"— choose the species —","Autre / nouvelle identification…":"Other / new identification…",
   "Nom scientifique *":"Scientific name *","Famille":"Family","Rareté":"Rarity","C'est un juvénile":"It's a juvenile",
   "Avis entre experts (ex. à confirmer par Alexandre ?)":"Note between experts (e.g. to be confirmed by Alexandre?)",
@@ -656,7 +656,8 @@ function popupHTML(o){
     ${phs[0]?`<img class="zoomable" src="${phs[0]}" alt="">`:""}
     ${phs.length>1?`<div class="pgal">${phs.slice(1).map(p=>`<img class="zoomable" src="${p}" alt="">`).join("")}</div>`:""}
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${badge}${juv}${st==="validated"?starsHtml(to.rarity):""}</div>
-    <div class="sci" style="margin-top:5px">${esc(to.sci)}</div>
+    <div class="sci" style="margin-top:5px">${esc(t(to.sci))}</div>
+    ${st!=="validated" && o.proposedName && state.user && state.user.email===o.byEmail ? `<div class="meta" style="color:var(--sea-deep)">${icon('sprout')} ${t('Ta proposition :')} <i>${esc(o.proposedName)}</i> — ${t('en attente de validation')}</div>` : ""}
     ${tx?`<div class="meta">${tx}</div>`:""}
     <div class="meta">
       <b>${esc(o.site||t("Site non précisé"))}</b>${o.env?` · ${esc(t(o.env))}`:""}<br>
