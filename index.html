@@ -384,6 +384,7 @@ const EN = {
   "Validation":"Validation","Bibliothèque":"Library","changer d'expert":"switch expert",
   "File d'attente":"Queue","Rien à valider dans la file.":"Nothing to validate.","Aucune pour le moment.":"None yet.",
   "Site ?":"Site ?","prof. n.c.":"depth n/a","proposé :":"suggested:","Espèce inconnue (à identifier)":"Unknown species (to identify)",
+  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion",
   "— choisir l'espèce —":"— choose the species —","Autre / nouvelle identification…":"Other / new identification…",
   "Nom scientifique *":"Scientific name *","Famille":"Family","Rareté":"Rarity","C'est un juvénile":"It's a juvenile",
   "Avis entre experts (ex. à confirmer par Alexandre ?)":"Note between experts (e.g. to be confirmed by Alexandre?)",
@@ -733,8 +734,11 @@ function renderProposer(){
         <span class="hint">${t("Une ou plusieurs photos, nettes et bien cadrées.")}</span>
         <div id="p-preview" class="pgal"></div></div>
       <div class="field"><label>${t("Connais-tu l'espèce ?")}</label>
-        <select id="p-species"><option value="je-sais-pas">${t("Je ne sais pas — à identifier")}</option>
-        ${state.species.map(s=>`<option value="${s.id}">${esc(s.sci)}</option>`).join("")}</select>
+        <select id="p-species" onchange="onSpeciesChange()"><option value="je-sais-pas">${t("Je ne sais pas — à identifier")}</option>
+        ${state.species.map(s=>`<option value="${s.id}">${esc(s.sci)}</option>`).join("")}
+        <option value="__propose">${t("Nouvelle proposition — proposer un nom d'espèce")}</option></select>
+        <input id="p-propose" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="${t("Ta proposition de nom (scientifique ou commun)")}" style="display:none;margin-top:8px">
+        <span class="hint" id="p-propose-hint" style="display:none">${icon('info')} ${t("Ta proposition sera vérifiée par un expert avant d'être affichée.")}</span>
         <span class="hint">${t("Pas sûr·e ? Laisse « je ne sais pas », les experts trancheront.")}</span></div>
       <div class="field"><label>${t("Environnement")}</label>
         <select id="p-env"><option value="">${t("— optionnel —")}</option>${ENV_OPTS.map(e=>`<option value="${esc(e)}">${esc(t(e))}</option>`).join("")}</select>
@@ -769,6 +773,7 @@ function renderProposer(){
   document.getElementById("p-photo").addEventListener("change",e=>{ const files=[...e.target.files]; files.forEach(f=>resizeToDataURL(f,d=>{ pendingPhotos.push(d); renderPhotoPreview(); })); e.target.value=""; });
 }
 function onSiteChange(){ document.getElementById("p-site-other").style.display = val("p-site")==="__autre"?"block":"none"; }
+function onSpeciesChange(){ const show = val("p-species")==="__propose"; document.getElementById("p-propose").style.display = show?"block":"none"; document.getElementById("p-propose-hint").style.display = show?"block":"none"; }
 function signup(){
   const n=val("su-name").trim(), em=val("su-email").trim();
   if(!n||!em){ toast(t("Indique ton nom et ton email.")); return; }
@@ -785,7 +790,8 @@ function submitObs(){
   if(!date) miss.push(t("la date"));
   if(depth===""||depth==null) miss.push(t("la profondeur"));
   if(miss.length){ toast(t("Il manque :")+" "+miss.join(", ")); return; }
-  state.observations.push({ id:"u"+Date.now(), sp: spVal==="je-sais-pas"?null:spVal,
+  const proposedName = spVal==="__propose" ? val("p-propose").trim() : "";
+  state.observations.push({ id:"u"+Date.now(), sp: (spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposedName,
     photos: pendingPhotos.slice(), env: val("p-env"), lat:pickLatLng.lat, lng:pickLatLng.lng, site,
     date, time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
     by:state.user.name, byEmail:state.user.email, byPhone:state.user.phone||"", status:"pending",
@@ -834,17 +840,17 @@ function renderAdminValidation(){
     <div>${v.length?v.map(o=>doneRow(o)).join(""):`<div class="empty">${t("Aucune pour le moment.")}</div>`}</div>`;
 }
 function queueRow(o){
-  const guessed = o.sp?(speciesById(o.sp)?.sci||o.sp) : t("Espèce inconnue (à identifier)");
+  const guessed = o.sp?(speciesById(o.sp)?.sci||o.sp) : (o.proposedName ? o.proposedName : t("Espèce inconnue (à identifier)"));
   return `<div class="qrow">
     <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`).join("")}</div>
     <div class="qi">
       <div class="t">${esc(o.site||t("Site ?"))} · ${o.depth?o.depth+" m":t("prof. n.c.")}${o.env?" · "+esc(t(o.env)):""}</div>
-      <div class="s">${icon('calendar')} ${frDate(o.date)} ${o.time||""} · ${icon('user')} ${esc(o.by||t("anonyme"))} · ${t("proposé :")} <i>${esc(guessed)}</i>${o.note?` · « ${esc(o.note)} »`:""}</div>
+      <div class="s">${icon('calendar')} ${frDate(o.date)} ${o.time||""} · ${icon('user')} ${esc(o.by||t("anonyme"))} · ${t("proposé :")} <i>${esc(guessed)}</i>${o.proposedName&&!o.sp?` <b style="color:var(--sea-deep)">(${t("proposition du déposant")})</b>`:""}${o.note?` · « ${esc(o.note)} »`:""}</div>
       <div class="s" style="margin-top:3px">${o.byEmail?`<a class="contact" href="mailto:${esc(o.byEmail)}">${icon('mail')} ${esc(o.byEmail)}</a>`:""}${o.byPhone?`&nbsp;&nbsp;<a class="contact" href="https://wa.me/${o.byPhone.replace(/[^0-9]/g,'')}" target="_blank" rel="noopener">${icon('phone')} ${esc(o.byPhone)}</a>`:""}</div>
       <div class="assign">
         <select id="as-sp-${o.id}" onchange="onAssignChange('${o.id}')"><option value="">${t("— choisir l'espèce —")}</option>${state.species.map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)}${s.classification?" — "+esc(s.classification):""}</option>`).join("")}<option value="autre">${t("Autre / nouvelle identification…")}</option></select>
         <div class="autre-box" id="autre-${o.id}">
-          <input class="full" id="au-sci-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="${t("Nom scientifique *")}">
+          <input class="full" id="au-sci-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="${t("Nom scientifique *")}" value="${esc(o.proposedName||"")}">
           ${classifSelect("au-classif-"+o.id, "")}
           ${familySelect("au-family-"+o.id, "")}
           <input class="full" id="au-common-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Nom commun")}">
