@@ -39,6 +39,9 @@ Si le déposant a fait une **« Nouvelle proposition »** de nom, elle apparaît
 | `Borabora2` | Alizée |
 | `Borabora3` | Alexandre |
 | `Borabora4` | Justine |
+| `Borabora5` | Pauline Bosserelle (CRIOBE — référence nudibranches en Polynésie française) |
+
+*(Les codes ne sont pas sensibles à la casse : `borabora5` fonctionne aussi.)*
 
 Chaque validation enregistre quel expert l'a faite. *(Codes de démo côté navigateur — une vraie authentification viendra avec la base en ligne.)*
 
