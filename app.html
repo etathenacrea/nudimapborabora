@@ -853,7 +853,8 @@ function setAdminTab(t){ adminTab=t; renderAdmin(); }
 // ---------- Connexion des experts (Supabase Auth) ----------
 const EXPERT_EMAILS={   // email (minuscule) -> nom affiché, complété au fur et à mesure
   "pro.justinecertain@gmail.com":"Justine",
-  "alexandre.tayale@gmail.com":"Alexandre"
+  "alexandre.tayale@gmail.com":"Alexandre",
+  "pauline.bosserelle@gmail.com":"Pauline Bosserelle"
 };
 function expertNameOf(u){ if(!u) return ""; const m=u.user_metadata||{}; const em=(u.email||"").toLowerCase();
   return m.name || m.full_name || EXPERT_EMAILS[em] || (em.split("@")[0]||"Expert"); }
