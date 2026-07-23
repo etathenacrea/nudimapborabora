@@ -568,9 +568,13 @@ let state = { user: loadUser(), observations: [], species: JSON.parse(JSON.strin
 function seenSet(){ try{ return new Set(JSON.parse(localStorage.getItem("nudimap_seen"))||[]); }catch(e){ return new Set(); } }
 function seenHas(id){ return seenSet().has(id); }
 function markSeen(id){ const s=seenSet(); s.add(id); localStorage.setItem("nudimap_seen", JSON.stringify([...s])); }
+// Observations déposées depuis CET appareil (pour retrouver « les miennes » sans exposer l'email)
+function mineSet(){ try{ return new Set(JSON.parse(localStorage.getItem("nudimap_mine"))||[]); }catch(e){ return new Set(); } }
+function mineHas(id){ return mineSet().has(id); }
+function markMine(id){ const s=mineSet(); s.add(id); localStorage.setItem("nudimap_mine", JSON.stringify([...s])); }
 // Observations : base partagée
 function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, outcomeSeen:seenHas(r.id) }; }
-async function loadObservations(){ try{ const {data,error}=await sb.from("observations").select("*").order("created_at",{ascending:true}); if(error){ console.error("loadObservations",error); return; } state.observations=(data||[]).map(obsFromRow); }catch(e){ console.error(e); } }
+async function loadObservations(){ try{ const cols=adminUnlocked?"*":"id,species_id,proposed_name,photos,env,island,site,lat,lng,obs_date,obs_time,depth,note,by_name,status,juvenile,expert_note,validated_by,reason,outcome,outcome_at,created_at"; const {data,error}=await sb.from("observations").select(cols).order("created_at",{ascending:true}); if(error){ console.error("loadObservations",error); return; } state.observations=(data||[]).map(obsFromRow); }catch(e){ console.error(e); } }
 function spFromRow(r){ return { id:r.id, sci:r.sci, commonName:r.common_name||"", classification:r.classification||"", family:r.family||"", dayNight:r.day_night||"", rarity:r.rarity||0, size:r.size||"", d:Array.isArray(r.description)?r.description:[], note:r.note||"", photo:r.photo||"" }; }
 async function loadSpecies(){ try{ const {data,error}=await sb.from("species").select("*").order("sci"); if(error){ console.error("loadSpecies",error); return; } if(data&&data.length) state.species=data.map(spFromRow); }catch(e){ console.error(e); } }
 async function uploadPhotos(dataUrls){ const out=[]; for(let i=0;i<dataUrls.length;i++){ const blob=await (await fetch(dataUrls[i])).blob(); const path="obs/"+Date.now()+"-"+i+"-"+Math.random().toString(36).slice(2,8)+".jpg"; const {error}=await sb.storage.from("photos").upload(path, blob, {contentType:blob.type||"image/jpeg", upsert:false}); if(error) throw error; out.push(sb.storage.from("photos").getPublicUrl(path).data.publicUrl); } return out; }
@@ -606,7 +610,7 @@ function goTo(v){
 }
 
 // ---------- WHO + notifications ----------
-function unseenCount(){ if(!state.user) return 0; return state.observations.filter(o=>o.byEmail===state.user.email && o.outcome && !o.outcomeSeen).length; }
+function unseenCount(){ if(!state.user) return 0; return state.observations.filter(o=>mineHas(o.id) && o.outcome && !o.outcomeSeen).length; }
 function renderWho(){
   const w=document.getElementById("who");
   if(state.user){ const n=unseenCount();
@@ -614,7 +618,7 @@ function renderWho(){
   else { w.innerHTML=`<span style="opacity:.8">${t('Non inscrit·e')}</span>`; }
 }
 function logoutUser(){ state.user=null; saveState(); renderWho(); renderProposer(); goTo("home"); toast(LANG==='en'?"Signed out.":"Tu es déconnecté·e."); }
-function myNotifs(){ if(!state.user) return []; return state.observations.filter(o=>o.byEmail===state.user.email && o.outcome).sort((a,b)=>(b.outcomeAt||0)-(a.outcomeAt||0)); }
+function myNotifs(){ if(!state.user) return []; return state.observations.filter(o=>mineHas(o.id) && o.outcome).sort((a,b)=>new Date(b.outcomeAt||0)-new Date(a.outcomeAt||0)); }
 function openNotifications(){
   const list=myNotifs();
   const rows=list.length?list.map(o=>{ const tx=taxoOf(o); const ok=o.outcome==="validated";
@@ -626,7 +630,7 @@ function openNotifications(){
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2>${t("Mes notifications")}</h2><button class="btn ghost sm" onclick="closeNotif()">${t("Fermer")}</button></div>
     ${rows}</div>`;
   document.getElementById("notif-modal").classList.add("open");
-  state.observations.forEach(o=>{ if(o.byEmail===state.user.email && o.outcome){ o.outcomeSeen=true; markSeen(o.id); } });
+  state.observations.forEach(o=>{ if(mineHas(o.id) && o.outcome){ o.outcomeSeen=true; markSeen(o.id); } });
   renderWho();
 }
 function closeNotif(){ document.getElementById("notif-modal").classList.remove("open"); }
@@ -681,7 +685,7 @@ function popupHTML(o){
     ${phs.length>1?`<div class="pgal">${phs.slice(1).map(p=>`<img class="zoomable" src="${p}" alt="">`).join("")}</div>`:""}
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${badge}${juv}${st==="validated"?starsHtml(to.rarity):""}</div>
     <div class="sci" style="margin-top:5px">${esc(t(to.sci))}</div>
-    ${st!=="validated" && o.proposedName && state.user && state.user.email===o.byEmail ? `<div class="meta" style="color:var(--sea-deep)">${icon('sprout')} ${t('Ta proposition :')} <i>${esc(o.proposedName)}</i> — ${t('en attente de validation')}</div>` : ""}
+    ${st!=="validated" && o.proposedName && mineHas(o.id) ? `<div class="meta" style="color:var(--sea-deep)">${icon('sprout')} ${t('Ta proposition :')} <i>${esc(o.proposedName)}</i> — ${t('en attente de validation')}</div>` : ""}
     ${tx?`<div class="meta">${tx}</div>`:""}
     <div class="meta">
       <b>${esc(o.site||t("Site non précisé"))}</b>${o.env?` · ${esc(t(o.env))}`:""}<br>
@@ -788,7 +792,7 @@ function renderProposer(){
       <span class="hint"><span class="req">*</span> ${t("requis pour une observation scientifiquement utile.")}</span>
     </div>
   </div>`;
-  pickLatLng=null; pendingPhotos=[];
+  pickLatLng=null; pendingPhotos=[]; pickMarker=null; if(pickMap){ try{pickMap.remove();}catch(e){} pickMap=null; }
   setTimeout(()=>{
     pickMap=L.map("pick-map").setView([-16.5004,-151.7415],12.5);
     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19}).addTo(pickMap);
@@ -827,8 +831,9 @@ async function submitObs(){
     photos:urls, env:val("p-env"), island:"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
     obs_date:date, obs_time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
     by_name:state.user.name, by_email:state.user.email, by_phone:state.user.phone||"", status:"pending" };
-  const { error } = await sb.from("observations").insert(row);
+  const { data:ins, error } = await sb.from("observations").insert(row).select("id");
   if(error){ console.error("insert obs",error); toast(LANG==='en'?"Could not save, please try again.":"Enregistrement impossible, réessaie."); if(btn) btn.disabled=false; return; }
+  if(ins&&ins[0]) markMine(ins[0].id);
   await loadObservations();
   if(map){ fillFilters(); renderMarkers(); }
   toast(t("Merci ! Ton observation est en attente de validation."));
@@ -868,14 +873,14 @@ function expertNameOf(u){ if(!u) return ""; const m=u.user_metadata||{}; const e
   return m.name || m.full_name || EXPERT_EMAILS[em] || (em.split("@")[0]||"Expert"); }
 function setExpertSession(s){ adminUnlocked=!!s; adminUser = s? expertNameOf(s.user) : null; }
 async function initAuth(){ try{ const {data}=await sb.auth.getSession(); setExpertSession(data.session);
-    sb.auth.onAuthStateChange((_e,s)=>{ setExpertSession(s); renderAdmin(); }); }catch(e){ console.error("initAuth",e); } }
+    sb.auth.onAuthStateChange((ev,s)=>{ setExpertSession(s); if(ev==="SIGNED_OUT"){ loadObservations().then(()=>{ renderAdmin(); if(map)renderMarkers(); }); } }); }catch(e){ console.error("initAuth",e); } }
 async function expertLogin(){
   const email=(val("adm-email")||"").trim(), pw=val("adm-pw")||"";
   if(!email||!pw){ toast(t("Indique ton email et ton mot de passe.")); return; }
   const btn=document.getElementById("adm-btn"); if(btn) btn.disabled=true;
   const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
   if(error){ console.error("login",error); toast(t("Email ou mot de passe incorrect.")); if(btn) btn.disabled=false; return; }
-  setExpertSession(data.session); renderAdmin();
+  setExpertSession(data.session); await loadObservations(); renderAdmin(); if(map)renderMarkers();
   toast((LANG==='en'?"Welcome ":"Bienvenue ")+adminUser+" !");
 }
 async function expertLogout(){ try{ await sb.auth.signOut(); }catch(e){} setExpertSession(null); renderAdmin(); toast(t("Déconnecté·e.")); }
@@ -933,7 +938,7 @@ function doneRow(o,rejected){
     <div class="acts"><button class="btn ghost sm" onclick="toPending('${o.id}')">${icon('undo')} ${t("Remettre en attente")}</button></div>
   </div>`;
 }
-function saveExpertNote(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.expertNote=val("ex-note-"+id).trim(); saveState(); toast(t("Avis enregistré.")); }
+async function saveExpertNote(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; const note=val("ex-note-"+id).trim(); const { data:upd, error } = await sb.from("observations").update({expert_note:note}).eq("id",id).select(); if(error || !upd || !upd.length){ console.error("saveExpertNote",error); toast(t("Enregistrement impossible (connexion expert requise).")); return; } o.expertNote=note; toast(t("Avis enregistré.")); }
 async function ensureSpeciesFrom(sci,commonName,classification,family,rarity,photo){
   const ex=state.species.find(s=>s.sci.toLowerCase()===sci.toLowerCase());
   if(ex) return ex.id;
@@ -1077,7 +1082,7 @@ document.querySelectorAll(".bubbles").forEach(box=>{ const n=box.classList.conta
 document.documentElement.lang=LANG;
 applyI18n();
 // Charger les observations partagées, puis rafraîchir l'affichage
-(async ()=>{ await initAuth(); await loadSpecies(); await loadObservations(); renderSpecies(); renderWho(); renderAdmin(); if(map){ fillFilters(); renderMarkers(); } if(unseenCount()>0) toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")); })();
+(async ()=>{ await initAuth(); await loadSpecies(); await loadObservations(); const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" "+t("espèces de référence"); renderSpecies(); renderWho(); renderAdmin(); if(map){ fillFilters(); renderMarkers(); } if(unseenCount()>0) toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")); })();
 </script>
 </body>
 </html>
