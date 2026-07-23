@@ -51,11 +51,16 @@ Chaque validation enregistre quel expert l'a faite. Seuls les experts connectés
 - Familles, type et rareté des 15 espèces sont **pré-remplis au mieux** : à vérifier/corriger par les experts (Admin → Bibliothèque → ✏️ Modifier).
 - **Base partagée en ligne** (Supabase) : observations, photos (stockage cloud) et bibliothèque sont **communes à tout le monde** — une observation déposée depuis n'importe quel téléphone apparaît sur la carte de tous. Voir `db/` pour la structure. Prochaine étape : élargissement aux îles de la Société.
 
+## Présentation (conférence)
+
+Ouvre **`presentation.html`** dans un navigateur (idéalement en plein écran, touche `F`) : un diaporama prêt à projeter aux couleurs de l'app, avec les vraies photos d'espèces et une slide QR code finale. Navigation : flèches `←` `→` (ou clic / tap). Touche **`N`** : affiche les **notes pour l'oratrice** (ce qu'on peut dire + repères de jeu) — visibles à l'écran, pratiques en répétition ; à masquer (`N`) avant de projeter en public.
+
 ## Structure
 
 ```
 nudimapborabora/
 ├── index.html
+├── presentation.html               ← diaporama de présentation (conférence)
 └── assets/
     ├── species/*.jpg                ← photos d'espèces de référence
     └── qr-nudimapborabora.png       ← QR code du lien (à imprimer)
