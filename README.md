@@ -31,25 +31,25 @@ Double-clique sur **`index.html`** (il s'ouvre dans ton navigateur). Une connexi
 
 Si le déposant a fait une **« Nouvelle proposition »** de nom, elle apparaît dans la file (« proposition du déposant ») et **pré-remplit** le champ « Autre » : l'expert peut donc valider sa suggestion en un clic. Tant que ce n'est pas validé, l'observation reste **« Espèce indéterminée »** sur la carte.
 
-## Codes experts (démo)
+## Comptes experts
 
-| Code | Expert |
+Les experts se connectent (**Espace admin**) avec leur **email + mot de passe** (vrais comptes, base en ligne). Les comptes se créent dans Supabase → *Authentication → Users → Add user* (cocher **Auto Confirm User**).
+
+| Expert | Email |
 |---|---|
-| `Borabora1` | Vincent |
-| `Borabora2` | Alizée |
-| `Borabora3` | Alexandre |
-| `Borabora4` | Justine |
-| `Borabora5` | Pauline Bosserelle (CRIOBE — référence nudibranches en Polynésie française) |
+| Justine | pro.justinecertain@gmail.com |
+| Alexandre | alexandre.tayale@gmail.com |
+| Pauline Bosserelle (CRIOBE) | pauline.bosserelle@gmail.com |
+| Vincent | vincentdondon@orange.fr |
+| Alizée | *(à venir)* |
 
-*(Les codes ne sont pas sensibles à la casse : `borabora5` fonctionne aussi.)*
-
-Chaque validation enregistre quel expert l'a faite. *(Codes de démo côté navigateur — une vraie authentification viendra avec la base en ligne.)*
+Chaque validation enregistre quel expert l'a faite. Seuls les experts connectés peuvent valider/refuser et gérer la bibliothèque ; voir la carte et déposer une observation est ouvert à tous.
 
 ## Bon à savoir
 
 - **Clique une photo** (admin ou carte) pour l'agrandir en plein écran.
 - Familles, type et rareté des 15 espèces sont **pré-remplis au mieux** : à vérifier/corriger par les experts (Admin → Bibliothèque → ✏️ Modifier).
-- **Prototype local** : observations, bibliothèque et notifications sont stockées dans **chaque navigateur** séparément. Étape suivante : base partagée en ligne + comptes experts + emails.
+- **Base partagée en ligne** (Supabase) : observations, photos (stockage cloud) et bibliothèque sont **communes à tout le monde** — une observation déposée depuis n'importe quel téléphone apparaît sur la carte de tous. Voir `db/` pour la structure. Prochaine étape : élargissement aux îles de la Société.
 
 ## Structure
 

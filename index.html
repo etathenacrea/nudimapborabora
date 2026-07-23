@@ -319,8 +319,13 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const PROD_URL="https://etathenacrea.github.io/nudimapborabora/";
+// ---------- Base partagée (Supabase) ----------
+const SB_URL="https://hlpqqixkwvywekuutmnu.supabase.co";
+const SB_KEY="sb_publishable_J3wEczMZVX7pSp5MBfawJw_VJs-xHx6";
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
 const EXPERTS={ "Borabora1":"Vincent", "Borabora2":"Alizée", "Borabora3":"Alexandre", "Borabora4":"Justine", "Borabora5":"Pauline Bosserelle" };
 
 // ---------- i18n : FR par défaut, EN pour les touristes (clé = texte français) ----------
@@ -392,7 +397,7 @@ const EN = {
   "Validation":"Validation","Bibliothèque":"Library","changer d'expert":"switch expert",
   "File d'attente":"Queue","Rien à valider dans la file.":"Nothing to validate.","Aucune pour le moment.":"None yet.",
   "Site ?":"Site ?","prof. n.c.":"depth n/a","proposé :":"suggested:","Espèce inconnue (à identifier)":"Unknown species (to identify)",
-  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
+  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
   "— choisir l'espèce —":"— choose the species —","Autre / nouvelle identification…":"Other / new identification…",
   "Nom scientifique *":"Scientific name *","Famille":"Family","Rareté":"Rarity","C'est un juvénile":"It's a juvenile",
   "Avis entre experts (ex. à confirmer par Alexandre ?)":"Note between experts (e.g. to be confirmed by Alexandre?)",
@@ -555,10 +560,20 @@ function getClassif(id){ return getList(id); }
 function getFamily(id){ return getList(id); }
 
 // ---------- État + persistance ----------
-const KEY="nudimap_v6";
-function loadState(){ try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.observations&&s.species) return s;}catch(e){} return null; }
-function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
-let state = loadState() || { user:null, observations:[], species: JSON.parse(JSON.stringify(DEFAULT_SPECIES)) };
+// Identité du déposant : locale à l'appareil (les déposants ne sont pas des comptes)
+function loadUser(){ try{ return JSON.parse(localStorage.getItem("nudimap_user"))||null; }catch(e){ return null; } }
+function saveState(){ localStorage.setItem("nudimap_user", JSON.stringify(state.user||null)); }
+let state = { user: loadUser(), observations: [], species: JSON.parse(JSON.stringify(DEFAULT_SPECIES)) };
+// "Vu" des notifications : local à l'appareil (un anonyme ne peut pas modifier les lignes)
+function seenSet(){ try{ return new Set(JSON.parse(localStorage.getItem("nudimap_seen"))||[]); }catch(e){ return new Set(); } }
+function seenHas(id){ return seenSet().has(id); }
+function markSeen(id){ const s=seenSet(); s.add(id); localStorage.setItem("nudimap_seen", JSON.stringify([...s])); }
+// Observations : base partagée
+function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, outcomeSeen:seenHas(r.id) }; }
+async function loadObservations(){ try{ const {data,error}=await sb.from("observations").select("*").order("created_at",{ascending:true}); if(error){ console.error("loadObservations",error); return; } state.observations=(data||[]).map(obsFromRow); }catch(e){ console.error(e); } }
+function spFromRow(r){ return { id:r.id, sci:r.sci, commonName:r.common_name||"", classification:r.classification||"", family:r.family||"", dayNight:r.day_night||"", rarity:r.rarity||0, size:r.size||"", d:Array.isArray(r.description)?r.description:[], note:r.note||"", photo:r.photo||"" }; }
+async function loadSpecies(){ try{ const {data,error}=await sb.from("species").select("*").order("sci"); if(error){ console.error("loadSpecies",error); return; } if(data&&data.length) state.species=data.map(spFromRow); }catch(e){ console.error(e); } }
+async function uploadPhotos(dataUrls){ const out=[]; for(let i=0;i<dataUrls.length;i++){ const blob=await (await fetch(dataUrls[i])).blob(); const path="obs/"+Date.now()+"-"+i+"-"+Math.random().toString(36).slice(2,8)+".jpg"; const {error}=await sb.storage.from("photos").upload(path, blob, {contentType:blob.type||"image/jpeg", upsert:false}); if(error) throw error; out.push(sb.storage.from("photos").getPublicUrl(path).data.publicUrl); } return out; }
 let adminUnlocked=false, adminUser=null, adminTab="validation", editingSpeciesId=null, editorPhoto=null;
 
 const speciesById = id => state.species.find(x=>x.id===id);
@@ -611,8 +626,8 @@ function openNotifications(){
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2>${t("Mes notifications")}</h2><button class="btn ghost sm" onclick="closeNotif()">${t("Fermer")}</button></div>
     ${rows}</div>`;
   document.getElementById("notif-modal").classList.add("open");
-  state.observations.forEach(o=>{ if(o.byEmail===state.user.email && o.outcome) o.outcomeSeen=true; });
-  saveState(); renderWho();
+  state.observations.forEach(o=>{ if(o.byEmail===state.user.email && o.outcome){ o.outcomeSeen=true; markSeen(o.id); } });
+  renderWho();
 }
 function closeNotif(){ document.getElementById("notif-modal").classList.remove("open"); }
 document.getElementById("notif-modal").addEventListener("click",e=>{ if(e.target.id==="notif-modal") closeNotif(); });
@@ -769,7 +784,7 @@ function renderProposer(){
       <div class="field"><label>${t("Commentaire (optionnel)")}</label><input id="p-note" placeholder="${t("comportement, taille…")}"></div>
     </div>
     <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <button class="btn" onclick="submitObs()">${t("Envoyer l'observation")}</button>
+      <button class="btn" id="p-submit" onclick="submitObs()">${t("Envoyer l'observation")}</button>
       <span class="hint"><span class="req">*</span> ${t("requis pour une observation scientifiquement utile.")}</span>
     </div>
   </div>`;
@@ -791,7 +806,7 @@ function signup(){
   if(!n||!em){ toast(t("Indique ton nom et ton email.")); return; }
   state.user={name:n,email:em,phone:val("su-phone").trim()}; saveState(); renderWho(); renderProposer(); toast((LANG==='en'?"Welcome ":"Bienvenue ")+n+" !");
 }
-function submitObs(){
+async function submitObs(){
   const spVal=val("p-species");
   const siteSel=val("p-site"); let site = siteSel==="__autre"? val("p-site-other").trim() : siteSel;
   const date=val("p-date"), depth=val("p-depth");
@@ -803,12 +818,18 @@ function submitObs(){
   if(depth===""||depth==null) miss.push(t("la profondeur"));
   if(miss.length){ toast(t("Il manque :")+" "+miss.join(", ")); return; }
   const proposedName = spVal==="__propose" ? val("p-propose").trim() : "";
-  state.observations.push({ id:"u"+Date.now(), sp: (spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposedName,
-    photos: pendingPhotos.slice(), env: val("p-env"), lat:pickLatLng.lat, lng:pickLatLng.lng, site,
-    date, time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
-    by:state.user.name, byEmail:state.user.email, byPhone:state.user.phone||"", status:"pending",
-    outcome:null, outcomeSeen:true, validatedBy:null, expertNote:"", juvenile:false });
-  saveState();
+  const btn=document.getElementById("p-submit"); if(btn){ btn.disabled=true; }
+  toast(LANG==='en'?"Sending…":"Envoi en cours…");
+  let urls;
+  try{ urls = await uploadPhotos(pendingPhotos); }
+  catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed, please try again.":"Échec de l'envoi des photos, réessaie."); if(btn) btn.disabled=false; return; }
+  const row={ species_id:(spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposed_name:proposedName,
+    photos:urls, env:val("p-env"), island:"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
+    obs_date:date, obs_time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
+    by_name:state.user.name, by_email:state.user.email, by_phone:state.user.phone||"", status:"pending" };
+  const { error } = await sb.from("observations").insert(row);
+  if(error){ console.error("insert obs",error); toast(LANG==='en'?"Could not save, please try again.":"Enregistrement impossible, réessaie."); if(btn) btn.disabled=false; return; }
+  await loadObservations();
   if(map){ fillFilters(); renderMarkers(); }
   toast(t("Merci ! Ton observation est en attente de validation."));
   goTo("carte");
@@ -818,11 +839,12 @@ function submitObs(){
 function renderAdmin(){
   const b=document.getElementById("admin-body");
   if(!adminUnlocked){
-    b.innerHTML=`<div class="card" style="max-width:440px">
+    b.innerHTML=`<div class="card" style="max-width:470px">
       <h3>${t("Accès réservé aux experts")}</h3>
-      <p class="lead" style="margin:8px 0 14px">${t("Chaque expert dispose de son propre code de connexion.")}</p>
-      <div class="field" style="margin-bottom:14px"><label>${t("Code expert")}</label><input type="text" id="adm-pw" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="text" style="-webkit-text-security:disc;text-security:disc" placeholder="${t("Votre code")}" onkeydown="if(event.key==='Enter')unlockAdmin()"></div>
-      <button class="btn" onclick="unlockAdmin()">${t("Entrer")}</button>
+      <p class="lead" style="margin:8px 0 14px">${t("Connecte-toi avec ton email et ton mot de passe d'expert.")}</p>
+      <div class="field" style="margin-bottom:12px"><label>${t("Email")}</label><input type="email" id="adm-email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ex. justine@exemple.pf" onkeydown="if(event.key==='Enter')expertLogin()"></div>
+      <div class="field" style="margin-bottom:14px"><label>${t("Mot de passe")}</label><input type="password" id="adm-pw" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')expertLogin()"></div>
+      <button class="btn" id="adm-btn" onclick="expertLogin()">${t("Se connecter")}</button>
     </div>`; return;
   }
   b.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px">
@@ -830,14 +852,33 @@ function renderAdmin(){
         <button class="${adminTab==='validation'?'active':''}" onclick="setAdminTab('validation')">${icon('checks')} ${t("Validation")}</button>
         <button class="${adminTab==='biblio'?'active':''}" onclick="setAdminTab('biblio')">${icon('book')} ${t("Bibliothèque")}</button>
       </div>
-      <div style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px">${icon('shield')} <b style="color:var(--ink)">${esc(adminUser)}</b> · <a href="#" onclick="logoutAdmin();return false">${t("changer d'expert")}</a></div>
+      <div style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px">${icon('shield')} <b style="color:var(--ink)">${esc(adminUser)}</b> · <a href="#" onclick="expertLogout();return false">${t("se déconnecter")}</a></div>
     </div><div id="admin-section"></div>`;
   adminTab==="biblio"? renderAdminBiblio() : renderAdminValidation();
 }
 function setAdminTab(t){ adminTab=t; renderAdmin(); }
-function expertFor(code){ const c=String(code||"").trim().toLowerCase(); for(const k in EXPERTS){ if(k.toLowerCase()===c) return EXPERTS[k]; } return null; }
-function unlockAdmin(){ const name=expertFor(val("adm-pw")); if(name){adminUnlocked=true;adminUser=name;renderAdmin();toast((LANG==='en'?"Welcome ":"Bienvenue ")+name+" !");} else toast(t("Code expert incorrect.")); }
-function logoutAdmin(){ adminUnlocked=false; adminUser=null; renderAdmin(); }
+// ---------- Connexion des experts (Supabase Auth) ----------
+const EXPERT_EMAILS={   // email (minuscule) -> nom affiché, complété au fur et à mesure
+  "pro.justinecertain@gmail.com":"Justine",
+  "alexandre.tayale@gmail.com":"Alexandre",
+  "pauline.bosserelle@gmail.com":"Pauline Bosserelle",
+  "vincentdondon@orange.fr":"Vincent"
+};
+function expertNameOf(u){ if(!u) return ""; const m=u.user_metadata||{}; const em=(u.email||"").toLowerCase();
+  return m.name || m.full_name || EXPERT_EMAILS[em] || (em.split("@")[0]||"Expert"); }
+function setExpertSession(s){ adminUnlocked=!!s; adminUser = s? expertNameOf(s.user) : null; }
+async function initAuth(){ try{ const {data}=await sb.auth.getSession(); setExpertSession(data.session);
+    sb.auth.onAuthStateChange((_e,s)=>{ setExpertSession(s); renderAdmin(); }); }catch(e){ console.error("initAuth",e); } }
+async function expertLogin(){
+  const email=(val("adm-email")||"").trim(), pw=val("adm-pw")||"";
+  if(!email||!pw){ toast(t("Indique ton email et ton mot de passe.")); return; }
+  const btn=document.getElementById("adm-btn"); if(btn) btn.disabled=true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+  if(error){ console.error("login",error); toast(t("Email ou mot de passe incorrect.")); if(btn) btn.disabled=false; return; }
+  setExpertSession(data.session); renderAdmin();
+  toast((LANG==='en'?"Welcome ":"Bienvenue ")+adminUser+" !");
+}
+async function expertLogout(){ try{ await sb.auth.signOut(); }catch(e){} setExpertSession(null); renderAdmin(); toast(t("Déconnecté·e.")); }
 
 function renderAdminValidation(){
   const pend=state.observations.filter(o=>o.status==="pending");
@@ -893,40 +934,52 @@ function doneRow(o,rejected){
   </div>`;
 }
 function saveExpertNote(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.expertNote=val("ex-note-"+id).trim(); saveState(); toast(t("Avis enregistré.")); }
-function ensureSpeciesFrom(sci,commonName,classification,family,rarity,photo){
+async function ensureSpeciesFrom(sci,commonName,classification,family,rarity,photo){
   const ex=state.species.find(s=>s.sci.toLowerCase()===sci.toLowerCase());
   if(ex) return ex.id;
   let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
-  state.species.push({id,sci,commonName:commonName||"",classification:classification||"",family:family||"",dayNight:"",rarity:rarity||0,size:"",d:[],note:"",photo:photo||""});
+  let ph=photo||"";
+  if(ph.startsWith("data:")){ try{ ph=(await uploadPhotos([ph]))[0]; }catch(e){ console.error(e); ph=""; } }
+  const { error } = await sb.from("species").insert({ id, sci, common_name:commonName||"", classification:classification||"", family:family||"", day_night:"", rarity:rarity||0, size:"", description:[], note:"", photo:ph });
+  if(error){ console.error("insert species",error); toast(t("Création de l'espèce impossible.")); return null; }
   return id;
 }
-function validateObs(id){
+async function validateObs(id){
   const o=state.observations.find(x=>x.id===id); if(!o) return;
   const sel=val("as-sp-"+id);
   if(!sel){ toast(t("Choisis l'espèce, ou « Autre » pour en créer une.")); return; }
+  let speciesId=sel;
   if(sel==="autre"){
     const sci=val("au-sci-"+id).trim();
     if(!sci){ toast(t("Indique au moins le nom scientifique.")); return; }
-    o.sp=ensureSpeciesFrom(sci, val("au-common-"+id).trim(), getClassif("au-classif-"+id), getFamily("au-family-"+id), getStar("au-rar-"+id), obsPhoto(o));
-    o.scientific=null;
-  } else { o.sp=sel; o.scientific=null; }
-  o.juvenile=document.getElementById("juv-"+id)?.checked||false;
-  o.expertNote=val("ex-note-"+id).trim();
-  o.status="validated"; o.outcome="validated"; o.outcomeSeen=false; o.outcomeAt=Date.now(); o.validatedBy=adminUser; o.reason=null;
-  saveState(); renderAdmin(); renderSpecies(); renderWho(); if(map){fillFilters();renderMarkers();}
+    speciesId = await ensureSpeciesFrom(sci, val("au-common-"+id).trim(), getClassif("au-classif-"+id), getFamily("au-family-"+id), getStar("au-rar-"+id), obsPhoto(o));
+    if(!speciesId) return;
+  }
+  const patch={ species_id:speciesId, juvenile:document.getElementById("juv-"+id)?.checked||false,
+    expert_note:val("ex-note-"+id).trim(), status:"validated", outcome:"validated",
+    outcome_at:new Date().toISOString(), validated_by:adminUser||"", reason:"" };
+  const { data:upd, error } = await sb.from("observations").update(patch).eq("id",id).select();
+  if(error || !upd || !upd.length){ console.error("validate",error); toast(t("Validation impossible (connexion expert requise).")); return; }
+  await loadSpecies(); await loadObservations();
+  renderAdmin(); renderSpecies(); renderWho(); if(map){fillFilters();renderMarkers();}
   toast(LANG==='en'?("Validated by "+adminUser+" — it turns green."):("Observation validée par "+adminUser+" — elle passe au vert."));
 }
-function rejectObs(id){
+async function rejectObs(id){
   const o=state.observations.find(x=>x.id===id); if(!o) return;
   const r=prompt(LANG==='en'?"Reason for rejection (e.g. not a nudibranch):":"Motif du refus (ex. ce n'est pas un nudibranche) :", LANG==='en'?"off-topic":"hors-sujet");
   if(r===null) return;
-  o.juvenile=document.getElementById("juv-"+id)?.checked||false;
-  o.expertNote=val("ex-note-"+id).trim();
-  o.status="rejected"; o.outcome="rejected"; o.outcomeSeen=false; o.outcomeAt=Date.now(); o.validatedBy=adminUser; o.reason=r;
-  saveState(); renderAdmin(); renderWho(); if(map)renderMarkers();
+  const patch={ juvenile:document.getElementById("juv-"+id)?.checked||false, expert_note:val("ex-note-"+id).trim(),
+    status:"rejected", outcome:"rejected", outcome_at:new Date().toISOString(), validated_by:adminUser||"", reason:r };
+  const { data:upd, error } = await sb.from("observations").update(patch).eq("id",id).select();
+  if(error || !upd || !upd.length){ console.error("reject",error); toast(t("Action impossible (connexion expert requise).")); return; }
+  await loadObservations(); renderAdmin(); renderWho(); if(map)renderMarkers();
   toast(t("Observation refusée."));
 }
-function toPending(id){ const o=state.observations.find(x=>x.id===id); if(!o)return; o.status="pending"; o.outcome=null; o.reason=null; saveState(); renderAdmin(); renderWho(); if(map){fillFilters();renderMarkers();} }
+async function toPending(id){
+  const { data:upd, error } = await sb.from("observations").update({ status:"pending", outcome:null, reason:"", outcome_at:null }).eq("id",id).select();
+  if(error || !upd || !upd.length){ console.error("toPending",error); toast(t("Action impossible (connexion expert requise).")); return; }
+  await loadObservations(); renderAdmin(); renderWho(); if(map){fillFilters();renderMarkers();}
+}
 
 // ---------- ADMIN · Bibliothèque ----------
 function renderAdminBiblio(){
@@ -969,22 +1022,35 @@ function openSpeciesEditor(id){
   document.getElementById("sp-editor").classList.add("open");
 }
 function closeEditor(){ document.getElementById("sp-editor").classList.remove("open"); }
-function saveSpecies(){
+async function saveSpecies(){
   const sci=val("ed-sci").trim();
   if(!sci){ toast(t("Le nom scientifique est requis.")); return; }
   const d=val("ed-desc").split("\n").map(x=>x.trim()).filter(Boolean);
-  const data={ sci, commonName:val("ed-common").trim(), classification:getClassif("ed-classif"), family:getFamily("ed-family"), dayNight:val("ed-daynight"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), d, note:val("ed-note").trim() };
-  if(editingSpeciesId){ const s=speciesById(editingSpeciesId); Object.assign(s,data); if(editorPhoto) s.photo=editorPhoto; toast(t("Fiche mise à jour.")); }
-  else { if(!editorPhoto){ toast(t("Ajoute une photo pour la nouvelle espèce.")); return; }
+  const row={ sci, common_name:val("ed-common").trim(), classification:getClassif("ed-classif"), family:getFamily("ed-family"),
+    day_night:val("ed-daynight"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), description:d, note:val("ed-note").trim() };
+  let photo=editorPhoto||"";
+  if(photo.startsWith("data:")){ try{ photo=(await uploadPhotos([photo]))[0]; }catch(e){ console.error(e); toast(t("Envoi de la photo impossible.")); return; } }
+  if(editingSpeciesId){
+    if(photo) row.photo=photo;
+    const { data:upd, error } = await sb.from("species").update(row).eq("id",editingSpeciesId).select();
+    if(error || !upd || !upd.length){ console.error("update species",error); toast(t("Enregistrement impossible (connexion expert requise).")); return; }
+    toast(t("Fiche mise à jour."));
+  } else {
+    if(!photo){ toast(t("Ajoute une photo pour la nouvelle espèce.")); return; }
     let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
-    state.species.push({id, ...data, photo:editorPhoto}); toast(t("Espèce ajoutée à la bibliothèque.")); }
-  saveState(); closeEditor(); renderAdmin(); renderSpecies();
+    const { error } = await sb.from("species").insert({ id, ...row, photo });
+    if(error){ console.error("insert species",error); toast(t("Enregistrement impossible (connexion expert requise).")); return; }
+    toast(t("Espèce ajoutée à la bibliothèque."));
+  }
+  await loadSpecies(); closeEditor(); renderAdmin(); renderSpecies();
 }
-function deleteSpecies(id){
+async function deleteSpecies(id){
   const used=state.observations.filter(o=>o.sp===id).length;
   if(used){ toast(LANG==='en'?("Cannot delete: "+used+" observation(s) use this species."):("Impossible : "+used+" observation(s) utilisent cette espèce.")); return; }
   if(!confirm(LANG==='en'?('Delete "'+(speciesById(id)?.sci||"")+'" from the library?'):("Supprimer « "+(speciesById(id)?.sci||"")+" » de la bibliothèque ?"))) return;
-  state.species=state.species.filter(s=>s.id!==id); saveState(); renderAdmin(); renderSpecies(); toast(t("Espèce supprimée."));
+  const { data:del, error } = await sb.from("species").delete().eq("id",id).select();
+  if(error || !del || !del.length){ console.error("delete species",error); toast(t("Suppression impossible (connexion expert requise).")); return; }
+  await loadSpecies(); renderAdmin(); renderSpecies(); toast(t("Espèce supprimée."));
 }
 
 // ---------- Lightbox ----------
@@ -1010,7 +1076,8 @@ document.querySelectorAll(".intro .em[data-icon]").forEach(e=>e.innerHTML=icon(e
 document.querySelectorAll(".bubbles").forEach(box=>{ const n=box.classList.contains("inhero")?11:16; let h=""; for(let i=0;i<n;i++){ const sz=(5+Math.random()*12).toFixed(1); h+=`<b style="left:${(Math.random()*100).toFixed(2)}%;width:${sz}px;height:${sz}px;animation-duration:${(8+Math.random()*9).toFixed(1)}s;animation-delay:${(Math.random()*14).toFixed(1)}s"></b>`; } box.innerHTML=h; });
 document.documentElement.lang=LANG;
 applyI18n();
-if(unseenCount()>0) setTimeout(()=>toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")),700);
+// Charger les observations partagées, puis rafraîchir l'affichage
+(async ()=>{ await initAuth(); await loadSpecies(); await loadObservations(); renderSpecies(); renderWho(); renderAdmin(); if(map){ fillFilters(); renderMarkers(); } if(unseenCount()>0) toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")); })();
 </script>
 </body>
 </html>
