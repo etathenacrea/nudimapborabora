@@ -77,6 +77,9 @@
   .share .si{flex:1;min-width:230px}
   .share .url{font-size:13.5px;background:#e8f5f6;border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:10px 0;word-break:break-all;color:var(--sea-deep)}
   .credit{font-size:12.5px;color:var(--muted);margin-top:22px;text-align:center}
+  .partner{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-top:16px;display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
+  .partner img{width:300px;max-width:80%;height:auto}
+  .partner p{margin:0;font-size:13.5px;color:var(--muted);max-width:300px;line-height:1.5}
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
   .stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px 18px}
   .stat .n{font-size:32px;font-weight:700;letter-spacing:-.5px}
@@ -248,6 +251,10 @@
         <a class="btn sm" href="assets/qr-nudimapborabora.png" download style="text-decoration:none;display:inline-flex;align-items:center;gap:6px"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg> <span data-i18n="Télécharger le QR à imprimer">Télécharger le QR à imprimer</span></a>
       </div>
     </div>
+    <div class="partner">
+      <a href="https://www.criobe.pf" target="_blank" rel="noopener" aria-label="CRIOBE"><img src="assets/criobe.png" alt="CRIOBE" onerror="this.style.display='none'"></a>
+      <p data-i18n="Nous remercions le CRIOBE pour sa participation à ce projet.">Nous remercions le CRIOBE pour sa participation à ce projet.</p>
+    </div>
     <p class="credit" data-i18n="Photos et contenu d'identification : Justine Certain · Dive N' Smile Bora Bora">Photos et contenu d'identification : Justine Certain · Dive N' Smile Bora Bora</p>
   </section>
 
@@ -339,7 +346,7 @@ const EN = {
   "Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie du lagon de Bora Bora.":"Their presence is an indicator of reef health. Tracking them year after year means monitoring the life of the Bora Bora lagoon.",
   "Comment participer ?":"How to take part",
   "Tu plonges, tu photographies, tu déposes : photo + lieu + date + profondeur. Nos experts identifient et valident, et ta rencontre rejoint la carte.":"You dive, you photograph, you submit: photo + place + date + depth. Our experts identify and validate, and your sighting joins the map.",
-  "Partage l'observatoire":"Share the observatory",
+  "Partage l'observatoire":"Share the observatory","Nous remercions le CRIOBE pour sa participation à ce projet.":"We thank CRIOBE for taking part in this project.",
   "Scanne ou distribue ce QR code pour ouvrir NudiMapBoraBora sur n'importe quel téléphone.":"Scan or share this QR code to open NudiMapBoraBora on any phone.",
   "Télécharger le QR à imprimer":"Download the QR code to print",
   "Photos et contenu d'identification : Justine Certain · Dive N' Smile Bora Bora":"Photos and identification content: Justine Certain · Dive N' Smile Bora Bora",
