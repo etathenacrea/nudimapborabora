@@ -264,6 +264,7 @@
     <p class="lead" data-i18n="Chaque épingle est une rencontre dans le lagon.">Chaque épingle est une rencontre dans le lagon.</p>
     <div class="stats" id="stats"></div>
     <div class="filters">
+      <label><span data-i18n="Île">Île</span><select id="f-island"><option value="all" data-i18n="Toutes les îles">Toutes les îles</option></select></label>
       <label><span data-i18n="Espèce">Espèce</span><select id="f-species"></select></label>
       <label><span data-i18n="Année">Année</span><select id="f-year"></select></label>
       <label><span data-i18n="Statut">Statut</span><select id="f-status">
@@ -397,7 +398,7 @@ const EN = {
   "Validation":"Validation","Bibliothèque":"Library","changer d'expert":"switch expert",
   "File d'attente":"Queue","Rien à valider dans la file.":"Nothing to validate.","Aucune pour le moment.":"None yet.",
   "Site ?":"Site ?","prof. n.c.":"depth n/a","proposé :":"suggested:","Espèce inconnue (à identifier)":"Unknown species (to identify)",
-  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
+  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Île":"Island","Toutes les îles":"All islands","La carte ci-dessous se centrera sur l'île choisie.":"The map below will center on the chosen island.","Petit mot au déposant (encouragement) 🎉":"A note to the depositor (encouragement) 🎉","Bravo, il est magnifique !":"Well done — it's gorgeous!","Super rare, magique !":"Super rare — magical!","À publier sur nos réseaux, bravo !":"One for our socials — bravo!","Un mot de nos experts :":"A word from our experts:","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
   "— choisir l'espèce —":"— choose the species —","Autre / nouvelle identification…":"Other / new identification…",
   "Nom scientifique *":"Scientific name *","Famille":"Family","Rareté":"Rarity","C'est un juvénile":"It's a juvenile",
   "Avis entre experts (ex. à confirmer par Alexandre ?)":"Note between experts (e.g. to be confirmed by Alexandre?)",
@@ -546,6 +547,14 @@ const DEFAULT_SPECIES=[
 ].map(s=>({...s,classification:s.species||"",family:s.family||"",commonName:s.commonName||"",dayNight:s.dayNight||"",photo:"assets/species/"+s.id+".jpg"}));
 
 const SITE_NAMES=["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Pointe Tahi (Feufeu)","Tapu","Toopua","Toopua Iti","Tupitipiti"];
+// Îles de la Polynésie française (on en ajoutera au fur et à mesure)
+const ISLANDS=[
+  {name:"Bora Bora", c:[-16.5004,-151.7415], z:12.5},
+  {name:"Moorea",    c:[-17.5350,-149.8330], z:11.5},
+  {name:"Tahiti",    c:[-17.6700,-149.4200], z:10.5},
+];
+const islandBy=n=>ISLANDS.find(i=>i.name===n);
+const POLY_BOUNDS=[[-16.35,-152.05],[-17.95,-149.05]]; // vue « toutes les îles » (Société)
 // Classifications (familles) extraites du répertoire illustré de Justine — à compléter par elle.
 const CLASSIF_LIST=["Nudibranche","Doridacé","Éolide","Sacoglosse","Lièvre de mer","Ver plat","Bulle"];
 const FAMILY_LIST=["Abronicidae","Acteonidae","Aeolidiidae","Aglajidae","Aplustridae","Aplysiidae","Babakinidae","Bullidae","Bullinidae","Caliphyllidae","Chromodorididae","Diaphanidae","Dotidae","Embletoniidae","Eubranchidae","Facelinidae","Fionidae","Flabellinidae","Gastropteridae","Gymnodorididae","Haminoeidae","Hermaeidae","Juliidae","Limapontiidae","Mnestiidae","Myrrhinidae","Oxynoidae","Phyllidiidae","Plakobranchidae","Pleurobranchidae","Pleurolidiidae","Pseudocerotidae","Pteropoda","Runcinidae","Samlidae","Scyllaeidae","Thetididae","Trinchesiidae","Tritoniidae","Tylodinidae","Umbraculidae","Unidentidae","Volvatellidae"];
@@ -573,8 +582,16 @@ function mineSet(){ try{ return new Set(JSON.parse(localStorage.getItem("nudimap
 function mineHas(id){ return mineSet().has(id); }
 function markMine(id){ const s=mineSet(); s.add(id); localStorage.setItem("nudimap_mine", JSON.stringify([...s])); }
 // Observations : base partagée
-function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, outcomeSeen:seenHas(r.id) }; }
-async function loadObservations(){ try{ const cols=adminUnlocked?"*":"id,species_id,proposed_name,photos,env,island,site,lat,lng,obs_date,obs_time,depth,note,by_name,status,juvenile,expert_note,validated_by,reason,outcome,outcome_at,created_at"; const {data,error}=await sb.from("observations").select(cols).order("created_at",{ascending:true}); if(error){ console.error("loadObservations",error); return; } state.observations=(data||[]).map(obsFromRow); }catch(e){ console.error(e); } }
+function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", expertMessage:r.expert_message||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, outcomeSeen:seenHas(r.id) }; }
+async function loadObservations(){ try{
+    const cols=adminUnlocked?"*":"id,species_id,proposed_name,photos,env,island,site,lat,lng,obs_date,obs_time,depth,note,by_name,status,juvenile,expert_note,expert_message,validated_by,reason,outcome,outcome_at,created_at";
+    let {data,error}=await sb.from("observations").select(cols).order("created_at",{ascending:true});
+    if(error && /expert_message/.test(error.message||"")){ // colonne pas encore créée -> on réessaie sans
+      ({data,error}=await sb.from("observations").select(cols.replace(",expert_message","")).order("created_at",{ascending:true}));
+    }
+    if(error){ console.error("loadObservations",error); return; }
+    state.observations=(data||[]).map(obsFromRow);
+  }catch(e){ console.error(e); } }
 function spFromRow(r){ return { id:r.id, sci:r.sci, commonName:r.common_name||"", classification:r.classification||"", family:r.family||"", dayNight:r.day_night||"", rarity:r.rarity||0, size:r.size||"", d:Array.isArray(r.description)?r.description:[], note:r.note||"", photo:r.photo||"" }; }
 async function loadSpecies(){ try{ const {data,error}=await sb.from("species").select("*").order("sci"); if(error){ console.error("loadSpecies",error); return; } if(data&&data.length) state.species=data.map(spFromRow); }catch(e){ console.error(e); } }
 async function uploadPhotos(dataUrls){ const out=[]; for(let i=0;i<dataUrls.length;i++){ const blob=await (await fetch(dataUrls[i])).blob(); const path="obs/"+Date.now()+"-"+i+"-"+Math.random().toString(36).slice(2,8)+".jpg"; const {error}=await sb.storage.from("photos").upload(path, blob, {contentType:blob.type||"image/jpeg", upsert:false}); if(error) throw error; out.push(sb.storage.from("photos").getPublicUrl(path).data.publicUrl); } return out; }
@@ -624,7 +641,8 @@ function openNotifications(){
   const rows=list.length?list.map(o=>{ const tx=taxoOf(o); const ok=o.outcome==="validated";
     return `<div class="notif"><div class="ic" style="color:${ok?'var(--green)':'var(--sea)'}">${ok?icon('sparkles'):icon('search')}</div><div>
       <div class="nt">${ok?t("Votre identification a été validée par nos experts, félicitations !"):t("Votre demande d'identification n'a pas pu être validée par nos experts.")}</div>
-      <div class="ns">${esc(tx.sci)}${o.juvenile?" ("+t("juvénile")+")":""} · ${esc(o.site||t("site ?"))} · ${frDate(o.date)}${ok&&o.validatedBy?` · ${t("validée par")} ${esc(o.validatedBy)}`:""}${!ok&&o.reason?` · ${t("motif :")} ${esc(o.reason)}`:""}</div>
+      <div class="ns">${esc(tx.sci)}${o.juvenile?" ("+t("juvénile")+")":""} · ${esc(o.island?o.island+" · ":"")}${esc(o.site||t("site ?"))} · ${frDate(o.date)}${ok&&o.validatedBy?` · ${t("validée par")} ${esc(o.validatedBy)}`:""}${!ok&&o.reason?` · ${t("motif :")} ${esc(o.reason)}`:""}</div>
+      ${o.expertMessage?`<div style="margin-top:7px;padding:9px 12px;background:#eef9f4;border:1px solid #cfe9dd;border-radius:9px;color:#0a6f5e;font-size:13.5px">${icon('sparkles')} <b>${t("Un mot de nos experts :")}</b> « ${esc(o.expertMessage)} »${o.validatedBy?` — <i>${esc(o.validatedBy)}</i>`:""}</div>`:""}
     </div></div>`; }).join("") : `<div class="empty">${t("Aucune notification pour l'instant.")}</div>`;
   document.getElementById("notif-content").innerHTML=`<div class="mb">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2>${t("Mes notifications")}</h2><button class="btn ghost sm" onclick="closeNotif()">${t("Fermer")}</button></div>
@@ -640,7 +658,7 @@ document.getElementById("notif-modal").addEventListener("click",e=>{ if(e.target
 let map, markersLayer;
 function ensureMap(){
   if(map) return;
-  map=L.map("map",{scrollWheelZoom:true}).setView([-16.5004,-151.7415],13);
+  map=L.map("map",{scrollWheelZoom:true}).setView([-17.05,-150.57],7);
   L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {maxZoom:19,attribution:"Imagerie © Esri, Maxar, Earthstar Geographics"}).addTo(map);
   markersLayer=L.layerGroup().addTo(map);
@@ -652,15 +670,21 @@ function fillFilters(){
   fs.innerHTML='<option value="all">'+t("Toutes les espèces")+'</option>'+ids.map(id=>`<option value="${id}">${esc(speciesById(id)?.sci||id)}</option>`).join("");
   const ys=[...new Set(state.observations.map(o=>o.date.slice(0,4)))].sort().reverse();
   fy.innerHTML='<option value="all">'+t("Toutes les années")+'</option>'+ys.map(y=>`<option value="${y}">${y}</option>`).join("");
+  const fi=document.getElementById("f-island"), curIsl=fi.value||"all";
+  fi.innerHTML='<option value="all">'+t("Toutes les îles")+'</option>'+ISLANDS.map(i=>`<option value="${esc(i.name)}">${esc(i.name)}</option>`).join("");
+  fi.value=curIsl;
   ["f-species","f-year","f-status"].forEach(id=>document.getElementById(id).onchange=renderMarkers);
+  fi.onchange=onIslandFilter;
 }
+function onIslandFilter(){ if(map){ const v=val("f-island"); if(v==="all") map.fitBounds(POLY_BOUNDS,{padding:[20,20]}); else { const isl=islandBy(v); if(isl) map.setView(isl.c,isl.z); } } renderMarkers(); }
 function pinIcon(color){ return L.divIcon({className:"map-pin",html:`<span style="--c:${color}"></span>`,iconSize:[18,18],iconAnchor:[9,9],popupAnchor:[0,-9]}); }
 function renderMarkers(){
   if(!markersLayer) return;
   markersLayer.clearLayers();
-  const fs=val("f-species"),fy=val("f-year"),fst=val("f-status");
+  const fs=val("f-species"),fy=val("f-year"),fst=val("f-status"),fisl=val("f-island");
   let shown=0;
   state.observations.filter(o=>o.status!=="rejected").forEach(o=>{
+    if(fisl!=="all"&&(o.island||"")!==fisl) return;
     if(fs!=="all"&&o.sp!==fs) return;
     if(fy!=="all"&&o.date.slice(0,4)!==fy) return;
     if(fst!=="all"&&o.status!==fst) return;
@@ -688,7 +712,7 @@ function popupHTML(o){
     ${st!=="validated" && o.proposedName && mineHas(o.id) ? `<div class="meta" style="color:var(--sea-deep)">${icon('sprout')} ${t('Ta proposition :')} <i>${esc(o.proposedName)}</i> — ${t('en attente de validation')}</div>` : ""}
     ${tx?`<div class="meta">${tx}</div>`:""}
     <div class="meta">
-      <b>${esc(o.site||t("Site non précisé"))}</b>${o.env?` · ${esc(t(o.env))}`:""}<br>
+      ${o.island?`<b>${esc(o.island)}</b> · `:""}${esc(o.site||t("Site non précisé"))}${o.env?` · ${esc(t(o.env))}`:""}<br>
       ${icon('calendar')} ${frDate(o.date)} · ${icon('clock')} ${o.time||"—"}<br>
       ${icon('depth')} ${o.depth?o.depth+" m":t("profondeur n.c.")} · ${icon('user')} ${esc(o.by||t("anonyme"))}
       ${st==="validated"&&o.validatedBy?`<br>${icon('check')} ${t('validée par')} ${esc(o.validatedBy)}`:""}
@@ -774,6 +798,9 @@ function renderProposer(){
       <div class="field"><label>${t("Environnement")}</label>
         <select id="p-env"><option value="">${t("— optionnel —")}</option>${ENV_OPTS.map(e=>`<option value="${esc(e)}">${esc(t(e))}</option>`).join("")}</select>
         <span class="hint">${t("Sable, éponges, coraux… (lié à l'alimentation / au comportement).")}</span></div>
+      <div class="field"><label>${t("Île")} <span class="req">*</span></label>
+        <select id="p-island" onchange="onIslandChange()">${ISLANDS.map(i=>`<option value="${esc(i.name)}" ${i.name==="Bora Bora"?"selected":""}>${esc(i.name)}</option>`).join("")}</select>
+        <span class="hint">${t("La carte ci-dessous se centrera sur l'île choisie.")}</span></div>
       <div class="field"><label>${t("Site / lieu")} <span class="req">*</span></label>
         <select id="p-site" onchange="onSiteChange()"><option value="">${t("— choisis un site —")}</option>
         ${SITE_NAMES.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("")}
@@ -794,7 +821,8 @@ function renderProposer(){
   </div>`;
   pickLatLng=null; pendingPhotos=[]; pickMarker=null; if(pickMap){ try{pickMap.remove();}catch(e){} pickMap=null; }
   setTimeout(()=>{
-    pickMap=L.map("pick-map").setView([-16.5004,-151.7415],12.5);
+    const isl0=islandBy(val("p-island"))||ISLANDS[0];
+    pickMap=L.map("pick-map").setView(isl0.c,isl0.z);
     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19}).addTo(pickMap);
     pickMap.on("click",e=>{ pickLatLng=e.latlng;
       if(pickMarker) pickMarker.setLatLng(e.latlng); else pickMarker=L.marker(e.latlng).addTo(pickMap);
@@ -804,6 +832,7 @@ function renderProposer(){
   document.getElementById("p-photo").addEventListener("change",e=>{ const files=[...e.target.files]; files.forEach(f=>resizeToDataURL(f,d=>{ pendingPhotos.push(d); renderPhotoPreview(); })); e.target.value=""; });
 }
 function onSiteChange(){ document.getElementById("p-site-other").style.display = val("p-site")==="__autre"?"block":"none"; }
+function onIslandChange(){ const isl=islandBy(val("p-island")); if(isl && pickMap){ pickMap.setView(isl.c,isl.z); pickLatLng=null; if(pickMarker){ try{pickMap.removeLayer(pickMarker);}catch(e){} pickMarker=null; } const c=document.getElementById("p-coords"); if(c) c.innerHTML=t("Aucune position choisie."); } }
 function onSpeciesChange(){ const show = val("p-species")==="__propose"; document.getElementById("p-propose").style.display = show?"block":"none"; document.getElementById("p-propose-hint").style.display = show?"block":"none"; }
 function signup(){
   const n=val("su-name").trim(), em=val("su-email").trim();
@@ -828,7 +857,7 @@ async function submitObs(){
   try{ urls = await uploadPhotos(pendingPhotos); }
   catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed, please try again.":"Échec de l'envoi des photos, réessaie."); if(btn) btn.disabled=false; return; }
   const row={ species_id:(spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposed_name:proposedName,
-    photos:urls, env:val("p-env"), island:"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
+    photos:urls, env:val("p-env"), island:val("p-island")||"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
     obs_date:date, obs_time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
     by_name:state.user.name, by_email:state.user.email, by_phone:state.user.phone||"", status:"pending" };
   const { data:ins, error } = await sb.from("observations").insert(row).select("id");
@@ -903,7 +932,7 @@ function queueRow(o){
   return `<div class="qrow">
     <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`).join("")}</div>
     <div class="qi">
-      <div class="t">${esc(o.site||t("Site ?"))} · ${o.depth?o.depth+" m":t("prof. n.c.")}${o.env?" · "+esc(t(o.env)):""}</div>
+      <div class="t">${o.island?esc(o.island)+" · ":""}${esc(o.site||t("Site ?"))} · ${o.depth?o.depth+" m":t("prof. n.c.")}${o.env?" · "+esc(t(o.env)):""}</div>
       <div class="s">${icon('calendar')} ${frDate(o.date)} ${o.time||""} · ${icon('user')} ${esc(o.by||t("anonyme"))} · ${t("proposé :")} <i>${esc(guessed)}</i>${o.proposedName&&!o.sp?` <b style="color:var(--sea-deep)">(${t("proposition du déposant")})</b>`:""}${o.note?` · « ${esc(o.note)} »`:""}</div>
       <div class="s" style="margin-top:3px">${o.byEmail?`<a class="contact" href="mailto:${esc(o.byEmail)}">${icon('mail')} ${esc(o.byEmail)}</a>`:""}${o.byPhone?`&nbsp;&nbsp;<a class="contact" href="https://wa.me/${o.byPhone.replace(/[^0-9]/g,'')}" target="_blank" rel="noopener">${icon('phone')} ${esc(o.byPhone)}</a>`:""}</div>
       <div class="assign">
@@ -917,6 +946,8 @@ function queueRow(o){
         </div>
         <label class="chk"><input type="checkbox" id="juv-${o.id}"> ${icon('sprout')} ${t("C'est un juvénile")}</label>
         <input id="ex-note-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Avis entre experts (ex. à confirmer par Alexandre ?)")}" value="${esc(o.expertNote||"")}">
+        <input id="msg-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Petit mot au déposant (encouragement) 🎉")}" value="${esc(o.expertMessage||"")}">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px">${["Bravo, il est magnifique !","Super rare, magique !","À publier sur nos réseaux, bravo !"].map(m=>`<button type="button" onclick="setMsg('${o.id}',this)" style="font-size:12px;padding:4px 11px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--sea-deep);cursor:pointer">${t(m)}</button>`).join("")}</div>
       </div>
     </div>
     <div class="acts">
@@ -927,6 +958,7 @@ function queueRow(o){
   </div>`;
 }
 function onAssignChange(id){ document.getElementById("autre-"+id).classList.toggle("open", val("as-sp-"+id)==="autre"); }
+function setMsg(id,btn){ const el=document.getElementById("msg-"+id); if(el){ el.value=btn.textContent.trim(); } }
 function doneRow(o,rejected){
   const tx=taxoOf(o);
   return `<div class="qrow">
@@ -961,9 +993,10 @@ async function validateObs(id){
     if(!speciesId) return;
   }
   const patch={ species_id:speciesId, juvenile:document.getElementById("juv-"+id)?.checked||false,
-    expert_note:val("ex-note-"+id).trim(), status:"validated", outcome:"validated",
+    expert_note:val("ex-note-"+id).trim(), expert_message:val("msg-"+id).trim(), status:"validated", outcome:"validated",
     outcome_at:new Date().toISOString(), validated_by:adminUser||"", reason:"" };
-  const { data:upd, error } = await sb.from("observations").update(patch).eq("id",id).select();
+  let { data:upd, error } = await sb.from("observations").update(patch).eq("id",id).select();
+  if(error && /expert_message/.test(error.message||"")){ delete patch.expert_message; ({data:upd,error}=await sb.from("observations").update(patch).eq("id",id).select()); }
   if(error || !upd || !upd.length){ console.error("validate",error); toast(t("Validation impossible (connexion expert requise).")); return; }
   await loadSpecies(); await loadObservations();
   renderAdmin(); renderSpecies(); renderWho(); if(map){fillFilters();renderMarkers();}
@@ -973,9 +1006,10 @@ async function rejectObs(id){
   const o=state.observations.find(x=>x.id===id); if(!o) return;
   const r=prompt(LANG==='en'?"Reason for rejection (e.g. not a nudibranch):":"Motif du refus (ex. ce n'est pas un nudibranche) :", LANG==='en'?"off-topic":"hors-sujet");
   if(r===null) return;
-  const patch={ juvenile:document.getElementById("juv-"+id)?.checked||false, expert_note:val("ex-note-"+id).trim(),
+  const patch={ juvenile:document.getElementById("juv-"+id)?.checked||false, expert_note:val("ex-note-"+id).trim(), expert_message:val("msg-"+id).trim(),
     status:"rejected", outcome:"rejected", outcome_at:new Date().toISOString(), validated_by:adminUser||"", reason:r };
-  const { data:upd, error } = await sb.from("observations").update(patch).eq("id",id).select();
+  let { data:upd, error } = await sb.from("observations").update(patch).eq("id",id).select();
+  if(error && /expert_message/.test(error.message||"")){ delete patch.expert_message; ({data:upd,error}=await sb.from("observations").update(patch).eq("id",id).select()); }
   if(error || !upd || !upd.length){ console.error("reject",error); toast(t("Action impossible (connexion expert requise).")); return; }
   await loadObservations(); renderAdmin(); renderWho(); if(map)renderMarkers();
   toast(t("Observation refusée."));
