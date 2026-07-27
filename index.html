@@ -425,7 +425,7 @@ const EN = {
   "Ajouter une espèce":"Add a species","Modifier":"Edit","Supprimer":"Delete",
   "Modifier l'espèce":"Edit species","Annuler":"Cancel","Photo":"Photo","Nom scientifique":"Scientific name","ex. Hypselodoris bullockii":"e.g. Hypselodoris bullockii","ex. Doris de Kunié":"e.g. Bullock's Hypselodoris",
   "Plutôt de jour ou de nuit ?":"Mostly day or night?","— non renseigné —":"— not set —","Plus d'étoiles = plus rare.":"More stars = rarer.","Taille":"Size","ex. 2 à 4 cm":"e.g. 2 to 4 cm",
-  "Description (une ligne = un point)":"Description (one line = one bullet)","Note / anecdote":"Note / fun fact","Le petit plus à savoir…":"The little thing to know…",
+  "Description (une ligne = un point)":"Description (one line = one bullet)","Note / anecdote":"Note / fun fact","Le petit plus à savoir…":"The little thing to know…","Photographe (crédit photo)":"Photographer (photo credit)","ex. Justine, ou le nom du contributeur":"e.g. Justine, or the contributor's name","Affiché sous la fiche : « Photographe : … ». Laisse vide si inconnu.":"Shown under the species card: “Photographer: …”. Leave empty if unknown.",
   "Enregistrer les modifications":"Save changes","Ajouter à la bibliothèque":"Add to the library","Préciser la classification":"Specify the classification",
   // Notifications & toasts
   "Mes notifications":"My notifications","Aucune notification pour l'instant.":"No notifications yet.",
@@ -1109,6 +1109,7 @@ function openSpeciesEditor(id){
       <div class="field"><label>${t("Taille")}</label><input id="ed-size" value="${s?esc(s.size||""):""}" placeholder="${t("ex. 2 à 4 cm")}"></div>
       <div class="field"><label>${t("Description (une ligne = un point)")}</label><textarea id="ed-desc">${s?esc((s.d||[]).join("\n")):""}</textarea></div>
       <div class="field"><label>${t("Note / anecdote")}</label><textarea id="ed-note" placeholder="${t("Le petit plus à savoir…")}">${s?esc(s.note||""):""}</textarea></div>
+      <div class="field"><label>${icon('camera')} ${t("Photographe (crédit photo)")}</label><input id="ed-photographer" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" value="${s?esc(s.foundBy||""):""}" placeholder="${t("ex. Justine, ou le nom du contributeur")}"><span class="hint">${t("Affiché sous la fiche : « Photographe : … ». Laisse vide si inconnu.")}</span></div>
       <div style="position:sticky;bottom:0;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;background:var(--card);padding:13px 0 4px;margin-top:14px;border-top:1px solid var(--line);z-index:2">
         <button class="btn ghost" onclick="closeEditor()">${t("Annuler")}</button>
         <button class="btn" onclick="saveSpecies()">${s?t("Enregistrer les modifications"):t("Ajouter à la bibliothèque")}</button></div>
@@ -1122,7 +1123,7 @@ async function saveSpecies(){
   if(!sci){ toast(t("Le nom scientifique est requis.")); return; }
   const d=val("ed-desc").split("\n").map(x=>x.trim()).filter(Boolean);
   const row={ sci, common_name:val("ed-common").trim(), classification:getClassif("ed-classif"), family:getFamily("ed-family"),
-    day_night:val("ed-daynight"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), description:d, note:val("ed-note").trim() };
+    day_night:val("ed-daynight"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), description:d, note:val("ed-note").trim(), found_by:val("ed-photographer").trim() };
   let photo=editorPhoto||"";
   if(photo.startsWith("data:")){ try{ photo=(await uploadPhotos([photo]))[0]; }catch(e){ console.error(e); toast(t("Envoi de la photo impossible.")); return; } }
   if(editingSpeciesId){
