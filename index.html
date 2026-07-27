@@ -82,6 +82,15 @@
   .partner{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-top:16px;display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
   .partner img{width:300px;max-width:80%;height:auto}
   .partner p{margin:0;font-size:13.5px;color:var(--muted);max-width:300px;line-height:1.5}
+  .rank-list{max-width:600px;margin-top:4px}
+  .rank-row{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 16px;margin-bottom:9px}
+  .rank-row.top{border-color:#ecd9a6;background:linear-gradient(90deg,#fffaef,var(--card) 60%)}
+  .rank-row.me{outline:2px solid var(--sea);outline-offset:1px}
+  .rank-num{width:28px;text-align:center;font-weight:700;color:var(--muted);font-size:16px;flex:none}
+  .rank-medal{width:28px;text-align:center;font-size:23px;flex:none;line-height:1}
+  .rank-name{flex:1;font-weight:600;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rank-you{color:var(--sea-deep);font-weight:700;font-size:12px}
+  .rank-count{font-size:13.5px;color:var(--muted);flex:none;text-align:right;white-space:nowrap}
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
   .stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px 18px}
   .stat .n{font-size:32px;font-weight:700;letter-spacing:-.5px}
@@ -212,6 +221,7 @@
       <button data-view="carte"><span data-k="Carte">Carte</span></button>
       <button data-view="ident"><span data-k="Identification">Identification</span></button>
       <button data-view="proposer"><span data-k="Proposer">Proposer</span></button>
+      <button data-view="classement"><span data-k="Classement">Classement</span></button>
       <button data-view="admin"><span data-k="Espace admin">Espace admin</span></button>
     </nav>
     <div id="langbtn" class="langbtn" aria-label="Langue"></div>
@@ -302,6 +312,13 @@
     <h2 data-i18n="Proposer une observation">Proposer une observation</h2>
     <p class="lead" data-i18n="Partage ta rencontre. Elle apparaîtra en orange sur la carte, puis passera en vert une fois validée par les experts — tu recevras une notification.">Partage ta rencontre. Elle apparaîtra en orange sur la carte, puis passera en vert une fois validée par les experts — tu recevras une notification.</p>
     <div id="proposer-body"></div>
+  </section>
+
+  <!-- ============ CLASSEMENT ============ -->
+  <section class="view" id="view-ranking">
+    <h2 data-i18n="Classement des contributeurs">Classement des contributeurs</h2>
+    <p class="lead" data-i18n="Plus tu participes, plus tu montes ! Merci à toutes celles et ceux qui font vivre la carte.">Plus tu participes, plus tu montes ! Merci à toutes celles et ceux qui font vivre la carte.</p>
+    <div id="ranking-body"></div>
   </section>
 
   <!-- ============ ADMIN ============ -->
@@ -398,7 +415,7 @@ const EN = {
   "Validation":"Validation","Bibliothèque":"Library","changer d'expert":"switch expert",
   "File d'attente":"Queue","Rien à valider dans la file.":"Nothing to validate.","Aucune pour le moment.":"None yet.",
   "Site ?":"Site ?","prof. n.c.":"depth n/a","proposé :":"suggested:","Espèce inconnue (à identifier)":"Unknown species (to identify)",
-  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Île":"Island","Toutes les îles":"All islands","La carte ci-dessous se centrera sur l'île choisie.":"The map below will center on the chosen island.","Petit mot au déposant (encouragement) 🎉":"A note to the depositor (encouragement) 🎉","Bravo, il est magnifique !":"Well done — it's gorgeous!","Super rare, magique !":"Super rare — magical!","À publier sur nos réseaux, bravo !":"One for our socials — bravo!","Un mot de nos experts :":"A word from our experts:","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
+  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Île":"Island","Toutes les îles":"All islands","La carte ci-dessous se centrera sur l'île choisie.":"The map below will center on the chosen island.","Petit mot au déposant (encouragement) 🎉":"A note to the depositor (encouragement) 🎉","Bravo, il est magnifique !":"Well done — it's gorgeous!","Super rare, magique !":"Super rare — magical!","À publier sur nos réseaux, bravo !":"One for our socials — bravo!","Un mot de nos experts :":"A word from our experts:","Classement":"Leaderboard","Classement des contributeurs":"Contributor leaderboard","Plus tu participes, plus tu montes ! Merci à toutes celles et ceux qui font vivre la carte.":"The more you take part, the higher you climb! Thanks to everyone bringing the map to life.","contributeur·rices":"contributors","observations partagées":"shared observations","Personne n'a encore contribué — sois le premier à déposer une observation !":"No contributions yet — be the first to submit an observation!","(toi)":"(you)","obs.":"obs.","validées":"validated","Le classement compte tes observations partagées (les refusées ne comptent pas). Dépose, et grimpe !":"The ranking counts your shared observations (rejected ones don't count). Submit and climb!","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
   "— choisir l'espèce —":"— choose the species —","Autre / nouvelle identification…":"Other / new identification…",
   "Nom scientifique *":"Scientific name *","Famille":"Family","Rareté":"Rarity","C'est un juvénile":"It's a juvenile",
   "Avis entre experts (ex. à confirmer par Alexandre ?)":"Note between experts (e.g. to be confirmed by Alexandre?)",
@@ -491,10 +508,12 @@ const ICONS={
   moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
   image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4-4-9 9"/>',
   mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/>',
-  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 17l-1 4a16 16 0 0 1-15-15z"/>'
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 17l-1 4a16 16 0 0 1-15-15z"/>',
+  trophy:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.6V17c0 .5-.5 1-1 1.2C7.8 18.7 7 20.2 7 22"/><path d="M14 14.6V17c0 .5.5 1 1 1.2 1.2.5 2 2 2 4.8"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+  instagram:'<rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/>'
 };
 function icon(n,sz){ const s=sz?`width:${sz}px;height:${sz}px;`:""; return `<svg class="icn" style="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||""}</svg>`; }
-const NAV_ICON={home:"waves",carte:"map",ident:"search",proposer:"camera",admin:"lock"};
+const NAV_ICON={home:"waves",carte:"map",ident:"search",proposer:"camera",classement:"trophy",admin:"lock"};
 
 // ---------- Espèces de référence (conférence J. Certain, Dive N' Smile) ----------
 // family + species(type) + rarity pré-remplis au mieux : à vérifier/corriger par les experts.
@@ -613,7 +632,7 @@ function getStar(id){ const el=document.getElementById(id); return el?Number(el.
 function getCSS(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
 // ---------- Navigation ----------
-const views={home:"view-home",carte:"view-carte",ident:"view-ident",proposer:"view-proposer",admin:"view-admin"};
+const views={home:"view-home",carte:"view-carte",ident:"view-ident",proposer:"view-proposer",classement:"view-ranking",admin:"view-admin"};
 document.getElementById("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) goTo(b.dataset.view); });
 function goTo(v){
   document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
@@ -624,6 +643,28 @@ function goTo(v){
   if(v==="proposer") renderProposer();
   if(v==="admin") renderAdmin();
   if(v==="ident") renderSpecies();
+  if(v==="classement") renderRanking();
+}
+function renderRanking(){
+  const nonRej=state.observations.filter(o=>o.status!=="rejected");
+  const by={};
+  nonRej.forEach(o=>{ const n=(o.by||"").trim()||t("anonyme"); (by[n]=by[n]||{name:n,total:0,valid:0}); by[n].total++; if(o.status==="validated") by[n].valid++; });
+  const list=Object.values(by).sort((a,b)=> b.total-a.total || b.valid-a.valid || a.name.localeCompare(b.name,"fr"));
+  const me=((state.user&&state.user.name)||"").trim().toLowerCase();
+  const medal=["🥇","🥈","🥉"];
+  const bd=document.getElementById("ranking-body");
+  if(!list.length){ bd.innerHTML=`<div class="empty" style="margin-top:16px">${icon('trophy')} ${t("Personne n'a encore contribué — sois le premier à déposer une observation !")}</div>`; return; }
+  bd.innerHTML=`
+    <div class="stats" style="max-width:520px">
+      <div class="stat"><div class="n">${list.length}</div><div class="l">${t("contributeur·rices")}</div></div>
+      <div class="stat"><div class="n">${nonRej.length}</div><div class="l">${t("observations partagées")}</div></div>
+    </div>
+    <div class="rank-list">${list.map((p,i)=>{
+      const isMe = me && p.name.toLowerCase()===me;
+      const pos = i<3 ? `<span class="rank-medal">${medal[i]}</span>` : `<span class="rank-num">${i+1}</span>`;
+      return `<div class="rank-row${i<3?' top':''}${isMe?' me':''}">${pos}<div class="rank-name">${esc(p.name)}${isMe?` <span class="rank-you">${t("(toi)")}</span>`:""}</div><div class="rank-count"><b>${p.total}</b> ${t("obs.")}${p.valid?` · <span style="color:var(--green);font-weight:600">${p.valid} ${t("validées")}</span>`:""}</div></div>`;
+    }).join("")}</div>
+    <p class="hint" style="margin-top:14px">${icon('info')} ${t("Le classement compte tes observations partagées (les refusées ne comptent pas). Dépose, et grimpe !")}</p>`;
 }
 
 // ---------- WHO + notifications ----------
