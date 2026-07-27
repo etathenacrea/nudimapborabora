@@ -939,7 +939,8 @@ const EXPERT_EMAILS={   // email (minuscule) -> nom affiché, complété au fur 
   "pro.justinecertain@gmail.com":"Justine",
   "alexandre.tayale@gmail.com":"Alexandre",
   "pauline.bosserelle@gmail.com":"Pauline Bosserelle",
-  "vincentdondon@orange.fr":"Vincent"
+  "vincentdondon@orange.fr":"Vincent",
+  "alysee.drb@gmail.com":"Alizée"
 };
 function expertNameOf(u){ if(!u) return ""; const m=u.user_metadata||{}; const em=(u.email||"").toLowerCase();
   return m.name || m.full_name || EXPERT_EMAILS[em] || (em.split("@")[0]||"Expert"); }
