@@ -435,7 +435,7 @@ const EN = {
   "Indique ton nom et ton email.":"Please enter your name and email.","Le nom scientifique est requis.":"Scientific name is required.",
   "Ajoute une photo pour la nouvelle espèce.":"Add a photo for the new species.","Fiche mise à jour.":"Entry updated.","Espèce ajoutée à la bibliothèque.":"Species added to the library.","Espèce supprimée.":"Species deleted.",
   "Avis enregistré.":"Note saved.","Merci ! Ton observation est en attente de validation.":"Thank you! Your observation is awaiting validation.",
-  "Choisis l'espèce, ou « Autre » pour en créer une.":"Choose the species, or \"Other\" to create one.","Indique au moins le nom scientifique.":"Enter at least the scientific name.",
+  "Choisis l'espèce, ou « Autre » pour en créer une.":"Choose the species, or \"Other\" to create one.","Indique au moins le nom scientifique.":"Enter at least the scientific name.","Cette espèce est déjà dans la bibliothèque :":"This species is already in the library:","Une espèce très proche existe déjà :":"A very similar species already exists:","Choisir cette fiche":"Choose this entry","(évite un doublon)":"(avoids a duplicate)",
   "Observation refusée.":"Observation rejected.","Pose l'épingle sur la carte":"Drop the pin on the map",
   "Tu as":"You have","réponse(s) à tes observations.":"reply(ies) to your observations.",
   "OBSERVATOIRE PARTICIPATIF DES NUDIBRANCHES":"PARTICIPATORY NUDIBRANCH OBSERVATORY",
@@ -988,7 +988,8 @@ function queueRow(o){
       <div class="assign">
         <select id="as-sp-${o.id}" onchange="onAssignChange('${o.id}')"><option value="">${t("— choisir l'espèce —")}</option>${speciesSorted().map(s=>`<option value="${s.id}" ${s.id===o.sp?"selected":""}>${esc(s.sci)}${s.classification?" — "+esc(s.classification):""}</option>`).join("")}<option value="autre">${t("Autre / nouvelle identification…")}</option></select>
         <div class="autre-box" id="autre-${o.id}">
-          <input class="full" id="au-sci-${o.id}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="${t("Nom scientifique *")}" value="${esc(o.proposedName||"")}">
+          <input class="full" id="au-sci-${o.id}" oninput="onAuSciInput('${o.id}')" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="${t("Nom scientifique *")}" value="${esc(o.proposedName||"")}">
+          <div class="full" id="dupwarn-${o.id}" style="display:none;font-size:12.5px;line-height:1.55;background:#fff4e5;border:1px solid #f0c17a;color:#8a5300;border-radius:9px;padding:8px 11px"></div>
           ${classifSelect("au-classif-"+o.id, "")}
           ${familySelect("au-family-"+o.id, "")}
           <input class="full" id="au-common-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Nom commun")}">
@@ -1007,7 +1008,14 @@ function queueRow(o){
     </div>
   </div>`;
 }
-function onAssignChange(id){ document.getElementById("autre-"+id).classList.toggle("open", val("as-sp-"+id)==="autre"); }
+function onAssignChange(id){ const open=val("as-sp-"+id)==="autre"; document.getElementById("autre-"+id).classList.toggle("open", open); if(open) onAuSciInput(id); }
+// ---- Garde-fou anti-doublon : prévient si le nom scientifique tapé existe déjà ----
+function normSci(s){ return (s||"").toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,' ').trim(); }
+function isPlaceholderName(n){ if(!n) return true; if(n.indexOf(' ')<0) return true; if(/\bsp\d*\b/.test(n)) return true; if(/\bcf\b/.test(n)) return true; return false; }
+function leven(a,b){ const m=a.length,n=b.length; if(!m)return n; if(!n)return m; let prev=Array.from({length:n+1},(_,j)=>j),cur=new Array(n+1); for(let i=1;i<=m;i++){ cur[0]=i; for(let j=1;j<=n;j++){ cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1)); } [prev,cur]=[cur,prev]; } return prev[n]; }
+function findDupSpecies(sci){ const n=normSci(sci); if(n.length<4) return null; let near=null,nearD=99; for(const s of state.species){ const m=normSci(s.sci); if(!m) continue; if(m===n) return {sp:s,exact:true}; if(!isPlaceholderName(n)&&!isPlaceholderName(m)){ const d=leven(n,m); if(d<nearD){ nearD=d; near=s; } } } return (near&&nearD<=2)?{sp:near,exact:false}:null; }
+function onAuSciInput(id){ const box=document.getElementById("dupwarn-"+id); if(!box) return; const hit=findDupSpecies(val("au-sci-"+id).trim()); if(!hit){ box.style.display="none"; box.innerHTML=""; return; } const s=hit.sp; const lead=hit.exact?t("Cette espèce est déjà dans la bibliothèque :"):t("Une espèce très proche existe déjà :"); box.style.display="block"; box.innerHTML=`⚠️ ${lead} <b>${esc(s.sci)}</b>${s.commonName?" — "+esc(s.commonName):""}. <button type="button" onclick="useExisting('${id}','${s.id}')" style="margin-left:4px;font-size:12px;font-weight:600;padding:4px 11px;border:1px solid #e0a94a;border-radius:20px;background:#fff;color:#8a5300;cursor:pointer">${t("Choisir cette fiche")}</button> <span style="opacity:.8">${t("(évite un doublon)")}</span>`; }
+function useExisting(id,spId){ const sel=document.getElementById("as-sp-"+id); if(sel){ sel.value=spId; onAssignChange(id); } const box=document.getElementById("dupwarn-"+id); if(box){ box.style.display="none"; box.innerHTML=""; } }
 function setMsg(id,btn){ const el=document.getElementById("msg-"+id); if(el){ el.value=btn.textContent.trim(); } }
 function doneRow(o,rejected){
   const tx=taxoOf(o);
@@ -1028,7 +1036,7 @@ async function insertSpecies(row){
   return { error };
 }
 async function ensureSpeciesFrom(sci,commonName,classification,family,rarity,photo,foundBy,validatedBy){
-  const ex=state.species.find(s=>s.sci.toLowerCase()===sci.toLowerCase());
+  const n=normSci(sci); const ex=state.species.find(s=>normSci(s.sci)===n);
   if(ex) return ex.id;
   let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
   let ph=photo||"";
