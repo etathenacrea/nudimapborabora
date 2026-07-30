@@ -1,4 +1,4 @@
-# NudiMap Polynésie française 🐚
+# NudiMap - Polynésie Française 🐚
 
 Observatoire participatif des nudibranches du lagon de Bora Bora.
 Contenu d'identification issu de la conférence de **Justine Certain** (Dive N' Smile Bora Bora).
