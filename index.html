@@ -97,7 +97,7 @@
   .stat .l{font-size:13.5px;color:var(--muted);font-weight:500}
   .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
   .filters label{font-size:12px;color:var(--muted);font-weight:600;display:flex;flex-direction:column;gap:4px}
-  select,input,textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 13px;outline:none}
+  select,input,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 13px;outline:none}
   select:focus,input:focus,textarea:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(39,211,207,.22)}
   ::placeholder{color:var(--muted);opacity:.7}
   .legend{display:flex;gap:16px;align-items:center;font-size:13px;color:var(--muted);margin-left:auto;flex-wrap:wrap}
@@ -135,6 +135,8 @@
   .spcard .obs{font-size:13px;color:var(--muted);margin-top:9px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 1px 3px rgba(20,49,56,.05)}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-grid>*{min-width:0}            /* laisse les colonnes rétrécir (évite le débordement du champ fichier sur mobile) */
+  #p-photo,#ed-photo{max-width:100%}
   .field{display:flex;flex-direction:column;gap:6px}
   .field.full{grid-column:1/-1}
   .field label{font-size:14px;font-weight:600}
@@ -164,7 +166,7 @@
   .qrow .qi .t{font-weight:600;font-size:14.5px}
   .qrow .qi .s{font-size:12.5px;color:var(--muted);margin-top:2px}
   .assign{display:grid;grid-template-columns:1fr;gap:8px;width:100%;margin-top:8px}
-  .assign input,.assign select{font-size:13px;padding:7px 9px;width:100%}
+  .assign input,.assign select{font-size:16px;padding:8px 10px;width:100%}
   .autre-box{display:none;grid-template-columns:1fr 1fr;gap:8px;padding:10px;border:1px dashed var(--sea);border-radius:10px;background:rgba(39,211,207,.07)}
   .autre-box.open{display:grid}
   .autre-box .full{grid-column:1/-1}
@@ -878,7 +880,7 @@ function renderProposer(){
       document.getElementById("p-coords").innerHTML=`${icon('pin')} ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`; });
     pickMap.invalidateSize();
   },60);
-  document.getElementById("p-photo").addEventListener("change",e=>{ const files=[...e.target.files]; files.forEach(f=>resizeToDataURL(f,d=>{ pendingPhotos.push(d); renderPhotoPreview(); })); e.target.value=""; });
+  document.getElementById("p-photo").addEventListener("change",async e=>{ const files=[...e.target.files]; e.target.value=""; for(const f of files){ await new Promise(res=>resizeToDataURL(f,d=>{ if(d){ pendingPhotos.push(d); renderPhotoPreview(); } res(); })); } });
 }
 function onSiteChange(){ document.getElementById("p-site-other").style.display = val("p-site")==="__autre"?"block":"none"; }
 function onIslandChange(){ const isl=islandBy(val("p-island")); if(isl && pickMap){ pickMap.setView(isl.c,isl.z); pickLatLng=null; if(pickMarker){ try{pickMap.removeLayer(pickMarker);}catch(e){} pickMarker=null; } const c=document.getElementById("p-coords"); if(c) c.innerHTML=t("Aucune position choisie."); } }
@@ -1165,7 +1167,7 @@ document.addEventListener("click",e=>{ const z=e.target.closest("img.zoomable");
 document.querySelectorAll(".modal-bg").forEach(bg=>bg.addEventListener("click",e=>{ if(e.target===bg) bg.classList.remove("open"); }));
 
 // ---------- utils ----------
-function resizeToDataURL(file,cb){ const r=new FileReader(); r.onload=ev=>{ const img=new Image(); img.onload=()=>{ const max=1200, sc=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext("2d").drawImage(img,0,0,c.width,c.height); cb(c.toDataURL("image/jpeg",0.82)); }; img.src=ev.target.result; }; r.readAsDataURL(file); }
+function resizeToDataURL(file,cb){ const r=new FileReader(); r.onerror=()=>cb(null); r.onload=ev=>{ const img=new Image(); img.onerror=()=>cb(null); img.onload=()=>{ try{ const max=1200, sc=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext("2d").drawImage(img,0,0,c.width,c.height); const out=c.toDataURL("image/jpeg",0.82); c.width=c.height=0; img.src=""; cb(out); }catch(err){ console.error("resize",err); cb(null); } }; img.src=ev.target.result; }; r.readAsDataURL(file); }
 function slugify(s){ return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,""); }
 function val(id){ const el=document.getElementById(id); return el?el.value:""; }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
