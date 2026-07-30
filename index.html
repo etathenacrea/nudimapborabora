@@ -69,13 +69,23 @@
   .hero-in{position:relative;max-width:740px}
   .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:6px 15px;border-radius:30px;margin-bottom:20px}
   .hero-meta{margin-top:24px;font-size:14.5px;color:rgba(255,255,255,.88);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .reef-wrap{margin-top:24px}
+  .reef-label{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.82);display:flex;align-items:center;gap:7px;margin-bottom:4px}
+  .reef-carousel{overflow:hidden;padding:16px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+  .reef-track{display:flex;align-items:center;gap:20px;width:max-content;animation:reef-scroll 48s linear infinite}
+  .reef-carousel:hover .reef-track{animation-play-state:paused}
+  .reef-bub{flex:none;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.72);box-shadow:0 8px 22px rgba(11,49,56,.30),inset 0 2px 8px rgba(255,255,255,.5);background:rgba(255,255,255,.12);animation:reef-bob 4s ease-in-out infinite;will-change:transform}
+  .reef-bub img{width:100%;height:100%;object-fit:cover;display:block}
+  @keyframes reef-scroll{to{transform:translateX(-50%)}}
+  @keyframes reef-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @media(prefers-reduced-motion:reduce){.reef-track{animation:none}.reef-bub{animation:none}.reef-carousel{overflow-x:auto}}
   .intro{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:24px}
   .intro .c{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px}
   .intro .c .em{color:var(--sea);margin-bottom:6px;line-height:1}
   .intro .c h3{font-size:18.5px;margin:8px 0 7px}
   .intro .c p{margin:0;font-size:15px;color:var(--muted)}
   .share{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
-  .share img{width:150px;height:150px;flex:none;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .share img{width:162px;height:162px;flex:none;border:3px solid var(--sea-deep);border-radius:14px;background:#fff;padding:8px;box-shadow:0 5px 16px rgba(10,68,82,.20)}
   .share .si{flex:1;min-width:230px}
   .share .url{font-size:13.5px;background:#e8f5f6;border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:10px 0;word-break:break-all;color:var(--sea-deep)}
   .credit{font-size:12.5px;color:var(--muted);margin-top:22px;text-align:center}
@@ -239,8 +249,8 @@
       <div class="bubbles inhero" aria-hidden="true"></div>
       <div class="hero-in">
         <span class="eyebrow" id="hero-eyebrow"></span>
-        <h2 data-i18n="Les joyaux cachés du récif">Les joyaux cachés du récif</h2>
-        <p data-i18n="Le nudibranche, joyau de la Polynésie française. Photographie, localise, partage : chaque observation compte.">Le nudibranche, joyau de la Polynésie française. Photographie, localise, partage : chaque observation compte.</p>
+        <h2 data-i18n="Les joyaux cachés du récif !">Les joyaux cachés du récif !</h2>
+        <p data-i18n="Le nudibranche (Nudibranchia) est un joyau du Fenua. Toi aussi, photographie, localise et partage tes observations. Māuruuru.">Le nudibranche (Nudibranchia) est un joyau du Fenua. Toi aussi, photographie, localise et partage tes observations. Māuruuru.</p>
         <div class="cta">
           <button data-i18n="Voir la carte" onclick="goTo('carte')">Voir la carte</button>
           <button class="outline" data-i18n="Identifier une photo" onclick="goTo('ident')">Identifier une photo</button>
@@ -248,9 +258,13 @@
         </div>
         <div class="hero-meta" id="hero-meta"></div>
       </div>
+      <div class="reef-wrap" id="reef-wrap" style="display:none">
+        <div class="reef-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;opacity:.9"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.2"/></svg> <span data-i18n="Les dernières trouvailles">Les dernières trouvailles</span></div>
+        <div class="reef-carousel"><div class="reef-track" id="reef-track"></div></div>
+      </div>
     </div>
     <div class="intro">
-      <div class="c"><div class="em" data-icon="rainbow"></div><h3 data-i18n="Qu'est-ce qu'un nudibranche ?">Qu'est-ce qu'un nudibranche ?</h3><p data-i18n="Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique — dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille — et un cousin bien plus lointain, souvent confondu avec eux : le ver plat.">Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique — dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille — et un cousin bien plus lointain, souvent confondu avec eux : le ver plat.</p></div>
+      <div class="c"><div class="em" data-icon="rainbow"></div><h3 data-i18n="Qu'est-ce qu'un nudibranche ?">Qu'est-ce qu'un nudibranche ?</h3><p data-i18n="Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique, dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille, ainsi qu'un cousin bien plus lointain, souvent confondu avec eux : le ver plat.">Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique, dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille, ainsi qu'un cousin bien plus lointain, souvent confondu avec eux : le ver plat.</p></div>
       <div class="c"><div class="em" data-icon="heart"></div><h3 data-i18n="Pourquoi ça compte ?">Pourquoi ça compte ?</h3><p data-i18n="Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie des lagons de Polynésie française.">Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie des lagons de Polynésie française.</p></div>
       <div class="c"><div class="em" data-icon="camera"></div><h3 data-i18n="Comment participer ?">Comment participer ?</h3><p data-i18n="Tu plonges, tu photographies, tu déposes : photo + lieu + date + profondeur. Nos experts identifient et valident, et ta rencontre rejoint la carte.">Tu plonges, tu photographies, tu déposes : photo + lieu + date + profondeur. Nos experts identifient et valident, et ta rencontre rejoint la carte.</p></div>
     </div>
@@ -356,13 +370,13 @@ const EN = {
   "Accueil":"Home","Carte":"Map","Identification":"Identification","Proposer":"Submit","Espace admin":"Admin",
   "Non inscrit·e":"Not registered","se déconnecter":"sign out",
   // Accueil
-  "Science participative · Polynésie française":"Citizen science · French Polynesia",
-  "Les joyaux cachés du récif":"The reef's hidden jewels",
-  "Le nudibranche, joyau de la Polynésie française. Photographie, localise, partage : chaque observation compte.":"The nudibranch — jewel of French Polynesia. Photograph it, locate it, share it: every observation counts.",
+  "Science participative · Polynésie française":"Citizen science · French Polynesia","Les dernières trouvailles":"The latest finds",
+  "Les joyaux cachés du récif !":"The reef's hidden jewels!",
+  "Le nudibranche (Nudibranchia) est un joyau du Fenua. Toi aussi, photographie, localise et partage tes observations. Māuruuru.":"The nudibranch (Nudibranchia) is a jewel of the Fenua. You too can photograph, locate and share your observations. Māuruuru.",
   "Voir la carte":"View the map","Identifier une photo":"Identify a photo","Proposer une observation":"Submit an observation",
   "espèces de référence":"reference species",
   "Qu'est-ce qu'un nudibranche ?":"What is a nudibranch?",
-  "Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique — dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille — et un cousin bien plus lointain, souvent confondu avec eux : le ver plat.":"A shell-less sea slug, often tiny (from a few millimetres to a few centimetres) and spectacularly colourful. Over 5,000 species worldwide, mostly in the Indo-Pacific — including French Polynesia. The library also features a few mollusc cousins (bubble snails, sea hares), some of which do keep a shell — plus a much more distant look-alike often mistaken for them: the flatworm.",
+  "Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique, dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille, ainsi qu'un cousin bien plus lointain, souvent confondu avec eux : le ver plat.":"A shell-less sea slug, often tiny (from a few millimetres to a few centimetres) and spectacularly colourful. Over 5,000 species worldwide, mostly in the Indo-Pacific, including French Polynesia. The library also features a few mollusc cousins (bubble snails, sea hares), some of which do keep a shell, plus a much more distant look-alike often mistaken for them: the flatworm.",
   "Pourquoi ça compte ?":"Why it matters",
   "Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie des lagons de Polynésie française.":"Their presence is an indicator of reef health. Tracking them year after year means monitoring the life of French Polynesia's lagoons.",
   "Comment participer ?":"How to take part",
@@ -605,7 +619,7 @@ function mineSet(){ try{ return new Set(JSON.parse(localStorage.getItem("nudimap
 function mineHas(id){ return mineSet().has(id); }
 function markMine(id){ const s=mineSet(); s.add(id); localStorage.setItem("nudimap_mine", JSON.stringify([...s])); }
 // Observations : base partagée
-function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", expertMessage:r.expert_message||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, outcomeSeen:seenHas(r.id) }; }
+function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", expertMessage:r.expert_message||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, createdAt:r.created_at||"", outcomeSeen:seenHas(r.id) }; }
 async function loadObservations(){ try{
     const cols=adminUnlocked?"*":"id,species_id,proposed_name,photos,env,island,site,lat,lng,obs_date,obs_time,depth,note,by_name,status,juvenile,expert_note,expert_message,validated_by,reason,outcome,outcome_at,created_at";
     let {data,error}=await sb.from("observations").select(cols).order("created_at",{ascending:true});
@@ -648,6 +662,7 @@ function goTo(v){
   if(v==="admin") renderAdmin();
   if(v==="ident") renderSpecies();
   if(v==="classement") renderRanking();
+  if(v==="home") renderReefCarousel();
 }
 function renderRanking(){
   const nonRej=state.observations.filter(o=>o.status!=="rejected");
@@ -1176,6 +1191,25 @@ function todayISO(){ return new Date().toISOString().slice(0,10); }
 function szT(s){ return LANG==="en"?String(s||"").replace(/ à /g," to "):(s||""); }
 let toastT; function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2800); }
 
+// ---------- carrousel de bulles-photos (accueil) ----------
+function renderReefCarousel(){
+  const wrap=document.getElementById("reef-wrap"), track=document.getElementById("reef-track");
+  if(!wrap||!track) return;
+  // les trouvailles = observations validées, les plus récentes d'abord, 1 photo chacune
+  const recent=(state.observations||[])
+    .filter(o=>o.status==="validated" && o.photos && o.photos.length)
+    .sort((a,b)=> String(b.outcomeAt||b.createdAt||"").localeCompare(String(a.outcomeAt||a.createdAt||"")));
+  const seen=new Set(), pics=[];
+  recent.forEach(o=>{ const p=o.photos[0]; if(p&&!seen.has(p)){ seen.add(p); pics.push(p); } });
+  // filet de sécurité si trop peu d'observations : compléter avec des fiches
+  if(pics.length<6) (state.species||[]).forEach(s=>{ if(s.photo&&!seen.has(s.photo)){ seen.add(s.photo); pics.push(s.photo); } });
+  if(pics.length<4){ wrap.style.display="none"; return; }
+  const list=pics.slice(0,12), sizes=[82,102,70,92,76,110,86,74];
+  const bub=(p,i)=>{ const sz=sizes[i%sizes.length]; return `<div class="reef-bub" style="width:${sz}px;height:${sz}px;animation-duration:${(3.4+(i%5)*0.5).toFixed(1)}s;animation-delay:-${((i%7)*0.45).toFixed(2)}s"><img src="${p}" alt="" referrerpolicy="no-referrer"></div>`; };
+  const seq=list.map(bub).join("");
+  track.innerHTML=seq+seq;
+  wrap.style.display="";
+}
 // ---------- init ----------
 document.querySelectorAll("#nav button").forEach(b=>b.insertAdjacentHTML("afterbegin", icon(NAV_ICON[b.dataset.view])+" "));
 document.querySelectorAll(".intro .em[data-icon]").forEach(e=>e.innerHTML=icon(e.dataset.icon,26));
@@ -1183,7 +1217,7 @@ document.querySelectorAll(".bubbles").forEach(box=>{ const n=box.classList.conta
 document.documentElement.lang=LANG;
 applyI18n();
 // Charger les observations partagées, puis rafraîchir l'affichage
-(async ()=>{ await initAuth(); await loadSpecies(); await loadObservations(); const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" "+t("espèces de référence"); renderSpecies(); renderWho(); renderAdmin(); if(map){ fillFilters(); renderMarkers(); } if(unseenCount()>0) toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")); })();
+(async ()=>{ await initAuth(); await loadSpecies(); await loadObservations(); const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" "+t("espèces de référence"); renderSpecies(); renderReefCarousel(); renderWho(); renderAdmin(); if(map){ fillFilters(); renderMarkers(); } if(unseenCount()>0) toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")); })();
 </script>
 </body>
 </html>
