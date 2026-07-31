@@ -432,7 +432,7 @@ const EN = {
   "Site / lieu":"Site / location","— choisis un site —":"— choose a site —","Autre (préciser)…":"Other (specify)…","Écris le lieu (ex. tombant nord…)":"Type the place (e.g. north drop-off…)",
   "Emplacement précis — clique sur la carte pour poser l'épingle":"Exact spot — click the map to drop the pin","Aucune position choisie.":"No position chosen.",
   "Date d'observation":"Observation date","Heure":"Time","Profondeur (m)":"Depth (m)","Environ, ça suffit.":"Roughly is fine.","Commentaire (optionnel)":"Comment (optional)",
-  "comportement, taille…":"behaviour, size…","Envoyer l'observation":"Send the observation","requis pour une observation scientifiquement utile.":"required for a scientifically useful observation.",
+  "comportement, taille…":"behaviour, size…","Envoyer l'observation":"Send the observation","requis pour une observation scientifiquement utile.":"required for a scientifically useful observation.","Tes observations en attente":"Your pending observations","Tu peux les corriger tant qu'un expert ne les a pas validées.":"You can edit them until an expert validates them.","Corriger":"Edit","Correction de ton observation":"Editing your observation","Modifie ce que tu veux, puis enregistre.":"Change anything, then save.","Enregistrer les corrections":"Save changes","Observation corrigée !":"Observation updated!","Correction impossible.":"Cannot edit.","Correction impossible (déjà validée ?).":"Cannot edit (already validated?).","Correction indisponible pour le moment.":"Editing unavailable right now.",
   // Environnement / options
   "Sable":"Sand","Éponges":"Sponges","Coraux":"Corals","Roche":"Rock","Herbier / algues":"Seagrass / algae","Tombant":"Drop-off","Épave / structure":"Wreck / structure","Autre":"Other",
   "Nudibranche":"Nudibranch","Doridacé":"Dorid","Éolide":"Aeolid","Sacoglosse":"Sacoglossan","Lièvre de mer":"Sea hare","Ver plat":"Flatworm","Bulle":"Bubble snail",
@@ -629,6 +629,11 @@ function markSeen(id){ const s=seenSet(); s.add(id); localStorage.setItem("nudim
 function mineSet(){ try{ return new Set(JSON.parse(localStorage.getItem("nudimap_mine"))||[]); }catch(e){ return new Set(); } }
 function mineHas(id){ return mineSet().has(id); }
 function markMine(id){ const s=mineSet(); s.add(id); localStorage.setItem("nudimap_mine", JSON.stringify([...s])); }
+// clés d'édition : permettent au déposant de corriger SON observation en attente (sans compte, secret gardé sur l'appareil)
+function editMap(){ try{ return JSON.parse(localStorage.getItem("nudimap_edit"))||{}; }catch(e){ return {}; } }
+function getEditToken(id){ return editMap()[id]||null; }
+function setEditToken(id,tok){ const m=editMap(); m[id]=tok; localStorage.setItem("nudimap_edit", JSON.stringify(m)); }
+function genEditToken(){ try{ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID(); }catch(e){} return "t"+Date.now()+Math.random().toString(36).slice(2,12); }
 // Observations : base partagée
 function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", expertMessage:r.expert_message||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, createdAt:r.created_at||"", outcomeSeen:seenHas(r.id) }; }
 async function loadObservations(){ try{
@@ -843,7 +848,7 @@ function closeModal(){ document.getElementById("modal").classList.remove("open")
 document.getElementById("modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeModal(); });
 
 // ---------- PROPOSER ----------
-let pickMap,pickMarker,pickLatLng=null,pendingPhotos=[];
+let pickMap,pickMarker,pickLatLng=null,pendingPhotos=[],editingObsId=null;
 function renderPhotoPreview(){ const p=document.getElementById("p-preview"); if(!p)return; p.innerHTML=pendingPhotos.map((d,i)=>`<span style="position:relative;display:inline-block;line-height:0"><img src="${d}"><button type="button" aria-label="Retirer" onclick="rmPhoto(${i})" style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;border:0;background:var(--red);color:#fff;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center">×</button></span>`).join(""); }
 function rmPhoto(i){ pendingPhotos.splice(i,1); renderPhotoPreview(); }
 function renderProposer(){
@@ -858,7 +863,13 @@ function renderProposer(){
       <button class="btn" onclick="signup()">${t("Créer mon accès")}</button>
     </div>`; return;
   }
-  b.innerHTML=`<div class="card">
+  const editing = editingObsId ? state.observations.find(o=>o.id===editingObsId && o.status==="pending") : null;
+  if(editingObsId && !editing) editingObsId=null;
+  const myPending = editing ? [] : myPendingObs();
+  const header = editing
+    ? `<div class="card" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><b>${icon('edit')} ${t("Correction de ton observation")}</b><div class="hint" style="margin-top:3px">${t("Modifie ce que tu veux, puis enregistre.")}</div></div><button class="btn ghost sm" onclick="cancelEditObs()">${t("Annuler")}</button></div>`
+    : (myPending.length ? `<div class="card" style="margin-bottom:16px"><h3 style="margin:0 0 4px;font-size:16px">${icon('sprout')} ${t("Tes observations en attente")}</h3><p class="hint" style="margin:0 0 12px">${t("Tu peux les corriger tant qu'un expert ne les a pas validées.")}</p>${myPending.map(o=>`<div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)"><img src="${obsPhoto(o)}" style="width:46px;height:46px;object-fit:cover;border-radius:8px;flex:none"><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600">${esc(o.site||t("Site ?"))} · ${frDate(o.date)}</div><div style="font-size:12.5px;color:var(--muted)">${o.sp?esc((speciesById(o.sp)||{}).sci||""):(o.proposedName?esc(o.proposedName):t("Espèce indéterminée"))}</div></div><button class="btn ghost sm" onclick="startEditObs('${o.id}')">${icon('edit')} ${t("Corriger")}</button></div>`).join("")}</div>` : "");
+  b.innerHTML=header+`<div class="card">
     <p style="margin:0 0 16px;font-size:13.5px;color:var(--muted)">${icon('info')} ${t("Pas sûr·e de l'espèce ?")} <a href="#" onclick="goTo('ident');return false">${t("Regarde d'abord la bibliothèque d'identification")}</a> ${t("— elle est peut-être déjà répertoriée.")}</p>
     <div class="form-grid">
       <div class="field full"><label>${t("Photos de l'observation")} <span class="req">*</span></label>
@@ -892,18 +903,20 @@ function renderProposer(){
       <div class="field"><label>${t("Commentaire (optionnel)")}</label><input id="p-note" placeholder="${t("comportement, taille…")}"></div>
     </div>
     <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <button class="btn" id="p-submit" onclick="submitObs()">${t("Envoyer l'observation")}</button>
-      <span class="hint"><span class="req">*</span> ${t("requis pour une observation scientifiquement utile.")}</span>
+      <button class="btn" id="p-submit" onclick="${editing?'saveObsEdit()':'submitObs()'}">${editing?t("Enregistrer les corrections"):t("Envoyer l'observation")}</button>
+      ${editing?`<button class="btn ghost" onclick="cancelEditObs()">${t("Annuler")}</button>`:`<span class="hint"><span class="req">*</span> ${t("requis pour une observation scientifiquement utile.")}</span>`}
     </div>
   </div>`;
   pickLatLng=null; pendingPhotos=[]; pickMarker=null; if(pickMap){ try{pickMap.remove();}catch(e){} pickMap=null; }
+  if(editing) prefillProposerForm(editing);
   setTimeout(()=>{
-    const isl0=islandBy(val("p-island"))||ISLANDS[0];
+    const isl0 = (editing && editing.lat!=null && editing.lng!=null) ? {c:[editing.lat,editing.lng],z:15} : (islandBy(val("p-island"))||ISLANDS[0]);
     pickMap=L.map("pick-map").setView(isl0.c,isl0.z);
     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19}).addTo(pickMap);
     pickMap.on("click",e=>{ pickLatLng=e.latlng;
       if(pickMarker) pickMarker.setLatLng(e.latlng); else pickMarker=L.marker(e.latlng).addTo(pickMap);
       document.getElementById("p-coords").innerHTML=`${icon('pin')} ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`; });
+    if(pickLatLng){ pickMarker=L.marker([pickLatLng.lat,pickLatLng.lng]).addTo(pickMap); const c=document.getElementById("p-coords"); if(c) c.innerHTML=`${icon('pin')} ${pickLatLng.lat.toFixed(4)}, ${pickLatLng.lng.toFixed(4)}`; }
     pickMap.invalidateSize();
   },60);
   document.getElementById("p-photo").addEventListener("change",async e=>{ const files=[...e.target.files]; e.target.value=""; for(const f of files){ await new Promise(res=>resizeToDataURL(f,d=>{ if(d){ pendingPhotos.push(d); renderPhotoPreview(); } res(); })); } });
@@ -933,17 +946,68 @@ async function submitObs(){
   let urls;
   try{ urls = await uploadPhotos(pendingPhotos); }
   catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed, please try again.":"Échec de l'envoi des photos, réessaie."); if(btn) btn.disabled=false; return; }
+  const editToken = genEditToken();
   const row={ species_id:(spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposed_name:proposedName,
     photos:urls, env:val("p-env"), island:val("p-island")||"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
     obs_date:date, obs_time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
-    by_name:state.user.name, by_email:state.user.email, by_phone:state.user.phone||"", status:"pending" };
-  const { data:ins, error } = await sb.from("observations").insert(row).select("id");
+    by_name:state.user.name, by_email:state.user.email, by_phone:state.user.phone||"", status:"pending", edit_token:editToken };
+  let tokenStored=editToken;
+  let { data:ins, error } = await sb.from("observations").insert(row).select("id");
+  if(error && /edit_token/.test(error.message||"")){ const r2={...row}; delete r2.edit_token; tokenStored=null; ({ data:ins, error } = await sb.from("observations").insert(r2).select("id")); }
   if(error){ console.error("insert obs",error); toast(LANG==='en'?"Could not save, please try again.":"Enregistrement impossible, réessaie."); if(btn) btn.disabled=false; return; }
-  if(ins&&ins[0]) markMine(ins[0].id);
+  if(ins&&ins[0]){ markMine(ins[0].id); if(tokenStored) setEditToken(ins[0].id, tokenStored); }
   await loadObservations();
   if(map){ fillFilters(); renderMarkers(); }
   toast(t("Merci ! Ton observation est en attente de validation."));
   goTo("carte");
+}
+// ---- Correction d'une observation par son déposant (tant qu'elle est en attente) ----
+function myPendingObs(){ return (state.observations||[]).filter(o=> o.status==="pending" && mineHas(o.id) && getEditToken(o.id)); }
+function startEditObs(id){ editingObsId=id; renderProposer(); window.scrollTo(0,0); }
+function cancelEditObs(){ editingObsId=null; renderProposer(); window.scrollTo(0,0); }
+function prefillProposerForm(o){
+  const setv=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v; };
+  setv("p-island", o.island||"Bora Bora"); setv("p-env", o.env||"");
+  const sp=document.getElementById("p-species");
+  if(sp){ if(o.sp && speciesById(o.sp)) sp.value=o.sp; else if(o.proposedName){ sp.value="__propose"; setv("p-propose", o.proposedName); } else sp.value="je-sais-pas"; }
+  onSpeciesChange();
+  if(o.site && SITE_NAMES.includes(o.site)) setv("p-site", o.site);
+  else if(o.site){ setv("p-site","__autre"); setv("p-site-other", o.site); }
+  onSiteChange();
+  setv("p-date", o.date||todayISO()); setv("p-time", o.time||""); setv("p-depth", (o.depth!=null?o.depth:"")); setv("p-note", o.note||"");
+  pendingPhotos=[...(o.photos||[])]; renderPhotoPreview();
+  pickLatLng=(o.lat!=null&&o.lng!=null)?{lat:o.lat,lng:o.lng}:null;
+}
+async function saveObsEdit(){
+  const o = state.observations.find(x=>x.id===editingObsId);
+  const token = o && getEditToken(o.id);
+  if(!o || !token){ toast(t("Correction impossible.")); return; }
+  const spVal=val("p-species");
+  const siteSel=val("p-site"); let site = siteSel==="__autre"? val("p-site-other").trim() : siteSel;
+  const date=val("p-date"), depth=val("p-depth");
+  const miss=[];
+  if(!pendingPhotos.length) miss.push(t("au moins une photo"));
+  if(!siteSel || (siteSel==="__autre"&&!site)) miss.push(t("le lieu"));
+  if(!pickLatLng) miss.push(t("l'emplacement sur la carte"));
+  if(!date) miss.push(t("la date"));
+  if(depth===""||depth==null) miss.push(t("la profondeur"));
+  if(miss.length){ toast(t("Il manque :")+" "+miss.join(", ")); return; }
+  const proposedName = spVal==="__propose" ? val("p-propose").trim() : "";
+  const btn=document.getElementById("p-submit"); if(btn) btn.disabled=true;
+  toast(LANG==='en'?"Saving…":"Enregistrement…");
+  let finalPhotos=[];
+  try{ for(const p of pendingPhotos){ finalPhotos.push(p.startsWith("data:") ? (await uploadPhotos([p]))[0] : p); } }
+  catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed, please try again.":"Échec de l'envoi des photos, réessaie."); if(btn) btn.disabled=false; return; }
+  const patch={ species_id:(spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposed_name:proposedName,
+    photos:finalPhotos, env:val("p-env"), island:val("p-island")||"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
+    obs_date:date, obs_time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim() };
+  const { data, error } = await sb.rpc("edit_observation", { p_id:o.id, p_token:token, p_patch:patch });
+  if(error || data!==true){ console.error("edit obs", error); toast(error ? t("Correction indisponible pour le moment.") : t("Correction impossible (déjà validée ?).")); if(btn) btn.disabled=false; return; }
+  editingObsId=null;
+  await loadObservations();
+  if(map){ fillFilters(); renderMarkers(); }
+  toast(t("Observation corrigée !"));
+  renderProposer(); window.scrollTo(0,0);
 }
 
 // ---------- ADMIN ----------
