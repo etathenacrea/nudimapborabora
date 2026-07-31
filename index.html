@@ -1033,15 +1033,10 @@ function renderAdmin(){
 }
 function setAdminTab(t){ adminTab=t; renderAdmin(); }
 // ---------- Connexion des experts (Supabase Auth) ----------
-const EXPERT_EMAILS={   // email (minuscule) -> nom affiché, complété au fur et à mesure
-  "pro.justinecertain@gmail.com":"Justine",
-  "alexandre.tayale@gmail.com":"Alexandre",
-  "pauline.bosserelle@gmail.com":"Pauline Bosserelle",
-  "vincentdondon@orange.fr":"Vincent",
-  "alysee.drb@gmail.com":"Alizée"
-};
+// Le prénom affiché de l'expert vient de son compte Supabase (user_metadata.name),
+// renseigné via db/set_expert_names.sql — plus aucun email dans la source.
 function expertNameOf(u){ if(!u) return ""; const m=u.user_metadata||{}; const em=(u.email||"").toLowerCase();
-  return m.name || m.full_name || EXPERT_EMAILS[em] || (em.split("@")[0]||"Expert"); }
+  return m.name || m.full_name || (em.split("@")[0]||"Expert"); }
 function setExpertSession(s){ adminUnlocked=!!s; adminUser = s? expertNameOf(s.user) : null; }
 async function initAuth(){ try{ const {data}=await sb.auth.getSession(); setExpertSession(data.session);
     sb.auth.onAuthStateChange((ev,s)=>{ setExpertSession(s); if(ev==="SIGNED_OUT"){ loadObservations().then(()=>{ renderAdmin(); if(map)renderMarkers(); }); } }); }catch(e){ console.error("initAuth",e); } }
