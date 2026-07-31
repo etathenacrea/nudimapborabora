@@ -93,6 +93,8 @@
   .social a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);color:var(--muted);background:var(--card);transition:color .15s,border-color .15s,transform .12s}
   .social a:hover{color:var(--sea-deep);border-color:var(--sea);transform:translateY(-1px)}
   .social svg{width:19px;height:19px}
+  .ref-source{text-align:center;font-size:11px;color:var(--muted);margin-top:12px}
+  .ref-source a{color:var(--sea-deep);text-decoration:none}
   .partner{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-top:16px;display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
   .partner img{width:300px;max-width:80%;height:auto}
   .partner p{margin:0;font-size:13.5px;color:var(--muted);max-width:300px;line-height:1.5}
@@ -289,6 +291,7 @@
       <a href="https://www.facebook.com/share/1EsjrePmYA/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
       <a href="https://www.instagram.com/nudimap.pf/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></svg></a>
     </div>
+    <p class="ref-source"><span data-i18n="Référence et source :">Référence et source :</span> <a href="https://www.marinespecies.org" target="_blank" rel="noopener">marinespecies.org</a></p>
   </section>
 
   <!-- ============ CARTE ============ -->
@@ -367,7 +370,6 @@ const PROD_URL="https://nudi-map.app";
 const SB_URL="https://hlpqqixkwvywekuutmnu.supabase.co";
 const SB_KEY="sb_publishable_J3wEczMZVX7pSp5MBfawJw_VJs-xHx6";
 const sb = window.supabase.createClient(SB_URL, SB_KEY);
-const EXPERTS={ "Borabora1":"Vincent", "Borabora2":"Alizée", "Borabora3":"Alexandre", "Borabora4":"Justine", "Borabora5":"Pauline Bosserelle" };
 
 // ---------- i18n : FR par défaut, EN pour les touristes (clé = texte français) ----------
 let LANG = localStorage.getItem("nudimap_lang") || "fr";
@@ -391,6 +393,7 @@ const EN = {
   "Scanne ou distribue ce QR code pour ouvrir NudiMap - Polynésie Française sur n'importe quel téléphone.":"Scan or share this QR code to open NudiMap - Polynésie Française on any phone.",
   "Télécharger le QR à imprimer":"Download the QR code to print",
   "Photos et contenu : Justine Certain · Dive N' Smile Bora Bora · et nos contributeurs":"Photos & content: Justine Certain · Dive N' Smile Bora Bora · and our contributors",
+  "Référence et source :":"Reference & source:",
   // Carte
   "Carte des observations":"Observation map",
   "Chaque épingle est une rencontre dans le lagon.":"Each pin is a sighting in the lagoon.",
