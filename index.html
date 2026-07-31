@@ -80,6 +80,11 @@
   @keyframes reef-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
   @media(prefers-reduced-motion:reduce){.reef-track{animation:none}.reef-bub{animation:none}.reef-carousel{overflow-x:auto}}
   .intro{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:24px}
+  .island-progress{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 20px;margin-bottom:24px}
+  .island-progress .ip-txt{font-size:14.5px;color:var(--ink);text-align:center;margin-bottom:10px}
+  .island-progress .ip-bar{height:12px;background:var(--bg);border-radius:8px;overflow:hidden}
+  .island-progress .ip-fill{height:100%;background:linear-gradient(90deg,var(--sea),var(--sea-deep));border-radius:8px;transition:width .6s ease}
+  .island-progress .ip-sub{font-size:12.5px;color:var(--muted);text-align:center;margin-top:9px}
   .intro .c{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px}
   .intro .c .em{color:var(--sea);margin-bottom:6px;line-height:1}
   .intro .c h3{font-size:18.5px;margin:8px 0 7px}
@@ -271,6 +276,7 @@
         <div class="reef-carousel"><div class="reef-track" id="reef-track"></div></div>
       </div>
     </div>
+    <div id="island-progress" class="island-progress" style="display:none"></div>
     <div class="intro">
       <div class="c"><div class="em" data-icon="rainbow"></div><h3 data-i18n="Qu'est-ce qu'un nudibranche ?">Qu'est-ce qu'un nudibranche ?</h3><p data-i18n="Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique, dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille, ainsi qu'un cousin bien plus lointain, souvent confondu avec eux : le ver plat.">Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique, dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille, ainsi qu'un cousin bien plus lointain, souvent confondu avec eux : le ver plat.</p></div>
       <div class="c"><div class="em" data-icon="heart"></div><h3 data-i18n="Pourquoi ça compte ?">Pourquoi ça compte ?</h3><p data-i18n="Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie des lagons de Polynésie française.">Leur présence est un indicateur de la santé du récif. Les suivre année après année, c'est surveiller la vie des lagons de Polynésie française.</p></div>
@@ -443,7 +449,7 @@ const EN = {
   "Validation":"Validation","Bibliothèque":"Library","changer d'expert":"switch expert",
   "File d'attente":"Queue","Rien à valider dans la file.":"Nothing to validate.","Aucune pour le moment.":"None yet.",
   "Site ?":"Site ?","prof. n.c.":"depth n/a","proposé :":"suggested:","Espèce inconnue (à identifier)":"Unknown species (to identify)",
-  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Île":"Island","Toutes les îles":"All islands","La carte ci-dessous se centrera sur l'île choisie.":"The map below will center on the chosen island.","Petit mot au déposant (encouragement) 🎉":"A note to the depositor (encouragement) 🎉","Bravo, il est magnifique !":"Well done — it's gorgeous!","Super rare, magique !":"Super rare — magical!","À publier sur nos réseaux, bravo !":"One for our socials — bravo!","Un mot de nos experts :":"A word from our experts:","Classement":"Leaderboard","Classement des contributeurs":"Contributor leaderboard","Plus tu participes, plus tu montes ! Merci à toutes celles et ceux qui font vivre la carte.":"The more you take part, the higher you climb! Thanks to everyone bringing the map to life.","contributeur·rices":"contributors","observations partagées":"shared observations","Personne n'a encore contribué — sois le premier à déposer une observation !":"No contributions yet — be the first to submit an observation!","(toi)":"(you)","obs.":"obs.","validées":"validated","Trouvé par":"Found by","Photographe :":"Photographer:","Validé par":"Validated by","Observé par :":"Observed by:","autres":"others","Le classement compte tes observations partagées (les refusées ne comptent pas). Dépose, et grimpe !":"The ranking counts your shared observations (rejected ones don't count). Submit and climb!","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
+  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Île":"Island","Toutes les îles":"All islands","Prochaine île :":"Next island:","observations validées":"validated observations","plus que":"just","pour l'ouvrir !":"more to open it!","La carte ci-dessous se centrera sur l'île choisie.":"The map below will center on the chosen island.","Petit mot au déposant (encouragement) 🎉":"A note to the depositor (encouragement) 🎉","Bravo, il est magnifique !":"Well done — it's gorgeous!","Super rare, magique !":"Super rare — magical!","À publier sur nos réseaux, bravo !":"One for our socials — bravo!","Un mot de nos experts :":"A word from our experts:","Classement":"Leaderboard","Classement des contributeurs":"Contributor leaderboard","Plus tu participes, plus tu montes ! Merci à toutes celles et ceux qui font vivre la carte.":"The more you take part, the higher you climb! Thanks to everyone bringing the map to life.","contributeur·rices":"contributors","observations partagées":"shared observations","Personne n'a encore contribué — sois le premier à déposer une observation !":"No contributions yet — be the first to submit an observation!","(toi)":"(you)","obs.":"obs.","validées":"validated","Trouvé par":"Found by","Photographe :":"Photographer:","Validé par":"Validated by","Observé par :":"Observed by:","autres":"others","Le classement compte tes observations partagées (les refusées ne comptent pas). Dépose, et grimpe !":"The ranking counts your shared observations (rejected ones don't count). Submit and climb!","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
   "— choisir l'espèce —":"— choose the species —","Autre / nouvelle identification…":"Other / new identification…",
   "Nom scientifique *":"Scientific name *","Famille":"Family","Rareté":"Rarity","C'est un juvénile":"It's a juvenile",
   "Avis entre experts (ex. à confirmer par Alexandre ?)":"Note between experts (e.g. to be confirmed by Alexandre?)",
@@ -597,12 +603,19 @@ const DEFAULT_SPECIES=[
 const SITE_NAMES=["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Pointe Tahi (Feufeu)","Tapu","Toopua","Toopua Iti","Tupitipiti"];
 // Îles de la Polynésie française (on en ajoutera au fur et à mesure)
 const ISLANDS=[
-  {name:"Bora Bora", c:[-16.5004,-151.7415], z:12.5},
-  {name:"Moorea",    c:[-17.5350,-149.8330], z:11.5},
-  {name:"Tahiti",    c:[-17.6700,-149.4200], z:10.5},
+  {name:"Bora Bora", c:[-16.5004,-151.7415], z:12.5, openAt:0},
+  {name:"Moorea",    c:[-17.5350,-149.8330], z:11.5, openAt:0},
+  {name:"Tahiti",    c:[-17.6700,-149.4200], z:10.5, openAt:0},
+  {name:"Fakarava",  c:[-16.3000,-145.6200], z:10.5, openAt:50},
+  {name:"Rangiroa",  c:[-15.1600,-147.6500], z:9.5,  openAt:100},
 ];
 const islandBy=n=>ISLANDS.find(i=>i.name===n);
-const POLY_BOUNDS=[[-16.35,-152.05],[-17.95,-149.05]]; // vue « toutes les îles » (Société)
+// Déblocage progressif : une nouvelle île s'ouvre à chaque palier de 50 identifications validées
+const ISLAND_STEP=50;
+function validatedCount(){ return (state.observations||[]).filter(o=>o.status==="validated").length; }
+function openIslands(){ const n=validatedCount(); return ISLANDS.filter(i=>n >= (i.openAt||0)); }
+function nextIsland(){ const n=validatedCount(); return ISLANDS.filter(i=>(i.openAt||0) > n).sort((a,b)=>(a.openAt||0)-(b.openAt||0))[0] || null; }
+function polyBounds(){ return L.latLngBounds(openIslands().map(i=>i.c)).pad(0.45); }
 // Classifications (familles) extraites du répertoire illustré de Justine — à compléter par elle.
 const CLASSIF_LIST=["Nudibranche","Doridacé","Éolide","Sacoglosse","Lièvre de mer","Ver plat","Bulle"];
 const FAMILY_LIST=["Abronicidae","Acteonidae","Aeolidiidae","Aglajidae","Aplustridae","Aplysiidae","Babakinidae","Bullidae","Bullinidae","Caliphyllidae","Chromodorididae","Diaphanidae","Dotidae","Embletoniidae","Eubranchidae","Facelinidae","Fionidae","Flabellinidae","Gastropteridae","Gymnodorididae","Haminoeidae","Hermaeidae","Juliidae","Limapontiidae","Mnestiidae","Myrrhinidae","Oxynoidae","Phyllidiidae","Plakobranchidae","Pleurobranchidae","Pleurolidiidae","Pseudocerotidae","Pteropoda","Runcinidae","Samlidae","Scyllaeidae","Thetididae","Trinchesiidae","Tritoniidae","Tylodinidae","Umbraculidae","Unidentidae","Volvatellidae"];
@@ -678,7 +691,7 @@ function goTo(v){
   if(v==="admin") renderAdmin();
   if(v==="ident") renderSpecies();
   if(v==="classement") renderRanking();
-  if(v==="home") renderReefCarousel();
+  if(v==="home"){ renderReefCarousel(); renderIslandProgress(); }
 }
 function renderRanking(){
   const nonRej=state.observations.filter(o=>o.status!=="rejected");
@@ -747,12 +760,12 @@ function fillFilters(){
   const ys=[...new Set(state.observations.map(o=>o.date.slice(0,4)))].sort().reverse();
   fy.innerHTML='<option value="all">'+t("Toutes les années")+'</option>'+ys.map(y=>`<option value="${y}">${y}</option>`).join("");
   const fi=document.getElementById("f-island"), curIsl=fi.value||"all";
-  fi.innerHTML='<option value="all">'+t("Toutes les îles")+'</option>'+ISLANDS.map(i=>`<option value="${esc(i.name)}">${esc(i.name)}</option>`).join("");
+  fi.innerHTML='<option value="all">'+t("Toutes les îles")+'</option>'+openIslands().map(i=>`<option value="${esc(i.name)}">${esc(i.name)}</option>`).join("");
   fi.value=curIsl;
   ["f-species","f-year","f-status"].forEach(id=>document.getElementById(id).onchange=renderMarkers);
   fi.onchange=onIslandFilter;
 }
-function onIslandFilter(){ if(map){ const v=val("f-island"); if(v==="all") map.fitBounds(POLY_BOUNDS,{padding:[20,20]}); else { const isl=islandBy(v); if(isl) map.setView(isl.c,isl.z); } } renderMarkers(); }
+function onIslandFilter(){ if(map){ const v=val("f-island"); if(v==="all") map.fitBounds(polyBounds(),{padding:[20,20]}); else { const isl=islandBy(v); if(isl) map.setView(isl.c,isl.z); } } renderMarkers(); }
 function pinIcon(color){ return L.divIcon({className:"map-pin",html:`<span style="--c:${color}"></span>`,iconSize:[18,18],iconAnchor:[9,9],popupAnchor:[0,-9]}); }
 function renderMarkers(){
   if(!markersLayer) return;
@@ -887,7 +900,7 @@ function renderProposer(){
         <select id="p-env"><option value="">${t("— optionnel —")}</option>${ENV_OPTS.map(e=>`<option value="${esc(e)}">${esc(t(e))}</option>`).join("")}</select>
         <span class="hint">${t("Sable, éponges, coraux… (lié à l'alimentation / au comportement).")}</span></div>
       <div class="field"><label>${t("Île")} <span class="req">*</span></label>
-        <select id="p-island" onchange="onIslandChange()">${ISLANDS.map(i=>`<option value="${esc(i.name)}" ${i.name==="Bora Bora"?"selected":""}>${esc(i.name)}</option>`).join("")}</select>
+        <select id="p-island" onchange="onIslandChange()">${openIslands().map(i=>`<option value="${esc(i.name)}" ${i.name==="Bora Bora"?"selected":""}>${esc(i.name)}</option>`).join("")}</select>
         <span class="hint">${t("La carte ci-dessous se centrera sur l'île choisie.")}</span></div>
       <div class="field"><label>${t("Site / lieu")} <span class="req">*</span></label>
         <select id="p-site" onchange="onSiteChange()"><option value="">${t("— choisis un site —")}</option>
@@ -1280,6 +1293,16 @@ function renderReefCarousel(){
   track.innerHTML=seq+seq;
   wrap.style.display="";
 }
+// ---------- déblocage progressif des îles (accueil) ----------
+function renderIslandProgress(){
+  const el=document.getElementById("island-progress"); if(!el) return;
+  const next=nextIsland();
+  if(!next){ el.style.display="none"; el.innerHTML=""; return; }
+  const n=validatedCount(), goal=next.openAt||ISLAND_STEP, base=Math.max(0,goal-ISLAND_STEP);
+  const pct=Math.max(4,Math.min(100,Math.round((n-base)/(goal-base)*100))), left=Math.max(0,goal-n);
+  el.style.display="";
+  el.innerHTML=`<div class="ip-txt">🏝️ ${t("Prochaine île :")} <b>${esc(next.name)}</b></div><div class="ip-bar"><div class="ip-fill" style="width:${pct}%"></div></div><div class="ip-sub">${n} / ${goal} ${t("observations validées")} · ${t("plus que")} <b>${left}</b> ${t("pour l'ouvrir !")}</div>`;
+}
 // ---------- init ----------
 document.querySelectorAll("#nav button").forEach(b=>b.insertAdjacentHTML("afterbegin", icon(NAV_ICON[b.dataset.view])+" "));
 document.querySelectorAll(".intro .em[data-icon]").forEach(e=>e.innerHTML=icon(e.dataset.icon,26));
@@ -1287,7 +1310,7 @@ document.querySelectorAll(".bubbles").forEach(box=>{ const n=box.classList.conta
 document.documentElement.lang=LANG;
 applyI18n();
 // Charger les observations partagées, puis rafraîchir l'affichage
-(async ()=>{ await initAuth(); await loadSpecies(); await loadObservations(); const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" "+t("espèces de référence"); renderSpecies(); renderReefCarousel(); renderWho(); renderAdmin(); if(map){ fillFilters(); renderMarkers(); } if(unseenCount()>0) toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")); })();
+(async ()=>{ await initAuth(); await loadSpecies(); await loadObservations(); const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" "+t("espèces de référence"); renderSpecies(); renderReefCarousel(); renderIslandProgress(); renderWho(); renderAdmin(); if(map){ fillFilters(); renderMarkers(); } if(unseenCount()>0) toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")); })();
 </script>
 </body>
 </html>
