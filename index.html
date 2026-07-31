@@ -89,6 +89,8 @@
   .share .si{flex:1;min-width:230px}
   .share .url{font-size:13.5px;background:#e8f5f6;border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:10px 0;word-break:break-all;color:var(--sea-deep)}
   .credit{font-size:12.5px;color:var(--muted);margin-top:22px;text-align:center}
+  .credit a{color:var(--sea-deep);text-decoration:none;font-weight:600}
+  .credit a:hover{text-decoration:underline}
   .social{display:flex;justify-content:center;gap:14px;margin-top:16px}
   .social a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);color:var(--muted);background:var(--card);transition:color .15s,border-color .15s,transform .12s}
   .social a:hover{color:var(--sea-deep);border-color:var(--sea);transform:translateY(-1px)}
@@ -286,7 +288,7 @@
       <a href="https://www.criobe.pf" target="_blank" rel="noopener" aria-label="CRIOBE"><img src="assets/criobe.png" alt="CRIOBE" onerror="this.style.display='none'"></a>
       <p data-i18n="Nous remercions le CRIOBE pour sa participation à ce projet.">Nous remercions le CRIOBE pour sa participation à ce projet.</p>
     </div>
-    <p class="credit" data-i18n="Photos et contenu : Justine Certain · Dive N' Smile Bora Bora · et nos contributeurs">Photos et contenu : Justine Certain · Dive N' Smile Bora Bora · et nos contributeurs</p>
+    <p class="credit"><span data-i18n="Photos et contenu :">Photos et contenu :</span> Justine Certain · <a href="https://divensmilebora.com/" target="_blank" rel="noopener">Dive N' Smile Bora Bora</a> · <span data-i18n="et nos contributeurs">et nos contributeurs</span></p>
     <div class="social">
       <a href="https://www.facebook.com/share/1EsjrePmYA/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
       <a href="https://www.instagram.com/nudimap.pf/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></svg></a>
@@ -392,7 +394,7 @@ const EN = {
   "Partage l'observatoire":"Share the observatory","Nous remercions le CRIOBE pour sa participation à ce projet.":"We thank CRIOBE for taking part in this project.",
   "Scanne ou distribue ce QR code pour ouvrir NudiMap - Polynésie Française sur n'importe quel téléphone.":"Scan or share this QR code to open NudiMap - Polynésie Française on any phone.",
   "Télécharger le QR à imprimer":"Download the QR code to print",
-  "Photos et contenu : Justine Certain · Dive N' Smile Bora Bora · et nos contributeurs":"Photos & content: Justine Certain · Dive N' Smile Bora Bora · and our contributors",
+  "Photos et contenu :":"Photos & content:","et nos contributeurs":"and our contributors",
   "Référence et source :":"Reference & source:",
   // Carte
   "Carte des observations":"Observation map",
