@@ -472,7 +472,7 @@ const EN = {
   "Votre demande d'identification n'a pas pu être validée par nos experts.":"Your identification request could not be validated by our experts.",
   "site ?":"site ?",
   "Indique ton nom et ton email.":"Please enter your name and email.","Le nom scientifique est requis.":"Scientific name is required.",
-  "Ajoute une photo pour la nouvelle espèce.":"Add a photo for the new species.","Fiche mise à jour.":"Entry updated.","Espèce ajoutée à la bibliothèque.":"Species added to the library.","Espèce supprimée.":"Species deleted.",
+  "Ajoute une photo pour la nouvelle espèce.":"Add a photo for the new species.","Fiche mise à jour.":"Entry updated.","Espèce ajoutée à la bibliothèque.":"Species added to the library.","Espèce supprimée.":"Species deleted.","observation(s) utilisent cette espèce":"observation(s) use this species","elles passeront en « Espèce indéterminée ».":"they will become an “Undetermined species”.","de la bibliothèque ?":"from the library?",
   "Avis enregistré.":"Note saved.","Merci ! Ton observation est en attente de validation.":"Thank you! Your observation is awaiting validation.",
   "Choisis l'espèce, ou « Autre » pour en créer une.":"Choose the species, or \"Other\" to create one.","Indique au moins le nom scientifique.":"Enter at least the scientific name.","Cette espèce est déjà dans la bibliothèque :":"This species is already in the library:","Une espèce très proche existe déjà :":"A very similar species already exists:","Choisir cette fiche":"Choose this entry","(évite un doublon)":"(avoids a duplicate)",
   "Observation refusée.":"Observation rejected.","Pose l'épingle sur la carte":"Drop the pin on the map",
@@ -1272,13 +1272,26 @@ async function saveSpecies(){
   }
   await loadSpecies(); closeEditor(); renderAdmin(); renderSpecies();
 }
+// confirmation intégrée à l'appli (plus fiable que confirm() sur mobile)
+function confirmAction(msg, confirmLabel, cb){
+  const bg=document.createElement('div');
+  bg.style.cssText='position:fixed;inset:0;background:rgba(16,49,56,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  bg.innerHTML=`<div style="background:var(--card);border-radius:16px;padding:22px;max-width:370px;box-shadow:0 20px 60px rgba(16,49,56,.4)"><div style="font-size:15px;line-height:1.55;color:var(--ink);margin-bottom:18px">${msg}</div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn ghost sm" id="cf-no">${t('Annuler')}</button><button class="btn red sm" id="cf-yes">${confirmLabel}</button></div></div>`;
+  document.body.appendChild(bg);
+  const close=()=>{ try{bg.remove();}catch(e){} };
+  bg.addEventListener('click',e=>{ if(e.target===bg) close(); });
+  bg.querySelector('#cf-no').onclick=close;
+  bg.querySelector('#cf-yes').onclick=()=>{ close(); cb(); };
+}
 async function deleteSpecies(id){
+  const s=speciesById(id); if(!s) return;
   const used=state.observations.filter(o=>o.sp===id).length;
-  if(used){ toast(LANG==='en'?("Cannot delete: "+used+" observation(s) use this species."):("Impossible : "+used+" observation(s) utilisent cette espèce.")); return; }
-  if(!confirm(LANG==='en'?('Delete "'+(speciesById(id)?.sci||"")+'" from the library?'):("Supprimer « "+(speciesById(id)?.sci||"")+" » de la bibliothèque ?"))) return;
-  const { data:del, error } = await sb.from("species").delete().eq("id",id).select();
-  if(error || !del || !del.length){ console.error("delete species",error); toast(t("Suppression impossible (connexion expert requise).")); return; }
-  await loadSpecies(); renderAdmin(); renderSpecies(); toast(t("Espèce supprimée."));
+  const warn = used ? `<div style="background:#fff4e5;border:1px solid #f0c17a;color:#8a5300;border-radius:9px;padding:9px 11px;margin-bottom:13px;font-size:13.5px">⚠️ ${used} ${t('observation(s) utilisent cette espèce')} — ${t('elles passeront en « Espèce indéterminée ».')}</div>` : "";
+  confirmAction(`${warn}${t('Supprimer')} « <b>${esc(s.sci)}</b> » ${t('de la bibliothèque ?')}`, t('Supprimer'), async ()=>{
+    const { data:del, error } = await sb.from("species").delete().eq("id",id).select();
+    if(error || !del || !del.length){ console.error("delete species",error); toast(t("Suppression impossible (connexion expert requise).")); return; }
+    await loadSpecies(); renderAdmin(); renderSpecies(); toast(t("Espèce supprimée."));
+  });
 }
 
 // ---------- Lightbox ----------
