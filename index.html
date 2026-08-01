@@ -1060,8 +1060,15 @@ function isOwner(){ return adminIsOwner; }
 // Réservé au propriétaire (Justine) : corriger l'île d'une observation depuis la carte
 async function setObsIsland(id, island){
   if(!isOwner()){ toast(t("Action réservée.")); return; }
-  const { data, error } = await sb.from("observations").update({island}).eq("id",id).select("id");
-  if(error || !data || !data.length){ console.error("setObsIsland",error); toast(t("Modification impossible.")); return; }
+  let ok=false;
+  const r = await sb.rpc("set_observation_island", { p_id:id, p_island:island });
+  if(!r.error && r.data===true){ ok=true; }
+  else if(r.error && /pgrst202|schema cache|function|does not exist/i.test((r.error.message||"")+(r.error.code||""))){
+    // repli tant que la fonction sécurisée n'est pas encore créée (aucune coupure)
+    const u = await sb.from("observations").update({island}).eq("id",id).select("id");
+    ok = !u.error && !!u.data && u.data.length>0;
+  }
+  if(!ok){ console.error("setObsIsland", r.error); toast(t("Modification impossible.")); return; }
   const o=state.observations.find(x=>x.id===id); if(o) o.island=island;
   toast(t("Île mise à jour :")+" "+island);
   if(map){ fillFilters(); renderMarkers(); }
