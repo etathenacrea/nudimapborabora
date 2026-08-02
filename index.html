@@ -1307,7 +1307,8 @@ function slugify(s){ return String(s).toLowerCase().normalize("NFD").replace(/[�
 function val(id){ const el=document.getElementById(id); return el?el.value:""; }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function frDate(iso){ if(!iso)return"—"; const[y,m,d]=iso.split("-"); const M=LANG==="en"?["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]:["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."]; return `${+d} ${M[+m-1]} ${y}`; }
-function todayISO(){ return new Date().toISOString().slice(0,10); }
+// Date du jour en Polynésie française (Pacific/Tahiti, UTC-10), pas en heure du téléphone
+function todayISO(){ const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Pacific/Tahiti',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()); const g=t=>(p.find(x=>x.type===t)||{}).value; return `${g('year')}-${g('month')}-${g('day')}`; }
 function szT(s){ return LANG==="en"?String(s||"").replace(/ à /g," to "):(s||""); }
 let toastT; function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2800); }
 
