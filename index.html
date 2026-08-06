@@ -1108,18 +1108,29 @@ async function expertLogin(){
 }
 async function expertLogout(){ try{ await sb.auth.signOut(); }catch(e){} setExpertSession(null); renderAdmin(); toast(t("Déconnecté·e.")); }
 
+let adminValFilter="all";
 function renderAdminValidation(){
-  const pend=state.observations.filter(o=>o.status==="pending");
-  const v=state.observations.filter(o=>o.status==="validated");
+  const byRecent=(a,b)=> String(b.createdAt||b.outcomeAt||"").localeCompare(String(a.createdAt||a.outcomeAt||"")); // plus récent d'abord
+  const pend=state.observations.filter(o=>o.status==="pending").sort(byRecent);
+  const vAll=state.observations.filter(o=>o.status==="validated").sort(byRecent);
+  const catOf=o=>{ const s=o.sp&&speciesById(o.sp); return ((s&&s.classification)||"").trim(); };
+  const counts={}; vAll.forEach(o=>{ const c=catOf(o); if(c) counts[c]=(counts[c]||0)+1; });
+  const cats=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b));
+  if(adminValFilter!=="all" && !counts[adminValFilter]) adminValFilter="all";
+  const v = adminValFilter==="all"? vAll : vAll.filter(o=>catOf(o)===adminValFilter);
+  const chip=(key,label,n)=>`<button class="ident-chip${adminValFilter===key?' active':''}" data-vcat="${esc(key)}">${esc(label)} <span class="n">${n}</span></button>`;
+  const chipsHTML = vAll.length? `<div class="ident-filters" id="adminval-filters">${chip("all",t("Tout"),vAll.length)+cats.map(c=>chip(c,t(c),counts[c])).join("")}</div>` : "";
   document.getElementById("admin-section").innerHTML=`
     <div class="stats">
       <div class="stat"><div class="n" style="color:var(--orange)">${pend.length}</div><div class="l">${t("En attente")}</div></div>
-      <div class="stat"><div class="n" style="color:var(--green)">${v.length}</div><div class="l">${t("Validées")}</div></div>
+      <div class="stat"><div class="n" style="color:var(--green)">${vAll.length}</div><div class="l">${t("Validées")}</div></div>
     </div>
     <h3 style="margin:22px 0 12px"><span class="hdot" style="background:var(--orange)"></span> ${t("File d'attente")}</h3>
     <div>${pend.length?pend.map(queueRow).join(""):`<div class="empty">${t("Rien à valider dans la file.")}</div>`}</div>
     <h3 style="margin:26px 0 12px"><span class="hdot" style="background:var(--green)"></span> ${t("Validées")}</h3>
+    ${chipsHTML}
     <div>${v.length?v.map(o=>doneRow(o)).join(""):`<div class="empty">${t("Aucune pour le moment.")}</div>`}</div>`;
+  document.querySelectorAll('#adminval-filters .ident-chip').forEach(b=>b.onclick=()=>{ adminValFilter=b.dataset.vcat; renderAdminValidation(); });
 }
 function queueRow(o){
   const guessed = o.sp?(speciesById(o.sp)?.sci||o.sp) : (o.proposedName ? o.proposedName : t("Espèce inconnue (à identifier)"));
