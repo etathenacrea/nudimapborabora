@@ -135,6 +135,13 @@
   .ident-chip.active .n{opacity:.85}
   .move-banner{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9998;display:none;align-items:center;gap:12px;background:var(--sea-deep);color:#fff;padding:10px 16px;border-radius:12px;box-shadow:0 8px 30px rgba(10,68,82,.4);font-size:13.5px;max-width:92vw}
   .move-banner .btn.ghost{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.45)}
+  .gallery-grid{columns:3 230px;column-gap:14px}
+  .gcard{break-inside:avoid;margin:0 0 14px;position:relative;border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 2px 10px rgba(20,49,56,.12)}
+  .gcard img{width:100%;display:block;transition:transform .35s ease}
+  .gcard:hover img{transform:scale(1.06)}
+  .gcard figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 12px 11px;background:linear-gradient(transparent,rgba(6,30,35,.85))}
+  .gcard .gsci{font-style:italic;font-weight:600;font-size:14px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);margin-bottom:3px}
+  .gcard figcaption .rare{filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
   .filters label{font-size:12px;color:var(--muted);font-weight:600;display:flex;flex-direction:column;gap:4px}
   select,input,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 13px;outline:none}
   select:focus,input:focus,textarea:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(39,211,207,.22)}
@@ -263,6 +270,7 @@
       <button data-view="ident"><span data-k="Identification">Identification</span></button>
       <button data-view="proposer"><span data-k="Proposer">Proposer</span></button>
       <button data-view="classement"><span data-k="Classement">Classement</span></button>
+      <button data-view="galerie"><span data-k="Galerie">Galerie</span></button>
       <button data-view="admin"><span data-k="Espace admin">Espace admin</span></button>
     </nav>
     <div id="langbtn" class="langbtn" aria-label="Langue"></div>
@@ -373,6 +381,13 @@
     <div id="ranking-body"></div>
   </section>
 
+  <!-- ============ GALERIE ============ -->
+  <section class="view" id="view-galerie">
+    <h2 data-i18n="Galerie">Galerie</h2>
+    <p class="lead" data-i18n="Les nudibranches les plus rares et les plus beaux du fenua. Clique sur une photo pour voir sa fiche.">Les nudibranches les plus rares et les plus beaux du fenua. Clique sur une photo pour voir sa fiche.</p>
+    <div class="gallery-grid" id="gallery-grid"></div>
+  </section>
+
   <!-- ============ ADMIN ============ -->
   <section class="view" id="view-admin">
     <h2 data-i18n="Espace admin">Espace admin</h2>
@@ -467,7 +482,7 @@ const EN = {
   "Validation":"Validation","Bibliothèque":"Library","changer d'expert":"switch expert",
   "File d'attente":"Queue","Rien à valider dans la file.":"Nothing to validate.","Aucune pour le moment.":"None yet.",
   "Site ?":"Site ?","prof. n.c.":"depth n/a","proposé :":"suggested:","Espèce inconnue (à identifier)":"Unknown species (to identify)",
-  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Île":"Island","Toutes les îles":"All islands","Tout":"All","Récentes d'abord":"Most recent first","Par espèce":"By species","Prochaine île :":"Next island:","observations validées":"validated observations","plus que":"just","pour l'ouvrir !":"more to open it!","Île mise à jour :":"Island updated:","Action réservée.":"Restricted action.","Modification impossible.":"Could not update.","Déplacer le point":"Move the point","Clique sur la carte au bon endroit pour déplacer le point.":"Tap the right spot on the map to move the point.","Point déplacé.":"Point moved.","La carte ci-dessous se centrera sur l'île choisie.":"The map below will center on the chosen island.","Petit mot au déposant (encouragement) 🎉":"A note to the depositor (encouragement) 🎉","Bravo, il est magnifique !":"Well done — it's gorgeous!","Super rare, magique !":"Super rare — magical!","À publier sur nos réseaux, bravo !":"One for our socials — bravo!","Un mot de nos experts :":"A word from our experts:","Classement":"Leaderboard","Classement des contributeurs":"Contributor leaderboard","Plus tu participes, plus tu montes ! Merci à toutes celles et ceux qui font vivre la carte.":"The more you take part, the higher you climb! Thanks to everyone bringing the map to life.","contributeur·rices":"contributors","observations partagées":"shared observations","Personne n'a encore contribué — sois le premier à déposer une observation !":"No contributions yet — be the first to submit an observation!","(toi)":"(you)","obs.":"obs.","validées":"validated","Trouvé par":"Found by","Photographe :":"Photographer:","Validé par":"Validated by","Observé par :":"Observed by:","autres":"others","Le classement compte tes observations partagées (les refusées ne comptent pas). Dépose, et grimpe !":"The ranking counts your shared observations (rejected ones don't count). Submit and climb!","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
+  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Île":"Island","Toutes les îles":"All islands","Tout":"All","Récentes d'abord":"Most recent first","Par espèce":"By species","Galerie":"Gallery","Les nudibranches les plus rares et les plus beaux du fenua. Clique sur une photo pour voir sa fiche.":"The rarest and most beautiful nudibranchs of the fenua. Tap a photo to see its entry.","Aucune photo pour le moment.":"No photos yet.","Prochaine île :":"Next island:","observations validées":"validated observations","plus que":"just","pour l'ouvrir !":"more to open it!","Île mise à jour :":"Island updated:","Action réservée.":"Restricted action.","Modification impossible.":"Could not update.","Déplacer le point":"Move the point","Clique sur la carte au bon endroit pour déplacer le point.":"Tap the right spot on the map to move the point.","Point déplacé.":"Point moved.","La carte ci-dessous se centrera sur l'île choisie.":"The map below will center on the chosen island.","Petit mot au déposant (encouragement) 🎉":"A note to the depositor (encouragement) 🎉","Bravo, il est magnifique !":"Well done — it's gorgeous!","Super rare, magique !":"Super rare — magical!","À publier sur nos réseaux, bravo !":"One for our socials — bravo!","Un mot de nos experts :":"A word from our experts:","Classement":"Leaderboard","Classement des contributeurs":"Contributor leaderboard","Plus tu participes, plus tu montes ! Merci à toutes celles et ceux qui font vivre la carte.":"The more you take part, the higher you climb! Thanks to everyone bringing the map to life.","contributeur·rices":"contributors","observations partagées":"shared observations","Personne n'a encore contribué — sois le premier à déposer une observation !":"No contributions yet — be the first to submit an observation!","(toi)":"(you)","obs.":"obs.","validées":"validated","Trouvé par":"Found by","Photographe :":"Photographer:","Validé par":"Validated by","Observé par :":"Observed by:","autres":"others","Le classement compte tes observations partagées (les refusées ne comptent pas). Dépose, et grimpe !":"The ranking counts your shared observations (rejected ones don't count). Submit and climb!","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
   "— choisir l'espèce —":"— choose the species —","Autre / nouvelle identification…":"Other / new identification…",
   "Nom scientifique *":"Scientific name *","Famille":"Family","Rareté":"Rarity","C'est un juvénile":"It's a juvenile",
   "Avis entre experts (ex. à confirmer par Alexandre ?)":"Note between experts (e.g. to be confirmed by Alexandre?)",
@@ -566,7 +581,7 @@ const ICONS={
   instagram:'<rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/>'
 };
 function icon(n,sz){ const s=sz?`width:${sz}px;height:${sz}px;`:""; return `<svg class="icn" style="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||""}</svg>`; }
-const NAV_ICON={home:"waves",carte:"map",ident:"search",proposer:"camera",classement:"trophy",admin:"lock"};
+const NAV_ICON={home:"waves",carte:"map",ident:"search",proposer:"camera",classement:"trophy",galerie:"image",admin:"lock"};
 
 // ---------- Espèces de référence (conférence J. Certain, Dive N' Smile) ----------
 // family + species(type) + rarity pré-remplis au mieux : à vérifier/corriger par les experts.
@@ -705,7 +720,7 @@ function getStar(id){ const el=document.getElementById(id); return el?Number(el.
 function getCSS(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
 // ---------- Navigation ----------
-const views={home:"view-home",carte:"view-carte",ident:"view-ident",proposer:"view-proposer",classement:"view-ranking",admin:"view-admin"};
+const views={home:"view-home",carte:"view-carte",ident:"view-ident",proposer:"view-proposer",classement:"view-ranking",galerie:"view-galerie",admin:"view-admin"};
 document.getElementById("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) goTo(b.dataset.view); });
 function goTo(v){
   if(movingObsId && v!=="carte") cancelMove();
@@ -718,6 +733,7 @@ function goTo(v){
   if(v==="admin") renderAdmin();
   if(v==="ident") renderSpecies();
   if(v==="classement") renderRanking();
+  if(v==="galerie") renderGallery();
   if(v==="home"){ renderReefCarousel(); renderIslandProgress(); }
 }
 function renderRanking(){
@@ -879,6 +895,13 @@ function renderSpecies(){
   g.querySelectorAll(".spcard").forEach(c=>c.onclick=()=>openSpecies(c.dataset.id));
 }
 document.getElementById("ident-search").addEventListener("input",renderSpecies);
+function renderGallery(){
+  const g=document.getElementById("gallery-grid"); if(!g) return;
+  const list=(state.species||[]).slice().sort((a,b)=>(b.rarity||0)-(a.rarity||0) || a.sci.localeCompare(b.sci));
+  g.innerHTML=list.map(s=>`<figure class="gcard" data-id="${s.id}"><img src="${s.photo}" alt="${esc(s.sci)}" loading="lazy"><figcaption><div class="gsci">${esc(s.sci)}</div>${starsHtml(s.rarity)}</figcaption></figure>`).join("")
+    || `<div class="empty">${t("Aucune photo pour le moment.")}</div>`;
+  g.querySelectorAll(".gcard").forEach(c=>c.onclick=()=>openSpecies(c.dataset.id));
+}
 function openSpecies(id){
   const s=speciesById(id); if(!s) return;
   const observers=[...new Set(state.observations.filter(o=>o.sp===id && o.status==="validated" && (o.by||"").trim()).map(o=>o.by.trim()))];
@@ -1198,7 +1221,7 @@ function queueRow(o){
         </div>
         <label class="chk"><input type="checkbox" id="juv-${o.id}"> ${icon('sprout')} ${t("C'est un juvénile")}</label>
         <input id="ex-note-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Avis entre experts (ex. à confirmer par Alexandre ?)")}" value="${esc(o.expertNote||"")}">
-        <input id="msg-${o.id}" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Petit mot au déposant (encouragement) 🎉")}" value="${esc(o.expertMessage||"")}">
+        <textarea id="msg-${o.id}" rows="2" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="${t("Petit mot au déposant (encouragement) 🎉")}">${esc(o.expertMessage||"")}</textarea>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px">${["Bravo, il est magnifique !","Super rare, magique !","À publier sur nos réseaux, bravo !"].map(m=>`<button type="button" onclick="setMsg('${o.id}',this)" style="font-size:12px;padding:4px 11px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--sea-deep);cursor:pointer">${t(m)}</button>`).join("")}</div>
       </div>
     </div>
