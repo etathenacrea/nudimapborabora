@@ -902,7 +902,7 @@ function renderGallery(){
     .sort((a,b)=> String(b.featuredAt).localeCompare(String(a.featuredAt)));
   if(!list.length){ g.innerHTML=`<div class="empty">${t("La galerie est vide pour l'instant — les experts y ajouteront bientôt leurs coups de cœur.")}</div>`; return; }
   g.innerHTML=list.map(o=>{ const s=speciesById(o.sp); const sci=s?s.sci:(o.proposedName||t("Espèce indéterminée"));
-    return `<figure class="gcard"><img class="zoomable" src="${o.featuredPhoto||obsPhoto(o)}" alt="${esc(sci)}" loading="lazy"><figcaption><div class="gsci">${esc(sci)}</div><div class="gby">${s&&s.rarity?starsHtml(s.rarity):""}${o.by?`<span>${icon('user')} ${esc(o.by)}</span>`:""}</div></figcaption></figure>`; }).join("");
+    return `<figure class="gcard"><img class="zoomable" src="${o.featuredPhoto||obsPhoto(o)}" alt="${esc(sci)}" loading="lazy"><figcaption><div class="gsci">${esc(sci)}</div><div class="gby">${s&&s.rarity?starsHtml(s.rarity):""}${o.island?`<span>${icon('pin')} ${esc(o.island)}</span>`:""}${o.by?`<span>${icon('user')} ${esc(o.by)}</span>`:""}</div></figcaption></figure>`; }).join("");
 }
 function openSpecies(id){
   const s=speciesById(id); if(!s) return;
