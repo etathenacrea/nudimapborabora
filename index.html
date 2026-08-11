@@ -153,6 +153,26 @@
   .gcard figcaption .rare{filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
   .gcard .gby{display:flex;align-items:center;gap:9px;font-size:12px;color:rgba(255,255,255,.92);text-shadow:0 1px 2px rgba(0,0,0,.55);flex-wrap:wrap}
   .gcard .gby span{display:inline-flex;align-items:center;gap:4px}
+  .like-btn{position:absolute;top:8px;right:8px;z-index:2;display:inline-flex;align-items:center;gap:4px;padding:5px 9px 5px 8px;border:0;border-radius:999px;background:rgba(8,28,36,.42);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);color:#fff;cursor:pointer;font-size:12.5px;font-weight:700;line-height:1;transition:transform .12s ease,background .2s ease}
+  .like-btn:hover{background:rgba(8,28,36,.62)}
+  .like-btn:active{transform:scale(.86)}
+  .like-btn .icn{width:16px;height:16px;fill:transparent;transition:fill .15s ease,stroke .15s ease}
+  .like-btn.liked{background:rgba(214,51,73,.94)}
+  .like-btn.liked .icn{fill:#fff;stroke:#fff}
+  .like-n{min-width:7px;text-align:center}
+  #gallery-winner:not(:empty){margin:0 0 16px}
+  .week-win{display:flex;gap:14px;align-items:center;padding:12px 14px;border-radius:16px;background:linear-gradient(120deg,rgba(232,146,11,.16),rgba(14,150,173,.13));border:1px solid rgba(232,146,11,.38)}
+  .week-win>img{width:88px;height:88px;object-fit:cover;border-radius:12px;flex:none;cursor:pointer;box-shadow:0 2px 8px rgba(20,49,56,.22)}
+  .week-win .ww-info{min-width:0}
+  .week-win .ww-label{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:12px;color:var(--star);text-transform:uppercase;letter-spacing:.03em}
+  .week-win .ww-label .icn{width:16px;height:16px}
+  .week-win .ww-sci{font-style:italic;font-weight:700;font-size:15.5px;margin:3px 0 2px;color:var(--ink)}
+  .week-win .ww-by{font-size:13px;color:var(--ink);display:flex;align-items:center;gap:5px}
+  .week-win .ww-by .icn{width:14px;height:14px}
+  .week-win .ww-likes{margin-top:4px;font-size:12.5px;color:#c0392b;font-weight:700;display:inline-flex;align-items:center;gap:5px}
+  .week-win .ww-likes .icn{width:14px;height:14px;fill:#c0392b;stroke:#c0392b}
+  .week-win.empty{justify-content:center;gap:8px;color:var(--muted);font-size:13.5px;background:rgba(14,150,173,.06);border-style:dashed;text-align:center}
+  .week-win.empty .icn{width:18px;height:18px;color:var(--star)}
   .filters label{font-size:12px;color:var(--muted);font-weight:600;display:flex;flex-direction:column;gap:4px}
   select,input,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 13px;outline:none}
   select:focus,input:focus,textarea:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(39,211,207,.22)}
@@ -396,6 +416,7 @@
   <section class="view" id="view-galerie">
     <h2 data-i18n="Galerie">Galerie</h2>
     <p class="lead" data-i18n="Une sélection des plus belles rencontres du fenua, choisie par nos experts. Clique sur une photo pour l'agrandir.">Une sélection des plus belles rencontres du fenua, choisie par nos experts. Clique sur une photo pour l'agrandir.</p>
+    <div id="gallery-winner"></div>
     <div class="gallery-grid" id="gallery-grid"></div>
   </section>
 
@@ -493,7 +514,7 @@ const EN = {
   "Validation":"Validation","Bibliothèque":"Library","changer d'expert":"switch expert",
   "File d'attente":"Queue","Rien à valider dans la file.":"Nothing to validate.","Aucune pour le moment.":"None yet.",
   "Site ?":"Site ?","prof. n.c.":"depth n/a","proposé :":"suggested:","Espèce inconnue (à identifier)":"Unknown species (to identify)",
-  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Île":"Island","Toutes les îles":"All islands","Tout":"All","Récentes d'abord":"Most recent first","Par espèce":"By species","Galerie":"Gallery","Une sélection des plus belles rencontres du fenua, choisie par nos experts. Clique sur une photo pour l'agrandir.":"A selection of the fenua's finest sightings, hand-picked by our experts. Tap a photo to enlarge it.","La galerie est vide pour l'instant — les experts y ajouteront bientôt leurs coups de cœur.":"The gallery is empty for now — the experts will soon add their favourites.","Ajouter à la galerie":"Add to gallery","Dans la galerie":"In the gallery","Quelle photo mettre en galerie ?":"Which photo for the gallery?","Clique sur la photo à afficher.":"Tap the photo to show.","Ajouté à la galerie ⭐":"Added to the gallery ⭐","Retiré de la galerie.":"Removed from the gallery.","Prochaine île :":"Next island:","observations validées":"validated observations","plus que":"just","pour l'ouvrir !":"more to open it!","Île mise à jour :":"Island updated:","Action réservée.":"Restricted action.","Modification impossible.":"Could not update.","Déplacer le point":"Move the point","Clique sur la carte au bon endroit pour déplacer le point.":"Tap the right spot on the map to move the point.","Point déplacé.":"Point moved.","La carte ci-dessous se centrera sur l'île choisie.":"The map below will center on the chosen island.","Petit mot au déposant (encouragement) 🎉":"A note to the depositor (encouragement) 🎉","Bravo, il est magnifique !":"Well done — it's gorgeous!","Super rare, magique !":"Super rare — magical!","À publier sur nos réseaux, bravo !":"One for our socials — bravo!","Un mot de nos experts :":"A word from our experts:","Classement":"Leaderboard","Classement des contributeurs":"Contributor leaderboard","Plus tu participes, plus tu montes ! Merci à toutes celles et ceux qui font vivre la carte.":"The more you take part, the higher you climb! Thanks to everyone bringing the map to life.","contributeur·rices":"contributors","observations partagées":"shared observations","Personne n'a encore contribué — sois le premier à déposer une observation !":"No contributions yet — be the first to submit an observation!","(toi)":"(you)","obs.":"obs.","validées":"validated","Trouvé par":"Found by","Photographe :":"Photographer:","Validé par":"Validated by","Observé par :":"Observed by:","autres":"others","Le classement compte tes observations partagées (les refusées ne comptent pas). Dépose, et grimpe !":"The ranking counts your shared observations (rejected ones don't count). Submit and climb!","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
+  "Nouvelle proposition — proposer un nom d'espèce":"New suggestion — propose a species name","Ta proposition de nom (scientifique ou commun)":"Your suggested name (scientific or common)","Ta proposition sera vérifiée par un expert avant d'être affichée.":"Your suggestion will be checked by an expert before it is shown.","proposition du déposant":"depositor's suggestion","Île":"Island","Toutes les îles":"All islands","Tout":"All","Récentes d'abord":"Most recent first","Par espèce":"By species","Galerie":"Gallery","Une sélection des plus belles rencontres du fenua, choisie par nos experts. Clique sur une photo pour l'agrandir.":"A selection of the fenua's finest sightings, hand-picked by our experts. Tap a photo to enlarge it.","La galerie est vide pour l'instant — les experts y ajouteront bientôt leurs coups de cœur.":"The gallery is empty for now — the experts will soon add their favourites.","Ajouter à la galerie":"Add to gallery","Dans la galerie":"In the gallery","Quelle photo mettre en galerie ?":"Which photo for the gallery?","Clique sur la photo à afficher.":"Tap the photo to show.","Ajouté à la galerie ⭐":"Added to the gallery ⭐","Retiré de la galerie.":"Removed from the gallery.","J'aime cette photo":"Like this photo","Impossible d'enregistrer ton like, réessaie.":"Couldn't save your like — try again.","Premier de la semaine":"Top of the week","cœur cette semaine":"heart this week","cœurs cette semaine":"hearts this week","Sois le premier à liker une photo cette semaine ❤️":"Be the first to like a photo this week ❤️","Prochaine île :":"Next island:","observations validées":"validated observations","plus que":"just","pour l'ouvrir !":"more to open it!","Île mise à jour :":"Island updated:","Action réservée.":"Restricted action.","Modification impossible.":"Could not update.","Déplacer le point":"Move the point","Clique sur la carte au bon endroit pour déplacer le point.":"Tap the right spot on the map to move the point.","Point déplacé.":"Point moved.","La carte ci-dessous se centrera sur l'île choisie.":"The map below will center on the chosen island.","Petit mot au déposant (encouragement) 🎉":"A note to the depositor (encouragement) 🎉","Bravo, il est magnifique !":"Well done — it's gorgeous!","Super rare, magique !":"Super rare — magical!","À publier sur nos réseaux, bravo !":"One for our socials — bravo!","Un mot de nos experts :":"A word from our experts:","Classement":"Leaderboard","Classement des contributeurs":"Contributor leaderboard","Plus tu participes, plus tu montes ! Merci à toutes celles et ceux qui font vivre la carte.":"The more you take part, the higher you climb! Thanks to everyone bringing the map to life.","contributeur·rices":"contributors","observations partagées":"shared observations","Personne n'a encore contribué — sois le premier à déposer une observation !":"No contributions yet — be the first to submit an observation!","(toi)":"(you)","obs.":"obs.","validées":"validated","Trouvé par":"Found by","Photographe :":"Photographer:","Validé par":"Validated by","Observé par :":"Observed by:","autres":"others","Le classement compte tes observations partagées (les refusées ne comptent pas). Dépose, et grimpe !":"The ranking counts your shared observations (rejected ones don't count). Submit and climb!","Ta proposition :":"Your suggestion:","en attente de validation":"awaiting validation","Espèce indéterminée":"Undetermined species","Connecte-toi avec ton email et ton mot de passe d'expert.":"Sign in with your expert email and password.","Mot de passe":"Password","Se connecter":"Sign in","Indique ton email et ton mot de passe.":"Enter your email and password.","Email ou mot de passe incorrect.":"Incorrect email or password.","Déconnecté·e.":"Signed out.","Validation impossible (connexion expert requise).":"Cannot validate (expert sign-in required).","Action impossible (connexion expert requise).":"Action not allowed (expert sign-in required).","Enregistrement impossible (connexion expert requise).":"Cannot save (expert sign-in required).","Suppression impossible (connexion expert requise).":"Cannot delete (expert sign-in required).","Création de l'espèce impossible.":"Could not create the species.","Envoi de la photo impossible.":"Photo upload failed.","Tu peux indiquer une date passée (anciennes photos).":"You can enter a past date (older photos).","À propos des noms « sp1 », « sp2 », « sp3 »…":"About the names sp1, sp2, sp3…","Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.":"When a species has been spotted but not yet officially described by scientists, it is given a temporary number (sp1, sp2, sp3…) until it receives a real name. It is not a mistake: it means there are still discoveries to be made, right here in French Polynesia.",
   "— choisir l'espèce —":"— choose the species —","Autre / nouvelle identification…":"Other / new identification…",
   "Nom scientifique *":"Scientific name *","Famille":"Family","Rareté":"Rarity","C'est un juvénile":"It's a juvenile",
   "Avis entre experts (ex. à confirmer par Alexandre ?)":"Note between experts (e.g. to be confirmed by Alexandre?)",
@@ -685,7 +706,14 @@ function getFamily(id){ return getList(id); }
 // Identité du déposant : locale à l'appareil (les déposants ne sont pas des comptes)
 function loadUser(){ try{ return JSON.parse(localStorage.getItem("nudimap_user"))||null; }catch(e){ return null; } }
 function saveState(){ localStorage.setItem("nudimap_user", JSON.stringify(state.user||null)); }
-let state = { user: loadUser(), observations: [], species: JSON.parse(JSON.stringify(DEFAULT_SPECIES)) };
+let state = { user: loadUser(), observations: [], species: JSON.parse(JSON.stringify(DEFAULT_SPECIES)), likes: {} };
+let likesOn = false;
+function clientId(){
+  try{ let c=localStorage.getItem("nudimap_client");
+    if(!c){ c=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():("c"+Math.random().toString(36).slice(2)+Date.now().toString(36)); localStorage.setItem("nudimap_client",c); }
+    return c;
+  }catch(e){ return "c-fallback-0001"; }
+}
 // "Vu" des notifications : local à l'appareil (un anonyme ne peut pas modifier les lignes)
 function seenSet(){ try{ return new Set(JSON.parse(localStorage.getItem("nudimap_seen"))||[]); }catch(e){ return new Set(); } }
 function seenHas(id){ return seenSet().has(id); }
@@ -905,13 +933,70 @@ function renderSpecies(){
   g.querySelectorAll(".spcard").forEach(c=>c.onclick=()=>openSpecies(c.dataset.id));
 }
 document.getElementById("ident-search").addEventListener("input",renderSpecies);
-function renderGallery(){
-  const g=document.getElementById("gallery-grid"); if(!g) return;
-  const list=(state.observations||[]).filter(o=>o.featuredAt && o.status!=="rejected")
+function galleryList(){
+  return (state.observations||[]).filter(o=>o.featuredAt && o.status!=="rejected")
     .sort((a,b)=> String(b.featuredAt).localeCompare(String(a.featuredAt)));
-  if(!list.length){ g.innerHTML=`<div class="empty">${t("La galerie est vide pour l'instant — les experts y ajouteront bientôt leurs coups de cœur.")}</div>`; return; }
+}
+async function loadLikes(){
+  try{
+    const { data, error } = await sb.rpc("gallery_likes", { p_client: clientId() });
+    if(error) throw error;
+    const m={}; (data||[]).forEach(r=>{ m[r.observation_id]={ total:Number(r.total)||0, week:Number(r.week)||0, mine:!!r.mine }; });
+    state.likes=m; likesOn=true;
+  }catch(e){ likesOn=false; }   // table/RPC pas encore créés → galerie sans likes
+}
+function winnerHtml(list){
+  if(!likesOn) return "";
+  let best=null, bestW=0;
+  list.forEach(o=>{ const w=(state.likes[o.id]||{}).week||0; if(w>bestW){ bestW=w; best=o; } });
+  if(!best) return `<div class="week-win empty">${icon('trophy')} <span>${t("Sois le premier à liker une photo cette semaine ❤️")}</span></div>`;
+  const s=speciesById(best.sp); const sci=s?s.sci:(best.proposedName||t("Espèce indéterminée"));
+  return `<div class="week-win">
+      <img class="zoomable" src="${best.featuredPhoto||obsPhoto(best)}" alt="${esc(sci)}">
+      <div class="ww-info">
+        <div class="ww-label">${icon('trophy')} ${t("Premier de la semaine")}</div>
+        <div class="ww-sci">${esc(sci)}</div>
+        ${best.by?`<div class="ww-by">${icon('user')} <b>${esc(best.by)}</b></div>`:""}
+        <div class="ww-likes">${icon('heart')} ${bestW} ${bestW>1?t("cœurs cette semaine"):t("cœur cette semaine")}</div>
+      </div>
+    </div>`;
+}
+async function renderGallery(){
+  const g=document.getElementById("gallery-grid"); if(!g) return;
+  const banner=document.getElementById("gallery-winner");
+  const list=galleryList();
+  if(!list.length){ g.innerHTML=`<div class="empty">${t("La galerie est vide pour l'instant — les experts y ajouteront bientôt leurs coups de cœur.")}</div>`; if(banner) banner.innerHTML=""; return; }
+  await loadLikes();
+  if(banner) banner.innerHTML=winnerHtml(list);
   g.innerHTML=list.map(o=>{ const s=speciesById(o.sp); const sci=s?s.sci:(o.proposedName||t("Espèce indéterminée"));
-    return `<figure class="gcard"><img class="zoomable" src="${o.featuredPhoto||obsPhoto(o)}" alt="${esc(sci)}" loading="lazy"><figcaption><div class="gsci">${esc(sci)}</div><div class="gby">${s&&s.rarity?starsHtml(s.rarity):""}${o.island?`<span>${icon('pin')} ${esc(o.island)}</span>`:""}${o.by?`<span>${icon('user')} ${esc(o.by)}</span>`:""}</div></figcaption></figure>`; }).join("");
+    const L=(likesOn&&state.likes[o.id])||{total:0,week:0,mine:false};
+    const likeBtn=likesOn?`<button class="like-btn${L.mine?' liked':''}" onclick="event.stopPropagation();toggleLike('${o.id}')" aria-label="${t("J'aime cette photo")}">${icon('heart')}<span class="like-n">${L.total||0}</span></button>`:"";
+    return `<figure class="gcard" data-obs="${o.id}"><img class="zoomable" src="${o.featuredPhoto||obsPhoto(o)}" alt="${esc(sci)}" loading="lazy">${likeBtn}<figcaption><div class="gsci">${esc(sci)}</div><div class="gby">${s&&s.rarity?starsHtml(s.rarity):""}${o.island?`<span>${icon('pin')} ${esc(o.island)}</span>`:""}${o.by?`<span>${icon('user')} ${esc(o.by)}</span>`:""}</div></figcaption></figure>`; }).join("");
+}
+function patchLikeUI(id){
+  const card=document.querySelector('.gcard[data-obs="'+id+'"]'); if(!card) return;
+  const btn=card.querySelector(".like-btn"); if(!btn) return;
+  const L=state.likes[id]||{total:0,mine:false};
+  btn.classList.toggle("liked", !!L.mine);
+  const n=btn.querySelector(".like-n"); if(n) n.textContent=L.total||0;
+}
+async function toggleLike(id){
+  if(!likesOn) return;
+  const cur=state.likes[id]||{total:0,week:0,mine:false};
+  const wasMine=cur.mine, d=wasMine?-1:1;
+  cur.mine=!wasMine; cur.total=Math.max(0,(cur.total||0)+d); cur.week=Math.max(0,(cur.week||0)+d);
+  state.likes[id]=cur; patchLikeUI(id);
+  const banner=document.getElementById("gallery-winner"); if(banner) banner.innerHTML=winnerHtml(galleryList());
+  try{
+    const { data, error } = await sb.rpc("toggle_like", { p_obs:id, p_client:clientId() });
+    if(error) throw error;
+    if(data){ cur.total=Number(data.total)||0; cur.week=Number(data.week)||0; cur.mine=!!data.liked; state.likes[id]=cur; }
+  }catch(e){
+    cur.mine=wasMine; cur.total=Math.max(0,(cur.total||0)-d); cur.week=Math.max(0,(cur.week||0)-d); state.likes[id]=cur;
+    toast(t("Impossible d'enregistrer ton like, réessaie."));
+  }
+  patchLikeUI(id);
+  if(banner) banner.innerHTML=winnerHtml(galleryList());
 }
 function openSpecies(id){
   const s=speciesById(id); if(!s) return;
