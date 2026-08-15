@@ -216,6 +216,30 @@
   .spcard .sci{font-style:italic;font-weight:600;font-size:16.5px;letter-spacing:-.2px}
   .spcard .tx{display:inline-block;font-size:11px;font-weight:600;color:var(--sea-deep);background:#e0f3f5;padding:2px 9px;border-radius:20px}
   .spcard .obs{font-size:13px;color:var(--muted);margin-top:9px}
+  .swipe-wrap{max-width:540px;margin:0 auto}
+  .swipe-deck{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:6px 0 14px;scrollbar-width:none}
+  .swipe-deck::-webkit-scrollbar{display:none}
+  .swipe-deck::before,.swipe-deck::after{content:"";flex:0 0 6%}
+  .swipe-card{flex:0 0 88%;scroll-snap-align:center;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 4px 20px rgba(11,93,112,.12);cursor:pointer;transition:transform .14s}
+  .swipe-card:active{transform:scale(.99)}
+  .swipe-card>img{width:100%;height:262px;object-fit:cover;display:block;background:#dfeef0}
+  .swipe-card .sc-b{padding:15px 17px 17px}
+  .swipe-card .sc-sci{font-style:italic;font-weight:700;font-size:19px;letter-spacing:-.2px;line-height:1.15}
+  .swipe-card .sc-common{font-size:13.5px;color:var(--muted);margin-top:3px}
+  .swipe-card .tx{display:inline-block;font-size:11px;font-weight:600;color:var(--sea-deep);background:#e0f3f5;padding:2px 9px;border-radius:20px}
+  .swipe-card .sc-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:11px;flex-wrap:wrap}
+  .swipe-card .sc-row2{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:9px}
+  .swipe-card .sc-fam{font-size:12.5px;color:var(--muted)}
+  .swipe-card .sc-obs{font-size:13px;color:var(--muted);margin-top:11px}
+  .swipe-card .sc-loc{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--sea-deep);margin-top:7px}
+  .swipe-card .sc-loc .icn{width:13px;height:13px;flex:none}
+  .swipe-card .sc-more{margin-top:12px;font-size:12.5px;font-weight:700;color:var(--sea-deep)}
+  .swipe-ctrl{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:2px}
+  .swipe-nav{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--sea-deep);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(11,93,112,.10);transition:background .12s,transform .1s}
+  .swipe-nav:hover{background:#e0f3f5}
+  .swipe-nav:active{transform:scale(.9)}
+  .swipe-nav .icn{width:22px;height:22px}
+  .swipe-count{font-size:14px;font-weight:700;color:var(--ink);min-width:70px;text-align:center;font-variant-numeric:tabular-nums}
   .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 1px 3px rgba(20,49,56,.05)}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .form-grid>*{min-width:0}            /* laisse les colonnes rétrécir (évite le débordement du champ fichier sur mobile) */
@@ -401,7 +425,7 @@
       <input id="ident-search" data-i18n-ph="Rechercher une espèce, une famille, une couleur…" placeholder="Rechercher une espèce, une famille, une couleur…" style="flex:1;min-width:220px" />
     </div>
     <div class="ident-filters" id="ident-filters"></div>
-    <div class="grid" id="species-grid"></div>
+    <div id="species-grid"></div>
     <div id="sp-note"></div>
   </section>
 
@@ -494,7 +518,7 @@ const EN = {
   "Le panache de branchies sur le dos. Absente chez certaines familles, qui respirent alors autrement : par des branchies non visibles, ou par des extensions du manteau (les cérates).":"The plume of gills on the back. Absent in some families, which breathe another way: through hidden gills, or through extensions of the mantle (the cerata).",
   "Le corps et ses couleurs. Sa forme et ses motifs sont la clé de l'identification.":"The body and its colours. Its shape and patterns are the key to identification.",
   "Rechercher une espèce, une famille, une couleur…":"Search a species, a family, a colour…",
-  "Aucune espèce ne correspond à la recherche.":"No species matches your search.",
+  "Aucune espèce ne correspond à la recherche.":"No species matches your search.","Touche pour la fiche complète":"Tap for the full profile","Précédent":"Previous","Suivant":"Next","observation(s)":"observation(s)",
   "observation(s) ·":"observation(s) ·","Fermer":"Close","Nom commun":"Common name","Classification":"Classification",
   "Taille :":"Size:","rareté non renseignée":"rarity not set",
   "Jour":"Day","Nuit":"Night","Jour et nuit":"Day and night",
@@ -620,7 +644,9 @@ const ICONS={
   mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/>',
   phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 17l-1 4a16 16 0 0 1-15-15z"/>',
   trophy:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.6V17c0 .5-.5 1-1 1.2C7.8 18.7 7 20.2 7 22"/><path d="M14 14.6V17c0 .5.5 1 1 1.2 1.2.5 2 2 2 4.8"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
-  instagram:'<rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/>'
+  instagram:'<rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/>',
+  chevL:'<path d="M15 18l-6-6 6-6"/>',
+  chevR:'<path d="M9 18l6-6-6-6"/>'
 };
 function icon(n,sz){ const s=sz?`width:${sz}px;height:${sz}px;`:""; return `<svg class="icn" style="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||""}</svg>`; }
 const NAV_ICON={home:"waves",carte:"map",ident:"search",proposer:"camera",classement:"trophy",galerie:"image",admin:"lock"};
@@ -932,17 +958,54 @@ function renderSpecies(){
   const g=document.getElementById("species-grid");
   const list=speciesSorted().filter(s=>(identFilter==="all"||(s.classification||"").trim()===identFilter) && (!q||(s.sci+" "+(s.commonName||"")+" "+(s.classification||"")+" "+(s.d||[]).join(" ")).toLowerCase().includes(q)));
   const count=id=>state.observations.filter(o=>o.sp===id&&o.status==="validated").length;
-  g.innerHTML=list.map(s=>`<div class="spcard" data-id="${s.id}">
-    <img src="${s.photo}" alt="${esc(s.sci)}" loading="lazy">
-    <div class="b"><div class="sci">${esc(s.sci)}</div>
-    ${s.commonName?`<div style="font-size:13px;color:var(--muted);margin-top:2px">${esc(s.commonName)}</div>`:""}
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap"><span class="tx">${esc(t(s.classification))||"—"}</span>${starsHtml(s.rarity)}</div>
-    ${(s.family||s.dayNight)?`<div style="margin-top:7px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">${s.family?`<span style="font-size:12.5px;color:var(--muted)">${esc(s.family)}</span>`:""}${dayNightHtml(s.dayNight)}</div>`:""}
-    <div class="obs">${count(s.id)} ${t("observation(s) ·")} ${esc(szT(s.size))}</div></div></div>`).join("")
-    || `<div class="empty">${t("Aucune espèce ne correspond à la recherche.")}</div>`;
+  const islandsOf=id=>{ const c={}; state.observations.filter(o=>o.sp===id&&o.status==="validated"&&(o.island||"").trim()).forEach(o=>{const k=o.island.trim();c[k]=(c[k]||0)+1;}); return Object.entries(c).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"fr")).map(x=>x[0]); };
+  if(!list.length){
+    g.innerHTML=`<div class="empty">${t("Aucune espèce ne correspond à la recherche.")}</div>`;
+  } else {
+    g.innerHTML=`<div class="swipe-wrap"><div class="swipe-deck" id="swipe-deck">${list.map(s=>{
+      const isl=islandsOf(s.id); const islTxt=isl.slice(0,3).join(" · ")+(isl.length>3?` +${isl.length-3}`:"");
+      return `<article class="swipe-card" data-id="${s.id}">
+        <img src="${s.photo}" alt="${esc(s.sci)}" loading="lazy">
+        <div class="sc-b">
+          <div class="sc-sci">${esc(s.sci)}</div>
+          ${s.commonName?`<div class="sc-common">${esc(s.commonName)}</div>`:""}
+          <div class="sc-row"><span class="tx">${esc(t(s.classification))||"—"}</span>${starsHtml(s.rarity)}</div>
+          ${(s.family||s.dayNight)?`<div class="sc-row2">${s.family?`<span class="sc-fam">${esc(s.family)}</span>`:""}${dayNightHtml(s.dayNight)}</div>`:""}
+          <div class="sc-obs">${count(s.id)} ${t("observation(s)")}${s.size?` · ${esc(szT(s.size))}`:""}</div>
+          ${isl.length?`<div class="sc-loc">${icon('pin')} ${esc(islTxt)}</div>`:""}
+          <div class="sc-more">${t("Touche pour la fiche complète")} ›</div>
+        </div>
+      </article>`;
+    }).join("")}</div>
+    <div class="swipe-ctrl">
+      <button class="swipe-nav" onclick="swipeStep(-1)" aria-label="${t("Précédent")}">${icon('chevL')}</button>
+      <span class="swipe-count" id="swipe-count">1 / ${list.length}</span>
+      <button class="swipe-nav" onclick="swipeStep(1)" aria-label="${t("Suivant")}">${icon('chevR')}</button>
+    </div></div>`;
+    const deck=document.getElementById("swipe-deck");
+    if(deck){ deck.scrollLeft=0; deck.onscroll=()=>requestAnimationFrame(updateSwipeCount); deck.querySelectorAll(".swipe-card").forEach(c=>c.onclick=()=>openSpecies(c.dataset.id)); updateSwipeCount(); }
+  }
   const spn=document.getElementById("sp-note");
   if(spn) spn.innerHTML=`<div class="card" style="margin-top:22px;max-width:760px"><h3 style="margin:0 0 8px;font-size:16px">${icon('info')} ${t("À propos des noms « sp1 », « sp2 », « sp3 »…")}</h3><p style="margin:0;font-size:14.5px;color:var(--muted);line-height:1.65">${t("Quand une espèce est repérée mais pas encore décrite officiellement par les scientifiques, elle reçoit un numéro provisoire (sp1, sp2, sp3…) en attendant de recevoir un vrai nom. Ce n'est pas une erreur : c'est le signe qu'il reste des découvertes à faire, ici même en Polynésie française.")}</p></div>`;
-  g.querySelectorAll(".spcard").forEach(c=>c.onclick=()=>openSpecies(c.dataset.id));
+}
+function swipeStep(dir){
+  const deck=document.getElementById("swipe-deck"); if(!deck) return;
+  const cards=[...deck.querySelectorAll(".swipe-card")]; if(!cards.length) return;
+  const r=deck.getBoundingClientRect(), center=r.left+r.width/2;
+  let cur=0,best=Infinity;
+  cards.forEach((c,i)=>{ const cr=c.getBoundingClientRect(), cc=cr.left+cr.width/2, d=Math.abs(cc-center); if(d<best){best=d;cur=i;} });
+  const target=Math.max(0,Math.min(cards.length-1,cur+dir));
+  const cr=cards[target].getBoundingClientRect();
+  deck.scrollLeft += (cr.left+cr.width/2)-center;
+  updateSwipeCount();
+}
+function updateSwipeCount(){
+  const deck=document.getElementById("swipe-deck"); if(!deck) return;
+  const cards=[...deck.querySelectorAll(".swipe-card")]; if(!cards.length) return;
+  const r=deck.getBoundingClientRect(), center=r.left+r.width/2;
+  let idx=0,best=Infinity;
+  cards.forEach((c,i)=>{ const cr=c.getBoundingClientRect(), cc=cr.left+cr.width/2, d=Math.abs(cc-center); if(d<best){best=d;idx=i;} });
+  const el=document.getElementById("swipe-count"); if(el) el.textContent=`${idx+1} / ${cards.length}`;
 }
 document.getElementById("ident-search").addEventListener("input",renderSpecies);
 function galleryList(){
