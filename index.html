@@ -536,7 +536,7 @@ const EN = {
   "Environnement":"Environment","— optionnel —":"— optional —","Sable, éponges, coraux… (lié à l'alimentation / au comportement).":"Sand, sponges, corals… (linked to diet / behaviour).",
   "Site / lieu":"Site / location","— choisis un site —":"— choose a site —","Autre (préciser)…":"Other (specify)…","Écris le lieu (ex. tombant nord…)":"Type the place (e.g. north drop-off…)",
   "Emplacement précis — clique sur la carte pour poser l'épingle":"Exact spot — click the map to drop the pin","Aucune position choisie.":"No position chosen.",
-  "Date d'observation":"Observation date","Heure":"Time","Profondeur (m)":"Depth (m)","Environ, ça suffit.":"Roughly is fine.","Commentaire (optionnel)":"Comment (optional)",
+  "Date d'observation":"Observation date","Heure":"Time","Profondeur (m)":"Depth (m)","Environ, ça suffit.":"Roughly is fine.","ex. 0,5 ou 14":"e.g. 0.5 or 14","Environ, ça suffit. Les décimales sont acceptées (ex. 0,5).":"Roughly is fine. Decimals are accepted (e.g. 0.5).","Commentaire (optionnel)":"Comment (optional)",
   "comportement, taille…":"behaviour, size…","Envoyer l'observation":"Send the observation","requis pour une observation scientifiquement utile.":"required for a scientifically useful observation.","Tes observations en attente":"Your pending observations","Tu peux les corriger tant qu'un expert ne les a pas validées.":"You can edit them until an expert validates them.","Corriger":"Edit","Correction de ton observation":"Editing your observation","Modifie ce que tu veux, puis enregistre.":"Change anything, then save.","Enregistrer les corrections":"Save changes","Observation corrigée !":"Observation updated!","Correction impossible.":"Cannot edit.","Correction impossible (déjà validée ?).":"Cannot edit (already validated?).","Correction indisponible pour le moment.":"Editing unavailable right now.",
   // Environnement / options
   "Sable":"Sand","Éponges":"Sponges","Coraux":"Corals","Roche":"Rock","Herbier / algues":"Seagrass / algae","Tombant":"Drop-off","Épave / structure":"Wreck / structure","Autre":"Other",
@@ -1151,7 +1151,7 @@ function renderProposer(){
         <span class="hint" id="p-coords">${t("Aucune position choisie.")}</span></div>
       <div class="field"><label>${t("Date d'observation")} <span class="req">*</span></label><input type="date" id="p-date" value="${todayISO()}"><span class="hint">${t("Tu peux indiquer une date passée (anciennes photos).")}</span></div>
       <div class="field"><label>${t("Heure")}</label><input type="time" id="p-time" value="10:00"></div>
-      <div class="field"><label>${t("Profondeur (m)")} <span class="req">*</span></label><input type="number" id="p-depth" min="0" max="60" placeholder="ex. 14"><span class="hint">${t("Environ, ça suffit.")}</span></div>
+      <div class="field"><label>${t("Profondeur (m)")} <span class="req">*</span></label><input type="text" inputmode="decimal" id="p-depth" placeholder="${t("ex. 0,5 ou 14")}" autocomplete="off"><span class="hint">${t("Environ, ça suffit. Les décimales sont acceptées (ex. 0,5).")}</span></div>
       <div class="field"><label>${t("Commentaire (optionnel)")}</label><input id="p-note" placeholder="${t("comportement, taille…")}"></div>
     </div>
     <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -1181,16 +1181,17 @@ function signup(){
   if(!n||!em){ toast(t("Indique ton nom et ton email.")); return; }
   state.user={name:n,email:em,phone:val("su-phone").trim()}; saveState(); renderWho(); renderProposer(); toast((LANG==='en'?"Welcome ":"Bienvenue ")+n+" !");
 }
+function parseDepth(v){ if(v==null) return null; const n=parseFloat(String(v).replace(",",".").trim()); return isNaN(n)?null:n; }
 async function submitObs(){
   const spVal=val("p-species");
   const siteSel=val("p-site"); let site = siteSel==="__autre"? val("p-site-other").trim() : siteSel;
-  const date=val("p-date"), depth=val("p-depth");
+  const date=val("p-date"), depth=parseDepth(val("p-depth"));
   const miss=[];
   if(!pendingPhotos.length) miss.push(t("au moins une photo"));
   if(!siteSel || (siteSel==="__autre"&&!site)) miss.push(t("le lieu"));
   if(!pickLatLng) miss.push(t("l'emplacement sur la carte"));
   if(!date) miss.push(t("la date"));
-  if(depth===""||depth==null) miss.push(t("la profondeur"));
+  if(depth==null||depth<0) miss.push(t("la profondeur"));
   if(miss.length){ toast(t("Il manque :")+" "+miss.join(", ")); return; }
   const proposedName = spVal==="__propose" ? val("p-propose").trim() : "";
   const btn=document.getElementById("p-submit"); if(btn){ btn.disabled=true; }
@@ -1201,7 +1202,7 @@ async function submitObs(){
   const editToken = genEditToken();
   const row={ species_id:(spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposed_name:proposedName,
     photos:urls, env:val("p-env"), island:val("p-island")||"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
-    obs_date:date, obs_time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim(),
+    obs_date:date, obs_time:val("p-time")||"", depth:depth, note:val("p-note").trim(),
     by_name:state.user.name, by_email:state.user.email, by_phone:state.user.phone||"", status:"pending", edit_token:editToken };
   let tokenStored=editToken;
   let { data:ins, error } = await sb.from("observations").insert(row).select("id");
@@ -1236,13 +1237,13 @@ async function saveObsEdit(){
   if(!o || !token){ toast(t("Correction impossible.")); return; }
   const spVal=val("p-species");
   const siteSel=val("p-site"); let site = siteSel==="__autre"? val("p-site-other").trim() : siteSel;
-  const date=val("p-date"), depth=val("p-depth");
+  const date=val("p-date"), depth=parseDepth(val("p-depth"));
   const miss=[];
   if(!pendingPhotos.length) miss.push(t("au moins une photo"));
   if(!siteSel || (siteSel==="__autre"&&!site)) miss.push(t("le lieu"));
   if(!pickLatLng) miss.push(t("l'emplacement sur la carte"));
   if(!date) miss.push(t("la date"));
-  if(depth===""||depth==null) miss.push(t("la profondeur"));
+  if(depth==null||depth<0) miss.push(t("la profondeur"));
   if(miss.length){ toast(t("Il manque :")+" "+miss.join(", ")); return; }
   const proposedName = spVal==="__propose" ? val("p-propose").trim() : "";
   const btn=document.getElementById("p-submit"); if(btn) btn.disabled=true;
@@ -1252,7 +1253,7 @@ async function saveObsEdit(){
   catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed, please try again.":"Échec de l'envoi des photos, réessaie."); if(btn) btn.disabled=false; return; }
   const patch={ species_id:(spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposed_name:proposedName,
     photos:finalPhotos, env:val("p-env"), island:val("p-island")||"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
-    obs_date:date, obs_time:val("p-time")||"", depth:Number(depth), note:val("p-note").trim() };
+    obs_date:date, obs_time:val("p-time")||"", depth:depth, note:val("p-note").trim() };
   const { data, error } = await sb.rpc("edit_observation", { p_id:o.id, p_token:token, p_patch:patch });
   if(error || data!==true){ console.error("edit obs", error); toast(error ? t("Correction indisponible pour le moment.") : t("Correction impossible (déjà validée ?).")); if(btn) btn.disabled=false; return; }
   editingObsId=null;
