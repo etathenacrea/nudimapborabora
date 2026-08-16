@@ -702,6 +702,10 @@ const DEFAULT_SPECIES=[
 ].map(s=>({...s,classification:s.species||"",family:s.family||"",commonName:s.commonName||"",dayNight:s.dayNight||"",photo:"assets/species/"+s.id+".jpg"}));
 
 const SITE_NAMES=["Anau","Aquarium","Matira","Muri Muri","Passe Teavanui","Pointe Tahi (Feufeu)","Tapu","Toopua","Toopua Iti","Tupitipiti"];
+// Sites prédéfinis par île. Pour l'instant seulement Bora Bora ; les autres îles = saisie libre.
+// Pour ajouter des sites à une île : ajoute une entrée ici, ex. "Moorea":["Tiki","Temae"].
+const SITES_BY_ISLAND={ "Bora Bora": SITE_NAMES };
+function sitesForIsland(name){ return SITES_BY_ISLAND[name] || []; }
 // Îles de la Polynésie française (on en ajoutera au fur et à mesure)
 const ISLANDS=[
   {name:"Bora Bora", c:[-16.5004,-151.7415], z:12.5, openAt:0},
@@ -1142,9 +1146,7 @@ function renderProposer(){
         <select id="p-island" onchange="onIslandChange()">${openIslands().map(i=>`<option value="${esc(i.name)}" ${i.name==="Bora Bora"?"selected":""}>${esc(i.name)}</option>`).join("")}</select>
         <span class="hint">${t("La carte ci-dessous se centrera sur l'île choisie.")}</span></div>
       <div class="field"><label>${t("Site / lieu")} <span class="req">*</span></label>
-        <select id="p-site" onchange="onSiteChange()"><option value="">${t("— choisis un site —")}</option>
-        ${SITE_NAMES.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("")}
-        <option value="__autre">${t("Autre (préciser)…")}</option></select>
+        <select id="p-site" onchange="onSiteChange()"></select>
         <input id="p-site-other" placeholder="${t("Écris le lieu (ex. tombant nord…)")}" style="display:none;margin-top:8px"></div>
       <div class="field full"><label>${t("Emplacement précis — clique sur la carte pour poser l'épingle")} <span class="req">*</span></label>
         <div id="pick-map"></div>
@@ -1161,6 +1163,7 @@ function renderProposer(){
   </div>`;
   pickLatLng=null; pendingPhotos=[]; pickMarker=null; if(pickMap){ try{pickMap.remove();}catch(e){} pickMap=null; }
   if(editing) prefillProposerForm(editing);
+  else renderSiteOptions();
   setTimeout(()=>{
     const isl0 = (editing && editing.lat!=null && editing.lng!=null) ? {c:[editing.lat,editing.lng],z:15} : (islandBy(val("p-island"))||ISLANDS[0]);
     pickMap=L.map("pick-map").setView(isl0.c,isl0.z);
@@ -1174,7 +1177,21 @@ function renderProposer(){
   document.getElementById("p-photo").addEventListener("change",async e=>{ const files=[...e.target.files]; e.target.value=""; for(const f of files){ await new Promise(res=>resizeToDataURL(f,d=>{ if(d){ pendingPhotos.push(d); renderPhotoPreview(); } res(); })); } });
 }
 function onSiteChange(){ document.getElementById("p-site-other").style.display = val("p-site")==="__autre"?"block":"none"; }
-function onIslandChange(){ const isl=islandBy(val("p-island")); if(isl && pickMap){ pickMap.setView(isl.c,isl.z); pickLatLng=null; if(pickMarker){ try{pickMap.removeLayer(pickMarker);}catch(e){} pickMarker=null; } const c=document.getElementById("p-coords"); if(c) c.innerHTML=t("Aucune position choisie."); } }
+function renderSiteOptions(){
+  const sel=document.getElementById("p-site"); if(!sel) return;
+  const sites=sitesForIsland(val("p-island"));
+  sel.innerHTML=`<option value="">${t("— choisis un site —")}</option>`
+    + sites.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("")
+    + `<option value="__autre">${t("Autre (préciser)…")}</option>`;
+  if(sites.length){ sel.style.display=""; sel.value=""; }        // île avec sites → menu déroulant
+  else { sel.style.display="none"; sel.value="__autre"; }         // autre île → saisie libre directe
+  onSiteChange();
+}
+function onIslandChange(){
+  renderSiteOptions();
+  const other=document.getElementById("p-site-other"); if(other) other.value="";
+  const isl=islandBy(val("p-island")); if(isl && pickMap){ pickMap.setView(isl.c,isl.z); pickLatLng=null; if(pickMarker){ try{pickMap.removeLayer(pickMarker);}catch(e){} pickMarker=null; } const c=document.getElementById("p-coords"); if(c) c.innerHTML=t("Aucune position choisie."); }
+}
 function onSpeciesChange(){ const show = val("p-species")==="__propose"; document.getElementById("p-propose").style.display = show?"block":"none"; document.getElementById("p-propose-hint").style.display = show?"block":"none"; }
 function signup(){
   const n=val("su-name").trim(), em=val("su-email").trim();
@@ -1221,10 +1238,11 @@ function cancelEditObs(){ editingObsId=null; renderProposer(); window.scrollTo(0
 function prefillProposerForm(o){
   const setv=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v; };
   setv("p-island", o.island||"Bora Bora"); setv("p-env", o.env||"");
+  renderSiteOptions();
   const sp=document.getElementById("p-species");
   if(sp){ if(o.sp && speciesById(o.sp)) sp.value=o.sp; else if(o.proposedName){ sp.value="__propose"; setv("p-propose", o.proposedName); } else sp.value="je-sais-pas"; }
   onSpeciesChange();
-  if(o.site && SITE_NAMES.includes(o.site)) setv("p-site", o.site);
+  if(o.site && sitesForIsland(o.island||"Bora Bora").includes(o.site)) setv("p-site", o.site);
   else if(o.site){ setv("p-site","__autre"); setv("p-site-other", o.site); }
   onSiteChange();
   setv("p-date", o.date||todayISO()); setv("p-time", o.time||""); setv("p-depth", (o.depth!=null?o.depth:"")); setv("p-note", o.note||"");
