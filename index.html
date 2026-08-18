@@ -1588,7 +1588,7 @@ function openSpeciesEditor(id){
         <button class="btn ghost" onclick="closeEditor()">${t("Annuler")}</button>
         <button class="btn" onclick="saveSpecies()">${s?t("Enregistrer les modifications"):t("Ajouter à la bibliothèque")}</button></div>
     </div>`;
-  document.getElementById("ed-photo").addEventListener("change",e=>{ const f=e.target.files[0]; if(f) resizeToDataURL(f,d=>{ editorPhoto=d; document.getElementById("ed-preview").innerHTML=edPhotoHTML(); }); });
+  document.getElementById("ed-photo").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; toast(LANG==='en'?"Reading the photo…":"Lecture de la photo…"); resizeToDataURL(f,d=>{ if(!d){ toast(LANG==='en'?"Couldn't read this photo — try another one (or a screenshot).":"Photo illisible, essaie une autre image (ou une capture d'écran)."); return; } editorPhoto=d; document.getElementById("ed-preview").innerHTML=edPhotoHTML(); }); });
   document.getElementById("sp-editor").classList.add("open");
 }
 function closeEditor(){ document.getElementById("sp-editor").classList.remove("open"); }
@@ -1648,7 +1648,41 @@ document.addEventListener("click",e=>{ const z=e.target.closest("img.zoomable");
 document.querySelectorAll(".modal-bg").forEach(bg=>bg.addEventListener("click",e=>{ if(e.target===bg) bg.classList.remove("open"); }));
 
 // ---------- utils ----------
-function resizeToDataURL(file,cb){ const r=new FileReader(); r.onerror=()=>cb(null); r.onload=ev=>{ const img=new Image(); img.onerror=()=>cb(null); img.onload=()=>{ try{ const max=1200, sc=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext("2d").drawImage(img,0,0,c.width,c.height); const out=c.toDataURL("image/jpeg",0.82); c.width=c.height=0; img.src=""; cb(out); }catch(err){ console.error("resize",err); cb(null); } }; img.src=ev.target.result; }; r.readAsDataURL(file); }
+function resizeToDataURL(file,cb){
+  let done=false; const finish=o=>{ if(done)return; done=true; try{cb(o);}catch(e){} };
+  const draw=(src,w,h)=>{
+    try{
+      if(!w||!h) return false;
+      const max=1400, sc=Math.min(1, max/Math.max(w,h));
+      const cw=Math.max(1,Math.round(w*sc)), ch=Math.max(1,Math.round(h*sc));
+      const c=document.createElement("canvas"); c.width=cw; c.height=ch;
+      c.getContext("2d").drawImage(src,0,0,cw,ch);
+      const out=c.toDataURL("image/jpeg",0.82); c.width=c.height=0;
+      if(src.close) src.close();
+      if(out && out.length>100){ finish(out); return true; }
+    }catch(err){ console.error("resize draw",err); }
+    return false;
+  };
+  const viaReader=()=>{
+    const r=new FileReader();
+    r.onerror=()=>finish(null);
+    r.onload=ev=>{ const raw=ev.target.result;
+      const rawFallback=()=> finish(/^data:image\//.test(raw||"") ? raw : null);   // dernier recours : photo brute
+      const img=new Image();
+      img.onerror=rawFallback;
+      img.onload=()=>{ if(!draw(img, img.naturalWidth, img.naturalHeight)) rawFallback(); };
+      img.src=raw;
+    };
+    r.readAsDataURL(file);
+  };
+  try{
+    if(window.createImageBitmap){
+      createImageBitmap(file, {imageOrientation:'from-image'})
+        .then(bmp=>{ if(!draw(bmp, bmp.width, bmp.height)) viaReader(); })
+        .catch(()=>viaReader());
+    } else viaReader();
+  }catch(e){ viaReader(); }
+}
 function slugify(s){ return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,""); }
 function val(id){ const el=document.getElementById(id); return el?el.value:""; }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
