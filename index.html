@@ -1598,18 +1598,22 @@ async function saveSpecies(){
   const d=val("ed-desc").split("\n").map(x=>x.trim()).filter(Boolean);
   const row={ sci, common_name:val("ed-common").trim(), classification:getClassif("ed-classif"), family:getFamily("ed-family"),
     day_night:val("ed-daynight"), rarity:getStar("ed-rarity"), size:val("ed-size").trim(), description:d, note:val("ed-note").trim(), found_by:val("ed-photographer").trim() };
+  const edBtns=document.querySelectorAll("#sp-editor-content .btn"); const relock=()=>edBtns.forEach(b=>b.disabled=false);
+  edBtns.forEach(b=>b.disabled=true);
+  toast(LANG==='en'?"Saving…":"Enregistrement…");
   let photo=editorPhoto||"";
-  if(photo.startsWith("data:")){ try{ photo=(await uploadPhotos([photo]))[0]; }catch(e){ console.error(e); toast(t("Envoi de la photo impossible.")); return; } }
+  if(photo.startsWith("data:")){ try{ photo=(await uploadPhotos([photo]))[0]; }catch(e){ console.error("species photo upload",e); toast(LANG==='en'?"Photo upload failed — please try again.":"Échec de l'envoi de la photo, réessaie."); relock(); return; } }
   if(editingSpeciesId){
     if(photo) row.photo=photo;
-    const { data:upd, error } = await sb.from("species").update(row).eq("id",editingSpeciesId).select();
-    if(error || !upd || !upd.length){ console.error("update species",error); toast(t("Enregistrement impossible (connexion expert requise).")); return; }
+    let { data:upd, error } = await sb.from("species").update(row).eq("id",editingSpeciesId).select();
+    if(error && /found_by|day_night/.test(error.message||"")){ const r2={...row}; delete r2.found_by; delete r2.day_night; ({ data:upd, error } = await sb.from("species").update(r2).eq("id",editingSpeciesId).select()); }
+    if(error || !upd || !upd.length){ console.error("update species",error); toast(LANG==='en'?"Couldn't save — sign in again?":"Enregistrement impossible — reconnecte-toi et réessaie."); relock(); return; }
     toast(t("Fiche mise à jour."));
   } else {
-    if(!photo){ toast(t("Ajoute une photo pour la nouvelle espèce.")); return; }
+    if(!photo){ toast(t("Ajoute une photo pour la nouvelle espèce.")); relock(); return; }
     let base=slugify(sci)||("sp-"+Date.now()); let id=base,i=2; while(speciesById(id)){ id=base+"-"+(i++); }
     const { error } = await insertSpecies({ id, ...row, photo, validated_by:adminUser||"" });
-    if(error){ console.error("insert species",error); toast(t("Enregistrement impossible (connexion expert requise).")); return; }
+    if(error){ console.error("insert species",error); toast(t("Enregistrement impossible (connexion expert requise).")); relock(); return; }
     toast(t("Espèce ajoutée à la bibliothèque."));
   }
   await loadSpecies(); closeEditor(); renderAdmin(); renderSpecies();
