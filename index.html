@@ -219,10 +219,15 @@
   .home-hero h2{font-size:34px;line-height:1.08;margin:0}
   .map-add{flex:none;display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:0;font-family:inherit}
   .map-add .ma-label{font-size:12.5px;font-weight:800;color:var(--sea-deep);white-space:nowrap}
-  .map-add .ma-circle{width:44px;height:44px;border-radius:50%;background:var(--sea-deep);border:3px solid #fff;box-shadow:0 4px 13px rgba(10,68,82,.32);display:flex;align-items:center;justify-content:center;transition:transform .12s,background .15s}
+  .map-add .ma-circle{position:relative;width:44px;height:44px;border-radius:50%;background:var(--sea-deep);border:3px solid #fff;box-shadow:0 4px 13px rgba(10,68,82,.32);display:flex;align-items:center;justify-content:center;transition:transform .12s,background .15s}
+  .map-add .ma-circle::after{content:"";position:absolute;inset:-1px;border-radius:50%;border:2.5px solid var(--sea-deep);opacity:0;animation:maBeacon 2.4s ease-out infinite;pointer-events:none}
+  @keyframes maBeacon{0%{transform:scale(1);opacity:.5}70%{opacity:0}100%{transform:scale(1.9);opacity:0}}
   .map-add:hover .ma-circle{background:var(--sea);transform:translateY(-1px)}
   .map-add:active .ma-circle{transform:scale(.93)}
-  .map-add .ha-plus{color:#fff;font-size:27px;line-height:1;font-weight:300}
+  .map-add .ma-nudi{width:31px;height:auto;transform-origin:center;animation:maSwim 3.4s ease-in-out infinite}
+  @keyframes maSwim{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-1.5px) rotate(4deg)}}
+  .map-add .ma-plus{position:absolute;bottom:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:#ff8a5c;color:#fff;font-size:14px;font-weight:600;line-height:1;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+  @media(prefers-reduced-motion:reduce){.map-add .ma-circle::after{animation:none}.map-add .ma-nudi{animation:none}}
   .home-map-wrap{margin-bottom:22px}
   .map-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;min-height:34px}
   .mt-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1;flex-wrap:wrap}
@@ -432,7 +437,7 @@
           <button class="map-back" id="map-back" onclick="exitIslandView()" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M15 18l-6-6 6-6"/></svg> <span data-i18n="Toutes les îles">Toutes les îles</span></button>
           <span class="map-hint" id="map-hint"><span data-i18n="Touche une île pour voir ses observations">Touche une île pour voir ses observations</span></span>
         </div>
-        <button class="map-add" onclick="goTo('proposer')" aria-label="Ajouter une observation"><span class="ma-label" data-i18n="Ajouter">Ajouter</span><span class="ma-circle"><span class="ha-plus">+</span></span></button>
+        <button class="map-add" onclick="goTo('proposer')" aria-label="Ajouter une observation"><span class="ma-label" data-i18n="Ajouter">Ajouter</span><span class="ma-circle"><svg class="ma-nudi" viewBox="0 0 46 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 16 C5 11 12 9 23 9 C34 9 42 12 42 15.5 C42 19 34 20.5 22 20.5 C10 20.5 5 20 5 16 Z" fill="#fff" stroke="#0a7286" stroke-width="1.2"/><path d="M6.5 15 C10 11.4 16 10.6 23 10.6 C31 10.6 38 12.4 40.8 14.7 C39 12.9 32 11.8 23 11.8 C14.5 11.8 9.5 12.6 6.5 15 Z" fill="#ff8a5c"/><circle cx="17" cy="15.4" r="1.3" fill="#e0648c"/><circle cx="25" cy="15.8" r="1.1" fill="#e0648c"/><circle cx="32" cy="15.3" r="1" fill="#e0648c"/><g stroke="#f2953f" stroke-width="1.6" stroke-linecap="round"><path d="M9 10 C8 6.6 8 6 7 4.6"/><path d="M11.5 10 C11.5 6.6 11.5 5.6 11.5 4.1"/><path d="M14 10 C15 6.6 15.4 6 16.4 4.9"/></g><g stroke="#f2953f" stroke-width="1.8" stroke-linecap="round"><path d="M36 10 C37 6 37 5 36 3.6"/><path d="M39 10.5 C41 6.6 41.4 5.6 42.4 4.3"/></g><circle cx="37.4" cy="14.4" r="1.1" fill="#0a4452"/></svg><span class="ma-plus">+</span></span></button>
       </div>
       <div id="map"></div>
       <div class="filters map-filters" id="map-filters" style="display:none">
