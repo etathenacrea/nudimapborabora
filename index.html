@@ -246,13 +246,13 @@
   .pp-name{position:absolute;left:50%;top:68px;transform:translateX(-50%);background:rgba(8,28,36,.85);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.35);pointer-events:none}
   .leaflet-tooltip.isl-tip{background:rgba(8,28,36,.85);color:#fff;border:0;border-radius:8px;font-size:12px;font-weight:700;padding:3px 9px;box-shadow:0 2px 8px rgba(0,0,0,.35);white-space:nowrap}
   .leaflet-tooltip.isl-tip::before{display:none}
-  .landing-stats{display:flex;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 2px;margin:0 0 24px;box-shadow:0 1px 3px rgba(20,49,56,.05)}
-  .lstat{flex:1;min-width:0;text-align:center;padding:1px 5px;border-right:1px solid var(--line)}
+  .landing-stats{display:flex;background:linear-gradient(180deg,#f2fafb,var(--card) 65%);border:1px solid var(--line);border-radius:18px;padding:14px 4px 13px;margin:0 0 24px;box-shadow:0 3px 14px rgba(11,93,112,.09)}
+  .lstat{flex:1;min-width:0;padding:1px 5px;border-right:1px solid #e4eef0;display:flex;flex-direction:column;align-items:center}
   .lstat:last-child{border-right:0}
-  .lstat-top{display:flex;align-items:baseline;gap:4px;justify-content:center;flex-wrap:wrap}
-  .lstat-n{font-size:20px;font-weight:800;letter-spacing:-.3px;color:var(--ink);line-height:1.1}
-  .lstat-d{font-size:10px;color:var(--sea-deep);font-weight:700;white-space:nowrap}
-  .lstat-l{font-size:10.5px;color:var(--muted);font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lstat-n{font-size:22px;font-weight:800;letter-spacing:-.4px;color:var(--sea-deep);line-height:1.05}
+  .lstat-l{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .lstat-d{display:inline-flex;align-items:center;gap:2px;font-size:9.5px;font-weight:800;color:#1f9d6b;background:#e2f4ea;border-radius:20px;padding:1px 7px 1px 5px;margin-top:6px;line-height:1.4}
+  .lstat-d svg{width:9px;height:9px;flex:none}
   @media(max-width:720px){
     .home-hero{padding:32px 26px 36px}
     .home-hero h2{font-size:27px}
@@ -1114,7 +1114,8 @@ function renderLandingStats(){
     {n:Object.keys(islF).length || new Set(obs.map(o=>(o.island||"").trim()).filter(Boolean)).size, l:t("îles"), d:countNewFirsts(islF)},
     {n:new Set(obs.map(o=>(o.by||"").trim()).filter(Boolean)).size, l:t("contributeurs"), d:countNewFirsts(byF)},
   ];
-  el.innerHTML=cards.map(c=>`<div class="lstat"><div class="lstat-top"><span class="lstat-n">${c.n}</span>${c.d>0?`<span class="lstat-d">+${c.d}</span>`:""}</div><span class="lstat-l">${esc(c.l)}</span></div>`).join("");
+  const trend='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M16 7h5v5"/></svg>';
+  el.innerHTML=cards.map(c=>`<div class="lstat"><div class="lstat-n">${c.n}</div><div class="lstat-l">${esc(c.l)}</div><div class="lstat-d"${c.d>0?"":' style="visibility:hidden"'}>${trend}${c.d>0?c.d:0}</div></div>`).join("");
 }
 function popupHTML(o){
   const to=taxoOf(o), st=o.status;
