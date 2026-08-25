@@ -71,6 +71,8 @@
   .hero-meta{margin-top:24px;font-size:14.5px;color:rgba(255,255,255,.88);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .reef-wrap{margin-top:24px}
   .reef-label{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.82);display:flex;align-items:center;gap:7px;margin-bottom:4px}
+  .home-reef{margin:2px 0 26px}
+  .home-reef .reef-label{color:var(--muted)}
   .reef-carousel{overflow:hidden;padding:16px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
   .reef-track{display:flex;align-items:center;gap:20px;width:max-content;animation:reef-scroll 48s linear infinite}
   .reef-carousel:hover .reef-track{animation-play-state:paused}
@@ -209,8 +211,46 @@
   .legend{display:flex;gap:16px;align-items:center;font-size:13px;color:var(--muted);margin-left:auto;flex-wrap:wrap}
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .dot{width:13px;height:13px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
-  #map{height:600px;border-radius:16px;border:1px solid var(--line);overflow:hidden;z-index:1}
+  #map{height:min(54vh,540px);min-height:330px;border-radius:16px;border:1px solid var(--line);overflow:hidden;z-index:1}
   .map-pin span{display:block;width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);background:var(--c)}
+  /* ---- Accueil fusionné : hero compact + carte + compteur ---- */
+  .home-hero{padding:40px 40px 46px;margin:0 0 26px}
+  .home-hero .eyebrow{margin-bottom:16px}
+  .home-hero h2{font-size:34px;line-height:1.08;margin:0}
+  .map-add{flex:none;display:inline-flex;align-items:center;gap:8px;background:var(--sea-deep);color:#fff;border:0;border-radius:14px;padding:9px 15px 9px 11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(10,68,82,.28);transition:transform .12s,background .15s}
+  .map-add:hover{background:var(--sea);transform:translateY(-1px)}
+  .map-add:active{transform:scale(.97)}
+  .map-add .ha-plus{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.22);color:#fff;font-size:19px;line-height:1;font-weight:400}
+  .home-map-wrap{margin-bottom:22px}
+  .map-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;min-height:34px}
+  .mt-left{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+  .map-back{display:inline-flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:7px 14px 7px 10px;font-size:13.5px;font-weight:700;color:var(--sea-deep);cursor:pointer;font-family:inherit}
+  .map-back:hover{background:#e0f3f5;border-color:var(--sea)}
+  .map-hint{font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+  .map-filters{margin:12px 0 0}
+  .isl-ic{background:none;border:0}
+  .isl-pins{display:flex;gap:5px;align-items:flex-end;justify-content:center;pointer-events:none}
+  .cpin{position:relative;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 3px 8px rgba(8,28,36,.5);display:flex;align-items:center;justify-content:center;pointer-events:auto;cursor:pointer}
+  .cpin.v{background:var(--green)}
+  .cpin.p{background:var(--orange)}
+  .cpin>span{transform:rotate(45deg);color:#fff;font-weight:800;font-size:14px;line-height:1}
+  .leaflet-tooltip.isl-tip{background:rgba(8,28,36,.85);color:#fff;border:0;border-radius:8px;font-size:12px;font-weight:700;padding:3px 9px;box-shadow:0 2px 8px rgba(0,0,0,.35);white-space:nowrap}
+  .leaflet-tooltip.isl-tip::before{display:none}
+  .landing-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 26px}
+  .lstat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 16px;box-shadow:0 1px 3px rgba(20,49,56,.05)}
+  .lstat-top{display:flex;align-items:center;gap:9px}
+  .lstat-ic{display:inline-flex;color:var(--sea-deep)}
+  .lstat-ic .icn{width:22px;height:22px}
+  .lstat-n{font-size:29px;font-weight:800;letter-spacing:-.5px;color:var(--ink);line-height:1}
+  .lstat-l{font-size:13.5px;color:var(--muted);font-weight:500;margin-top:7px}
+  .lstat-d{font-size:12px;color:var(--sea-deep);font-weight:700;margin-top:3px}
+  @media(max-width:720px){
+    .landing-stats{grid-template-columns:repeat(2,1fr)}
+    .home-hero{padding:32px 26px 36px}
+    .home-hero h2{font-size:27px}
+    .map-add .ha-txt{display:none}
+    .map-add{padding:9px 11px}
+  }
   .pop{width:230px}
   .pop img{width:100%;height:140px;object-fit:cover;border-radius:9px;display:block;margin-bottom:8px}
   .pop .pend-photo{position:relative;margin-bottom:8px;border-radius:9px;overflow:hidden}
@@ -363,7 +403,6 @@
     </div>
     <nav id="nav">
       <button data-view="home" class="active"><span data-k="Accueil">Accueil</span></button>
-      <button data-view="carte"><span data-k="Carte">Carte</span></button>
       <button data-view="ident"><span data-k="Identification">Identification</span></button>
       <button data-view="proposer"><span data-k="Proposer">Proposer</span></button>
       <button data-view="classement"><span data-k="Classement">Classement</span></button>
@@ -379,23 +418,43 @@
 
   <!-- ============ ACCUEIL ============ -->
   <section class="view active" id="view-home">
-    <div class="hero">
+    <div class="home-map-wrap">
+      <div class="map-topbar">
+        <div class="mt-left">
+          <button class="map-back" id="map-back" onclick="exitIslandView()" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M15 18l-6-6 6-6"/></svg> <span data-i18n="Toutes les îles">Toutes les îles</span></button>
+          <span class="map-hint" id="map-hint"><span data-i18n="Touche une île pour voir ses observations">Touche une île pour voir ses observations</span></span>
+        </div>
+        <button class="map-add" onclick="goTo('proposer')" aria-label="Ajouter une observation"><span class="ha-plus">+</span><span class="ha-txt" data-i18n="Ajouter une observation">Ajouter une observation</span></button>
+      </div>
+      <div id="map"></div>
+      <div class="filters map-filters" id="map-filters" style="display:none">
+        <label class="fl-island"><span data-i18n="Île">Île</span><select id="f-island"><option value="all" data-i18n="Toutes les îles">Toutes les îles</option></select></label>
+        <label><span data-i18n="Espèce">Espèce</span><select id="f-species"></select></label>
+        <label><span data-i18n="Année">Année</span><select id="f-year"></select></label>
+        <label><span data-i18n="Statut">Statut</span><select id="f-status">
+          <option value="all" data-i18n="Toutes">Toutes</option>
+          <option value="validated" data-i18n="Validées">Validées</option>
+          <option value="pending" data-i18n="En attente">En attente</option>
+        </select></label>
+        <div class="legend">
+          <span><span class="dot" style="background:var(--green)"></span> <span data-i18n="Validée">Validée</span></span>
+          <span><span class="dot" style="background:var(--orange)"></span> <span data-i18n="En attente">En attente</span></span>
+        </div>
+      </div>
+      <div id="map-empty"></div>
+    </div>
+    <div id="landing-stats" class="landing-stats"></div>
+    <div class="hero home-hero">
       <div class="bubbles inhero" aria-hidden="true"></div>
       <div class="hero-in">
         <span class="eyebrow" id="hero-eyebrow"></span>
         <h2 data-i18n="Les joyaux cachés du récif !">Les joyaux cachés du récif !</h2>
         <p data-i18n="Le nudibranche (Nudibranchia) est un joyau du Fenua. Toi aussi, photographie, localise et partage tes observations. Māuruuru.">Le nudibranche (Nudibranchia) est un joyau du Fenua. Toi aussi, photographie, localise et partage tes observations. Māuruuru.</p>
-        <div class="cta">
-          <button data-i18n="Voir la carte" onclick="goTo('carte')">Voir la carte</button>
-          <button class="outline" data-i18n="Identifier une photo" onclick="goTo('ident')">Identifier une photo</button>
-          <button class="outline" data-i18n="Proposer une observation" onclick="goTo('proposer')">Proposer une observation</button>
-        </div>
-        <div class="hero-meta" id="hero-meta"></div>
       </div>
-      <div class="reef-wrap" id="reef-wrap" style="display:none">
-        <div class="reef-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;opacity:.9"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.2"/></svg> <span data-i18n="Les dernières trouvailles">Les dernières trouvailles</span></div>
-        <div class="reef-carousel"><div class="reef-track" id="reef-track"></div></div>
-      </div>
+    </div>
+    <div class="reef-wrap home-reef" id="reef-wrap" style="display:none">
+      <div class="reef-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;opacity:.9"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.2"/></svg> <span data-i18n="Les dernières trouvailles">Les dernières trouvailles</span></div>
+      <div class="reef-carousel"><div class="reef-track" id="reef-track"></div></div>
     </div>
     <div id="island-progress" class="island-progress" style="display:none"></div>
     <div class="intro">
@@ -423,29 +482,6 @@
     </div>
     <p class="ref-source"><span data-i18n="Référence et source :">Référence et source :</span> <a href="https://www.marinespecies.org" target="_blank" rel="noopener">marinespecies.org</a></p>
     <p class="ref-source copyright">© 2026 NudiMap · <span data-i18n="Tous droits réservés.">Tous droits réservés.</span> · <a href="#" onclick="openLegal();return false"><span data-i18n="Mentions légales">Mentions légales</span></a></p>
-  </section>
-
-  <!-- ============ CARTE ============ -->
-  <section class="view" id="view-carte">
-    <h2 data-i18n="Carte des observations">Carte des observations</h2>
-    <p class="lead" data-i18n="Chaque épingle est une rencontre dans le lagon.">Chaque épingle est une rencontre dans le lagon.</p>
-    <div class="stats" id="stats"></div>
-    <div class="filters">
-      <label><span data-i18n="Île">Île</span><select id="f-island"><option value="all" data-i18n="Toutes les îles">Toutes les îles</option></select></label>
-      <label><span data-i18n="Espèce">Espèce</span><select id="f-species"></select></label>
-      <label><span data-i18n="Année">Année</span><select id="f-year"></select></label>
-      <label><span data-i18n="Statut">Statut</span><select id="f-status">
-        <option value="all" data-i18n="Toutes">Toutes</option>
-        <option value="validated" data-i18n="Validées">Validées</option>
-        <option value="pending" data-i18n="En attente">En attente</option>
-      </select></label>
-      <div class="legend">
-        <span><span class="dot" style="background:var(--green)"></span> <span data-i18n="Validée">Validée</span></span>
-        <span><span class="dot" style="background:var(--orange)"></span> <span data-i18n="En attente">En attente</span></span>
-      </div>
-    </div>
-    <div id="map"></div>
-    <div id="map-empty"></div>
   </section>
 
   <!-- ============ IDENTIFICATION ============ -->
@@ -525,7 +561,7 @@ const EN = {
   "Les joyaux cachés du récif !":"The reef's hidden jewels!",
   "Le nudibranche (Nudibranchia) est un joyau du Fenua. Toi aussi, photographie, localise et partage tes observations. Māuruuru.":"The nudibranch (Nudibranchia) is a jewel of the Fenua. You too can photograph, locate and share your observations. Māuruuru.",
   "Voir la carte":"View the map","Identifier une photo":"Identify a photo","Proposer une observation":"Submit an observation",
-  "espèces de référence":"reference species",
+  "espèces de référence":"reference species","Explore les nudibranches de Polynésie française, île par île.":"Explore the nudibranchs of French Polynesia, island by island.","Ajouter une observation":"Add an observation","Touche une île pour voir ses observations":"Tap an island to see its observations","Toutes les îles":"All islands","observations":"observations","espèces":"species","îles explorées":"islands explored","contributeurs":"contributors","cette semaine":"this week",
   "Qu'est-ce qu'un nudibranche ?":"What is a nudibranch?",
   "Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique, dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille, ainsi qu'un cousin bien plus lointain, souvent confondu avec eux : le ver plat.":"A shell-less sea slug, often tiny (from a few millimetres to a few centimetres) and spectacularly colourful. Over 5,000 species worldwide, mostly in the Indo-Pacific, including French Polynesia. The library also features a few mollusc cousins (bubble snails, sea hares), some of which do keep a shell, plus a much more distant look-alike often mistaken for them: the flatworm.",
   "Pourquoi ça compte ?":"Why it matters",
@@ -639,7 +675,7 @@ function applyI18n(){
   renderSpecies();
   const av=document.getElementById("view-admin"); if(av&&av.classList.contains("active")) renderAdmin();
   const pv=document.getElementById("view-proposer"); if(pv&&pv.classList.contains("active")) renderProposer();
-  if(map){ fillFilters(); renderMarkers(); }
+  if(map){ fillFilters(); renderMarkers(); } renderLandingStats();
 }
 function renderLangBtn(){ const el=document.getElementById("langbtn"); if(el) el.innerHTML=`<button class="lng ${LANG==='fr'?'on':''}" onclick="setLang('fr')">FR</button><button class="lng ${LANG==='en'?'on':''}" onclick="setLang('en')">EN</button>`; }
 
@@ -834,21 +870,20 @@ function getStar(id){ const el=document.getElementById(id); return el?Number(el.
 function getCSS(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
 // ---------- Navigation ----------
-const views={home:"view-home",carte:"view-carte",ident:"view-ident",proposer:"view-proposer",classement:"view-ranking",galerie:"view-galerie",admin:"view-admin"};
+const views={home:"view-home",ident:"view-ident",proposer:"view-proposer",classement:"view-ranking",galerie:"view-galerie",admin:"view-admin"};
 document.getElementById("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) goTo(b.dataset.view); });
 function goTo(v){
-  if(movingObsId && v!=="carte") cancelMove();
+  if(movingObsId && v!=="home") cancelMove();
   document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
   Object.values(views).forEach(id=>document.getElementById(id).classList.remove("active"));
   document.getElementById(views[v]).classList.add("active");
   window.scrollTo(0,0);
-  if(v==="carte"){ ensureMap(); setTimeout(()=>{map.invalidateSize(); renderMarkers();},60); }
   if(v==="proposer") renderProposer();
   if(v==="admin") renderAdmin();
   if(v==="ident") renderSpecies();
   if(v==="classement") renderRanking();
   if(v==="galerie") renderGallery();
-  if(v==="home"){ renderReefCarousel(); renderIslandProgress(); }
+  if(v==="home"){ ensureMap(); setTimeout(()=>{ if(map){ map.invalidateSize(); renderMarkers(); } },60); renderReefCarousel(); renderIslandProgress(); renderLandingStats(); }
 }
 async function renderRanking(){
   const pod=document.getElementById("ranking-podium");
@@ -946,7 +981,7 @@ function closeNotif(){ document.getElementById("notif-modal").classList.remove("
 document.getElementById("notif-modal").addEventListener("click",e=>{ if(e.target.id==="notif-modal") closeNotif(); });
 
 // ---------- CARTE ----------
-let map, markersLayer, movingObsId=null;
+let map, markersLayer, movingObsId=null, mapMode="overview", focusIsland=null;
 function ensureMap(){
   if(map) return;
   map=L.map("map",{scrollWheelZoom:true}).setView([-17.05,-150.57],7);
@@ -968,27 +1003,88 @@ function fillFilters(){
   ["f-species","f-year","f-status"].forEach(id=>document.getElementById(id).onchange=renderMarkers);
   fi.onchange=onIslandFilter;
 }
-function onIslandFilter(){ if(map){ const v=val("f-island"); if(v==="all") map.fitBounds(polyBounds(),{padding:[20,20]}); else { const isl=islandBy(v); if(isl) map.setView(isl.c,isl.z); } } renderMarkers(); }
+function onIslandFilter(){ const v=val("f-island"); if(v==="all") exitIslandView(); else enterIslandView(v); }
 function pinIcon(color){ return L.divIcon({className:"map-pin",html:`<span style="--c:${color}"></span>`,iconSize:[18,18],iconAnchor:[9,9],popupAnchor:[0,-9]}); }
+// Pin agrégé par île : teardrop vert (validées) + teardrop orange (en attente)
+function islandPinIcon(vCount,pCount){
+  const both = vCount>0 && pCount>0, w = both?84:44;
+  const html=`<div class="isl-pins">${vCount>0?`<div class="cpin v"><span>${vCount}</span></div>`:""}${pCount>0?`<div class="cpin p"><span>${pCount}</span></div>`:""}</div>`;
+  return L.divIcon({className:"isl-ic",html,iconSize:[w,46],iconAnchor:[w/2,44],popupAnchor:[0,-42]});
+}
+function islandStats(){
+  const m={};
+  state.observations.filter(o=>o.status!=="rejected").forEach(o=>{
+    const k=(o.island||"Bora Bora").trim(); if(!k) return;
+    const e=m[k]||(m[k]={v:0,p:0});
+    if(o.status==="validated") e.v++; else e.p++;
+  });
+  return m;
+}
 function renderMarkers(){
   if(!markersLayer) return;
   markersLayer.clearLayers();
-  const fs=val("f-species"),fy=val("f-year"),fst=val("f-status"),fisl=val("f-island");
-  let shown=0;
-  state.observations.filter(o=>o.status!=="rejected").forEach(o=>{
-    if(fisl!=="all"&&(o.island||"Bora Bora")!==fisl) return;
-    if(fs!=="all"&&o.sp!==fs) return;
-    if(fy!=="all"&&o.date.slice(0,4)!==fy) return;
-    if(fst!=="all"&&o.status!==fst) return;
-    shown++;
-    const m=L.marker([o.lat,o.lng],{icon:pinIcon(o.status==="validated"?getCSS("--green"):getCSS("--orange"))});
-    m.bindPopup(popupHTML(o),{minWidth:230});
-    markersLayer.addLayer(m);
-  });
-  renderStats(shown);
+  const back=document.getElementById("map-back"), hint=document.getElementById("map-hint"), filters=document.getElementById("map-filters");
   const total=state.observations.filter(o=>o.status!=="rejected").length;
-  document.getElementById("map-empty").innerHTML = total? "" :
+  if(mapMode!=="island"){
+    if(back) back.style.display="none";
+    if(hint) hint.style.display= total?"":"none";
+    if(filters) filters.style.display="none";
+    const st=islandStats(); const pts=[];
+    Object.keys(st).forEach(name=>{
+      const isl=islandBy(name); if(!isl) return;
+      const {v,p}=st[name]; if(!v && !p) return;
+      pts.push(isl.c);
+      const mk=L.marker(isl.c,{icon:islandPinIcon(v,p),riseOnHover:true});
+      mk.bindTooltip(name,{permanent:true,direction:"bottom",offset:[0,4],className:"isl-tip"});
+      mk.on("click",()=>enterIslandView(name));
+      markersLayer.addLayer(mk);
+    });
+    if(pts.length && map){ try{ map.fitBounds(L.latLngBounds(pts).pad(0.55),{padding:[30,30]}); }catch(e){} }
+  } else {
+    if(back) back.style.display="";
+    if(hint) hint.style.display="none";
+    if(filters) filters.style.display="";
+    const fs=val("f-species"),fy=val("f-year"),fst=val("f-status");
+    state.observations.filter(o=>o.status!=="rejected").forEach(o=>{
+      if((o.island||"Bora Bora")!==focusIsland) return;
+      if(fs!=="all"&&o.sp!==fs) return;
+      if(fy!=="all"&&o.date.slice(0,4)!==fy) return;
+      if(fst!=="all"&&o.status!==fst) return;
+      const mk=L.marker([o.lat,o.lng],{icon:pinIcon(o.status==="validated"?getCSS("--green"):getCSS("--orange"))});
+      mk.bindPopup(popupHTML(o),{minWidth:230});
+      markersLayer.addLayer(mk);
+    });
+  }
+  const me=document.getElementById("map-empty");
+  if(me) me.innerHTML = total? "" :
     `<div class="empty" style="margin-top:14px">${icon('waves')} ${t("Aucune observation pour l'instant. Va dans")} <b>${t('Proposer')}</b> ${t("pour ajouter la première !")}</div>`;
+}
+function enterIslandView(name){
+  focusIsland=name; mapMode="island";
+  const fi=document.getElementById("f-island"); if(fi) fi.value=name;
+  renderMarkers();
+  const isl=islandBy(name); if(isl && map){ setTimeout(()=>{ map.invalidateSize(); map.setView(isl.c,isl.z); },30); }
+}
+function exitIslandView(){
+  focusIsland=null; mapMode="overview";
+  const fi=document.getElementById("f-island"); if(fi) fi.value="all";
+  renderMarkers();
+}
+function renderLandingStats(){
+  const el=document.getElementById("landing-stats"); if(!el) return;
+  const obs=state.observations.filter(o=>o.status!=="rejected");
+  const weekAgo=Date.now()-7*24*3600*1000;
+  const ts=o=>{ const d=o.createdAt?new Date(o.createdAt).getTime():0; return isNaN(d)?0:d; };
+  const firstMap=key=>{ const m={}; obs.forEach(o=>{ const k=key(o); if(!k) return; const x=ts(o); if(x && (!(k in m)||x<m[k])) m[k]=x; }); return m; };
+  const countNewFirsts=fm=>Object.values(fm).filter(x=>x>=weekAgo).length;
+  const spF=firstMap(o=>o.sp||null), islF=firstMap(o=>(o.island||"").trim()||null), byF=firstMap(o=>(o.by||"").trim()||null);
+  const cards=[
+    {ic:'camera', n:obs.length, l:t("observations"), d:obs.filter(o=>ts(o)>=weekAgo).length},
+    {ic:'book',   n:new Set(obs.filter(o=>o.sp).map(o=>o.sp)).size, l:t("espèces"), d:countNewFirsts(spF)},
+    {ic:'map',    n:Object.keys(islF).length || new Set(obs.map(o=>(o.island||"").trim()).filter(Boolean)).size, l:t("îles explorées"), d:countNewFirsts(islF)},
+    {ic:'users',  n:new Set(obs.map(o=>(o.by||"").trim()).filter(Boolean)).size, l:t("contributeurs"), d:countNewFirsts(byF)},
+  ];
+  el.innerHTML=cards.map(c=>`<div class="lstat"><div class="lstat-top"><span class="lstat-ic">${icon(c.ic)}</span><span class="lstat-n">${c.n}</span></div><div class="lstat-l">${c.l}</div>${c.d>0?`<div class="lstat-d">+${c.d} ${t("cette semaine")}</div>`:""}</div>`).join("");
 }
 function popupHTML(o){
   const to=taxoOf(o), st=o.status;
@@ -1309,7 +1405,7 @@ async function submitObs(){
   if(error){ console.error("insert obs",error); toast(LANG==='en'?"Could not save, please try again.":"Enregistrement impossible, réessaie."); if(btn) btn.disabled=false; return; }
   if(ins&&ins[0]){ markMine(ins[0].id); if(tokenStored) setEditToken(ins[0].id, tokenStored); }
   await loadObservations();
-  if(map){ fillFilters(); renderMarkers(); }
+  if(map){ fillFilters(); renderMarkers(); } renderLandingStats();
   toast(t("Merci ! Ton observation est en attente de validation."));
   goTo("carte");
 }
@@ -1358,7 +1454,7 @@ async function saveObsEdit(){
   if(error || data!==true){ console.error("edit obs", error); toast(error ? t("Correction indisponible pour le moment.") : t("Correction impossible (déjà validée ?).")); if(btn) btn.disabled=false; return; }
   editingObsId=null;
   await loadObservations();
-  if(map){ fillFilters(); renderMarkers(); }
+  if(map){ fillFilters(); renderMarkers(); } renderLandingStats();
   toast(t("Observation corrigée !"));
   renderProposer(); window.scrollTo(0,0);
 }
@@ -1406,7 +1502,7 @@ async function setObsIsland(id, island){
   if(!ok){ console.error("setObsIsland", r.error); toast(t("Modification impossible.")); return; }
   const o=state.observations.find(x=>x.id===id); if(o) o.island=island;
   toast(t("Île mise à jour :")+" "+island);
-  if(map){ fillFilters(); renderMarkers(); }
+  if(map){ fillFilters(); renderMarkers(); } renderLandingStats();
 }
 // Déplacement du point d'une observation (owner uniquement)
 function startMoveObs(id){ if(!isOwner()) return; movingObsId=id; if(map){ map.closePopup(); try{map.getContainer().style.cursor='crosshair';}catch(e){} } showMoveBanner(); }
@@ -1840,7 +1936,7 @@ document.querySelectorAll(".bubbles").forEach(box=>{ const n=box.classList.conta
 document.documentElement.lang=LANG;
 applyI18n();
 // Charger les observations partagées, puis rafraîchir l'affichage
-(async ()=>{ await initAuth(); await loadSpecies(); await loadObservations(); const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" "+t("espèces de référence"); renderSpecies(); renderReefCarousel(); renderIslandProgress(); renderWho(); renderAdmin(); if(map){ fillFilters(); renderMarkers(); } if(unseenCount()>0) toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")); })();
+(async ()=>{ await initAuth(); await loadSpecies(); await loadObservations(); const hm=document.getElementById("hero-meta"); if(hm) hm.innerHTML=icon('book')+" "+state.species.length+" "+t("espèces de référence"); renderSpecies(); renderReefCarousel(); renderIslandProgress(); renderWho(); renderAdmin(); ensureMap(); if(map){ fillFilters(); renderMarkers(); setTimeout(()=>{ try{ map.invalidateSize(); renderMarkers(); }catch(e){} },90); } renderLandingStats(); if(unseenCount()>0) toast(t("Tu as")+" "+unseenCount()+" "+t("réponse(s) à tes observations.")); })();
 </script>
 </body>
 </html>
