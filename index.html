@@ -234,6 +234,12 @@
   .cpin.v{background:var(--green)}
   .cpin.p{background:var(--orange)}
   .cpin>span{transform:rotate(45deg);color:#fff;font-weight:800;font-size:14px;line-height:1}
+  .pp-ic{background:none;border:0}
+  .photo-pin{position:relative;width:54px;height:54px}
+  .pp-ring{width:54px;height:54px;border-radius:50%;padding:3.5px;box-sizing:border-box;background:conic-gradient(var(--green) 0 var(--v,100%), var(--orange) var(--v,100%) 100%);box-shadow:0 0 0 2.5px #fff,0 3px 10px rgba(8,28,36,.5);cursor:pointer}
+  .pp-img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:#cfe6e9}
+  .pp-count{position:absolute;right:-4px;bottom:22px;min-width:21px;height:21px;padding:0 5px;border-radius:20px;background:var(--sea-deep);color:#fff;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);cursor:pointer}
+  .pp-name{position:absolute;left:50%;top:57px;transform:translateX(-50%);background:rgba(8,28,36,.85);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.35);pointer-events:none}
   .leaflet-tooltip.isl-tip{background:rgba(8,28,36,.85);color:#fff;border:0;border-radius:8px;font-size:12px;font-weight:700;padding:3px 9px;box-shadow:0 2px 8px rgba(0,0,0,.35);white-space:nowrap}
   .leaflet-tooltip.isl-tip::before{display:none}
   .landing-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 26px}
@@ -989,6 +995,7 @@ function ensureMap(){
     {maxZoom:19,attribution:"Imagerie © Esri, Maxar, Earthstar Geographics"}).addTo(map);
   markersLayer=L.layerGroup().addTo(map);
   map.on("click", e=>{ if(movingObsId){ const id=movingObsId; cancelMove(); setObsPosition(id, e.latlng.lat, e.latlng.lng); } });
+  map.on("moveend zoomend", ()=>{ clearTimeout(map._spreadT); map._spreadT=setTimeout(spreadPins,45); });
   fillFilters();
 }
 function fillFilters(){
@@ -1006,19 +1013,40 @@ function fillFilters(){
 function onIslandFilter(){ const v=val("f-island"); if(v==="all") exitIslandView(); else enterIslandView(v); }
 function pinIcon(color){ return L.divIcon({className:"map-pin",html:`<span style="--c:${color}"></span>`,iconSize:[18,18],iconAnchor:[9,9],popupAnchor:[0,-9]}); }
 // Pin agrégé par île : teardrop vert (validées) + teardrop orange (en attente)
-function islandPinIcon(vCount,pCount){
-  const both = vCount>0 && pCount>0, w = both?84:44;
-  const html=`<div class="isl-pins">${vCount>0?`<div class="cpin v"><span>${vCount}</span></div>`:""}${pCount>0?`<div class="cpin p"><span>${pCount}</span></div>`:""}</div>`;
-  return L.divIcon({className:"isl-ic",html,iconSize:[w,46],iconAnchor:[w/2,44],popupAnchor:[0,-42]});
+function islandPinIcon(vCount,pCount,photo,name){
+  const total=vCount+pCount, vpct = total? Math.round(vCount/total*100) : 100;
+  const img = photo ? `<img class="pp-img" src="${esc(photo)}" alt="" loading="lazy">` : `<span class="pp-img"></span>`;
+  const html=`<div class="photo-pin"><div class="pp-ring" style="--v:${vpct}%">${img}</div><span class="pp-count">${total}</span><span class="pp-name">${esc(name||"")}</span></div>`;
+  return L.divIcon({className:"pp-ic",html,iconSize:[54,74],iconAnchor:[27,27],popupAnchor:[0,-26]});
 }
 function islandStats(){
   const m={};
   state.observations.filter(o=>o.status!=="rejected").forEach(o=>{
     const k=(o.island||"Bora Bora").trim(); if(!k) return;
-    const e=m[k]||(m[k]={v:0,p:0});
+    const e=m[k]||(m[k]={v:0,p:0,photo:"",_rank:-1,_at:""});
     if(o.status==="validated") e.v++; else e.p++;
+    const ph=obsPhotos(o)[0];               // photo représentative : la + récente validée en priorité
+    if(ph){ const rank=o.status==="validated"?2:1, at=o.createdAt||"";
+      if(rank>e._rank || (rank===e._rank && at>e._at)){ e.photo=ph; e._rank=rank; e._at=at; } }
   });
   return m;
+}
+// Écarte les pins d'îles qui se chevauchent à l'écran (îles proches) — sans perdre l'aperçu global
+function spreadPins(){
+  if(mapMode==="island" || !map || !markersLayer) return;
+  const items=[];
+  markersLayer.eachLayer(l=>{ if(l._icon && l.getLatLng){ const b=map.latLngToLayerPoint(l.getLatLng()); items.push({el:l._icon, bx:b.x, by:b.y, x:b.x, y:b.y}); } });
+  if(items.length<2){ items.forEach(it=>{ it.el.style.marginLeft="0px"; it.el.style.marginTop="0px"; }); return; }
+  const MIN=60;
+  for(let iter=0; iter<40; iter++){
+    let moved=false;
+    for(let i=0;i<items.length;i++) for(let j=i+1;j<items.length;j++){
+      const A=items[i],B=items[j]; let dx=B.x-A.x, dy=B.y-A.y, d=Math.hypot(dx,dy);
+      if(d<MIN){ if(d<0.01){ dx=(i-j)||1; dy=1; d=Math.hypot(dx,dy); } const push=(MIN-d)/2, ux=dx/d, uy=dy/d;
+        A.x-=ux*push; A.y-=uy*push; B.x+=ux*push; B.y+=uy*push; moved=true; } }
+    if(!moved) break;
+  }
+  items.forEach(it=>{ it.el.style.marginLeft=Math.round(it.x-it.bx)+"px"; it.el.style.marginTop=Math.round(it.y-it.by)+"px"; });
 }
 function renderMarkers(){
   if(!markersLayer) return;
@@ -1034,12 +1062,12 @@ function renderMarkers(){
       const isl=islandBy(name); if(!isl) return;
       const {v,p}=st[name]; if(!v && !p) return;
       pts.push(isl.c);
-      const mk=L.marker(isl.c,{icon:islandPinIcon(v,p),riseOnHover:true});
-      mk.bindTooltip(name,{permanent:true,direction:"bottom",offset:[0,4],className:"isl-tip"});
+      const mk=L.marker(isl.c,{icon:islandPinIcon(v,p,st[name].photo,name),riseOnHover:true});
       mk.on("click",()=>enterIslandView(name));
       markersLayer.addLayer(mk);
     });
-    if(pts.length && map){ try{ map.fitBounds(L.latLngBounds(pts).pad(0.55),{padding:[30,30]}); }catch(e){} }
+    if(pts.length && map){ try{ map.fitBounds(L.latLngBounds(pts).pad(0.35),{padding:[36,36]}); }catch(e){} }
+    setTimeout(spreadPins,70);
   } else {
     if(back) back.style.display="";
     if(hint) hint.style.display="none";
