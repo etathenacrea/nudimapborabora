@@ -217,16 +217,18 @@
   .home-hero{padding:40px 40px 46px;margin:0 0 26px}
   .home-hero .eyebrow{margin-bottom:16px}
   .home-hero h2{font-size:34px;line-height:1.08;margin:0}
-  .map-add{flex:none;display:inline-flex;align-items:center;gap:8px;background:var(--sea-deep);color:#fff;border:0;border-radius:14px;padding:9px 15px 9px 11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(10,68,82,.28);transition:transform .12s,background .15s}
-  .map-add:hover{background:var(--sea);transform:translateY(-1px)}
-  .map-add:active{transform:scale(.97)}
-  .map-add .ha-plus{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.22);color:#fff;font-size:19px;line-height:1;font-weight:400}
+  .map-add{flex:none;display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:0;font-family:inherit}
+  .map-add .ma-label{font-size:12.5px;font-weight:800;color:var(--sea-deep);white-space:nowrap}
+  .map-add .ma-circle{width:44px;height:44px;border-radius:50%;background:var(--sea-deep);border:3px solid #fff;box-shadow:0 4px 13px rgba(10,68,82,.32);display:flex;align-items:center;justify-content:center;transition:transform .12s,background .15s}
+  .map-add:hover .ma-circle{background:var(--sea);transform:translateY(-1px)}
+  .map-add:active .ma-circle{transform:scale(.93)}
+  .map-add .ha-plus{color:#fff;font-size:27px;line-height:1;font-weight:300}
   .home-map-wrap{margin-bottom:22px}
   .map-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;min-height:34px}
-  .mt-left{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+  .mt-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1;flex-wrap:wrap}
   .map-back{display:inline-flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:7px 14px 7px 10px;font-size:13.5px;font-weight:700;color:var(--sea-deep);cursor:pointer;font-family:inherit}
   .map-back:hover{background:#e0f3f5;border-color:var(--sea)}
-  .map-hint{font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+  .map-hint{font-size:12.5px;color:var(--muted);line-height:1.3}
   .map-filters{margin:12px 0 0}
   .isl-ic{background:none;border:0}
   .isl-pins{display:flex;gap:5px;align-items:flex-end;justify-content:center;pointer-events:none}
@@ -256,8 +258,6 @@
   @media(max-width:720px){
     .home-hero{padding:32px 26px 36px}
     .home-hero h2{font-size:27px}
-    .map-add .ha-txt{display:none}
-    .map-add{padding:9px 11px}
   }
   .pop{width:230px}
   .pop img{width:100%;height:140px;object-fit:cover;border-radius:9px;display:block;margin-bottom:8px}
@@ -432,7 +432,7 @@
           <button class="map-back" id="map-back" onclick="exitIslandView()" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M15 18l-6-6 6-6"/></svg> <span data-i18n="Toutes les îles">Toutes les îles</span></button>
           <span class="map-hint" id="map-hint"><span data-i18n="Touche une île pour voir ses observations">Touche une île pour voir ses observations</span></span>
         </div>
-        <button class="map-add" onclick="goTo('proposer')" aria-label="Ajouter une observation"><span class="ha-plus">+</span><span class="ha-txt" data-i18n="Ajouter une observation">Ajouter une observation</span></button>
+        <button class="map-add" onclick="goTo('proposer')" aria-label="Ajouter une observation"><span class="ma-label" data-i18n="Ajouter">Ajouter</span><span class="ma-circle"><span class="ha-plus">+</span></span></button>
       </div>
       <div id="map"></div>
       <div class="filters map-filters" id="map-filters" style="display:none">
@@ -569,7 +569,7 @@ const EN = {
   "Les joyaux cachés du récif !":"The reef's hidden jewels!",
   "Le nudibranche (Nudibranchia) est un joyau du Fenua. Toi aussi, photographie, localise et partage tes observations. Māuruuru.":"The nudibranch (Nudibranchia) is a jewel of the Fenua. You too can photograph, locate and share your observations. Māuruuru.",
   "Voir la carte":"View the map","Identifier une photo":"Identify a photo","Proposer une observation":"Submit an observation",
-  "espèces de référence":"reference species","Explore les nudibranches de Polynésie française, île par île.":"Explore the nudibranchs of French Polynesia, island by island.","Ajouter une observation":"Add an observation","Touche une île pour voir ses observations":"Tap an island to see its observations","Toutes les îles":"All islands","observations":"observations","espèces":"species","îles explorées":"islands explored","îles":"islands","contributeurs":"contributors","cette semaine":"this week",
+  "espèces de référence":"reference species","Explore les nudibranches de Polynésie française, île par île.":"Explore the nudibranchs of French Polynesia, island by island.","Ajouter une observation":"Add an observation","Ajouter":"Add","Touche une île pour voir ses observations":"Tap an island to see its observations","Toutes les îles":"All islands","observations":"observations","espèces":"species","îles explorées":"islands explored","îles":"islands","contributeurs":"contributors","cette semaine":"this week",
   "Qu'est-ce qu'un nudibranche ?":"What is a nudibranch?",
   "Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique, dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille, ainsi qu'un cousin bien plus lointain, souvent confondu avec eux : le ver plat.":"A shell-less sea slug, often tiny (from a few millimetres to a few centimetres) and spectacularly colourful. Over 5,000 species worldwide, mostly in the Indo-Pacific, including French Polynesia. The library also features a few mollusc cousins (bubble snails, sea hares), some of which do keep a shell, plus a much more distant look-alike often mistaken for them: the flatworm.",
   "Pourquoi ça compte ?":"Why it matters",
