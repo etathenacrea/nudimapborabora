@@ -47,6 +47,9 @@
   nav button:hover{background:var(--bg);color:var(--ink)}
   nav button.active{background:var(--sea-deep);color:#fff}
   .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;flex:0 0 auto;margin-left:auto}
+  .acct-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:border-color .15s,color .15s,transform .12s}
+  .acct-btn:hover{border-color:var(--sea);color:var(--sea-deep);transform:scale(1.05)}
+  .acct-btn svg{width:20px;height:20px}
   .lang-flags{display:flex;gap:14px;justify-content:center;align-items:center;margin:22px 0 6px}
   .flagbtn{width:40px;height:40px;border-radius:50%;padding:0;border:2px solid var(--line);background:var(--card);cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:transform .12s,border-color .15s,box-shadow .15s,opacity .15s}
   .flagbtn:hover{transform:scale(1.07)}
@@ -575,7 +578,7 @@ let LANG = localStorage.getItem("nudimap_lang") || "fr";
 const EN = {
   // Navigation / header
   "Accueil":"Home","Carte":"Map","Identification":"Identification","Proposer":"Submit","Espace admin":"Admin",
-  "Non inscrit·e":"Not registered","se déconnecter":"sign out",
+  "Non inscrit·e":"Not registered","S'inscrire":"Sign up","se déconnecter":"sign out",
   // Accueil
   "Science participative · Polynésie française":"Citizen science · French Polynesia","Les dernières trouvailles":"The latest finds",
   "Les joyaux cachés du récif !":"The reef's hidden jewels!",
@@ -981,7 +984,7 @@ function renderWho(){
   const w=document.getElementById("who");
   if(state.user){ const n=unseenCount();
     w.innerHTML=`<button class="bell" onclick="openNotifications()" title="${t('Mes notifications')}">${icon('bell')}${n?`<span class="bdg">${n}</span>`:""}</button> <b>${esc(state.user.name)}</b> · <a href="#" id="logout" onclick="logoutUser();return false">${t('se déconnecter')}</a>`; }
-  else { w.innerHTML=`<span style="opacity:.8">${t('Non inscrit·e')}</span>`; }
+  else { w.innerHTML=`<button class="acct-btn" onclick="goTo('proposer')" title="${t("S'inscrire")}" aria-label="${t("S'inscrire")}">${icon('user')}</button>`; }
 }
 function logoutUser(){ state.user=null; saveState(); renderWho(); renderProposer(); goTo("home"); toast(LANG==='en'?"Signed out.":"Tu es déconnecté·e."); }
 function myNotifs(){ if(!state.user) return []; return state.observations.filter(o=>mineHas(o.id) && o.outcome).sort((a,b)=>new Date(b.outcomeAt||0)-new Date(a.outcomeAt||0)); }
