@@ -235,11 +235,15 @@
   .cpin.p{background:var(--orange)}
   .cpin>span{transform:rotate(45deg);color:#fff;font-weight:800;font-size:14px;line-height:1}
   .pp-ic{background:none;border:0}
-  .photo-pin{position:relative;width:54px;height:54px}
-  .pp-ring{width:54px;height:54px;border-radius:50%;padding:3.5px;box-sizing:border-box;background:conic-gradient(var(--green) 0 var(--v,100%), var(--orange) var(--v,100%) 100%);box-shadow:0 0 0 2.5px #fff,0 3px 10px rgba(8,28,36,.5);cursor:pointer}
-  .pp-img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:#cfe6e9}
-  .pp-count{position:absolute;right:-4px;bottom:22px;min-width:21px;height:21px;padding:0 5px;border-radius:20px;background:var(--sea-deep);color:#fff;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);cursor:pointer}
-  .pp-name{position:absolute;left:50%;top:57px;transform:translateX(-50%);background:rgba(8,28,36,.85);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.35);pointer-events:none}
+  .geo-pin{position:relative;width:58px;height:86px}
+  .gp-shape{position:absolute;top:0;left:1px;width:56px;height:56px;border-radius:50%;background:var(--sea-deep);border:3px solid #fff;box-sizing:border-box;box-shadow:0 5px 12px rgba(8,28,36,.5);display:flex;align-items:center;justify-content:center;z-index:2;cursor:pointer}
+  .gp-img{width:44px;height:44px;border-radius:50%;object-fit:cover;display:block;background:#cfe6e9}
+  .gp-tail{position:absolute;left:calc(50% + 1px);top:44px;transform:translateX(-50%);width:0;height:0;border:11px solid transparent;border-top:18px solid #fff;z-index:1;filter:drop-shadow(0 3px 2px rgba(8,28,36,.32))}
+  .gp-tail::after{content:"";position:absolute;left:-8px;top:-18px;width:0;height:0;border:8px solid transparent;border-top:14px solid var(--sea-deep)}
+  .gp-badge{position:absolute;top:-3px;min-width:22px;height:22px;padding:0 5px;border-radius:20px;color:#fff;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);z-index:3}
+  .gp-badge.v{left:-9px;background:var(--green)}
+  .gp-badge.p{right:-9px;background:var(--orange)}
+  .pp-name{position:absolute;left:50%;top:68px;transform:translateX(-50%);background:rgba(8,28,36,.85);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.35);pointer-events:none}
   .leaflet-tooltip.isl-tip{background:rgba(8,28,36,.85);color:#fff;border:0;border-radius:8px;font-size:12px;font-weight:700;padding:3px 9px;box-shadow:0 2px 8px rgba(0,0,0,.35);white-space:nowrap}
   .leaflet-tooltip.isl-tip::before{display:none}
   .landing-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 26px}
@@ -1014,10 +1018,10 @@ function onIslandFilter(){ const v=val("f-island"); if(v==="all") exitIslandView
 function pinIcon(color){ return L.divIcon({className:"map-pin",html:`<span style="--c:${color}"></span>`,iconSize:[18,18],iconAnchor:[9,9],popupAnchor:[0,-9]}); }
 // Pin agrégé par île : teardrop vert (validées) + teardrop orange (en attente)
 function islandPinIcon(vCount,pCount,photo,name){
-  const total=vCount+pCount, vpct = total? Math.round(vCount/total*100) : 100;
-  const img = photo ? `<img class="pp-img" src="${esc(photo)}" alt="" loading="lazy">` : `<span class="pp-img"></span>`;
-  const html=`<div class="photo-pin"><div class="pp-ring" style="--v:${vpct}%">${img}</div><span class="pp-count">${total}</span><span class="pp-name">${esc(name||"")}</span></div>`;
-  return L.divIcon({className:"pp-ic",html,iconSize:[54,74],iconAnchor:[27,27],popupAnchor:[0,-26]});
+  const img = photo ? `<img class="gp-img" src="${esc(photo)}" alt="" loading="lazy">` : `<span class="gp-img"></span>`;
+  const badges = `${vCount>0?`<span class="gp-badge v">${vCount}</span>`:""}${pCount>0?`<span class="gp-badge p">${pCount}</span>`:""}`;
+  const html=`<div class="geo-pin"><div class="gp-shape">${img}</div><span class="gp-tail"></span>${badges}<span class="pp-name">${esc(name||"")}</span></div>`;
+  return L.divIcon({className:"pp-ic",html,iconSize:[58,86],iconAnchor:[29,64],popupAnchor:[0,-60]});
 }
 function islandStats(){
   const m={};
@@ -1037,7 +1041,7 @@ function spreadPins(){
   const items=[];
   markersLayer.eachLayer(l=>{ if(l._icon && l.getLatLng){ const b=map.latLngToLayerPoint(l.getLatLng()); items.push({el:l._icon, bx:b.x, by:b.y, x:b.x, y:b.y}); } });
   if(items.length<2){ items.forEach(it=>{ it.el.style.marginLeft="0px"; it.el.style.marginTop="0px"; }); return; }
-  const MIN=60;
+  const MIN=68;
   for(let iter=0; iter<40; iter++){
     let moved=false;
     for(let i=0;i<items.length;i++) for(let j=i+1;j<items.length;j++){
