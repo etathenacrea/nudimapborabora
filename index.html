@@ -246,16 +246,14 @@
   .pp-name{position:absolute;left:50%;top:68px;transform:translateX(-50%);background:rgba(8,28,36,.85);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.35);pointer-events:none}
   .leaflet-tooltip.isl-tip{background:rgba(8,28,36,.85);color:#fff;border:0;border-radius:8px;font-size:12px;font-weight:700;padding:3px 9px;box-shadow:0 2px 8px rgba(0,0,0,.35);white-space:nowrap}
   .leaflet-tooltip.isl-tip::before{display:none}
-  .landing-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 26px}
-  .lstat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 16px;box-shadow:0 1px 3px rgba(20,49,56,.05)}
-  .lstat-top{display:flex;align-items:center;gap:9px}
-  .lstat-ic{display:inline-flex;color:var(--sea-deep)}
-  .lstat-ic .icn{width:22px;height:22px}
-  .lstat-n{font-size:29px;font-weight:800;letter-spacing:-.5px;color:var(--ink);line-height:1}
-  .lstat-l{font-size:13.5px;color:var(--muted);font-weight:500;margin-top:7px}
-  .lstat-d{font-size:12px;color:var(--sea-deep);font-weight:700;margin-top:3px}
+  .landing-stats{display:flex;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 2px;margin:0 0 24px;box-shadow:0 1px 3px rgba(20,49,56,.05)}
+  .lstat{flex:1;min-width:0;text-align:center;padding:1px 5px;border-right:1px solid var(--line)}
+  .lstat:last-child{border-right:0}
+  .lstat-top{display:flex;align-items:baseline;gap:4px;justify-content:center;flex-wrap:wrap}
+  .lstat-n{font-size:20px;font-weight:800;letter-spacing:-.3px;color:var(--ink);line-height:1.1}
+  .lstat-d{font-size:10px;color:var(--sea-deep);font-weight:700;white-space:nowrap}
+  .lstat-l{font-size:10.5px;color:var(--muted);font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   @media(max-width:720px){
-    .landing-stats{grid-template-columns:repeat(2,1fr)}
     .home-hero{padding:32px 26px 36px}
     .home-hero h2{font-size:27px}
     .map-add .ha-txt{display:none}
@@ -571,7 +569,7 @@ const EN = {
   "Les joyaux cachés du récif !":"The reef's hidden jewels!",
   "Le nudibranche (Nudibranchia) est un joyau du Fenua. Toi aussi, photographie, localise et partage tes observations. Māuruuru.":"The nudibranch (Nudibranchia) is a jewel of the Fenua. You too can photograph, locate and share your observations. Māuruuru.",
   "Voir la carte":"View the map","Identifier une photo":"Identify a photo","Proposer une observation":"Submit an observation",
-  "espèces de référence":"reference species","Explore les nudibranches de Polynésie française, île par île.":"Explore the nudibranchs of French Polynesia, island by island.","Ajouter une observation":"Add an observation","Touche une île pour voir ses observations":"Tap an island to see its observations","Toutes les îles":"All islands","observations":"observations","espèces":"species","îles explorées":"islands explored","contributeurs":"contributors","cette semaine":"this week",
+  "espèces de référence":"reference species","Explore les nudibranches de Polynésie française, île par île.":"Explore the nudibranchs of French Polynesia, island by island.","Ajouter une observation":"Add an observation","Touche une île pour voir ses observations":"Tap an island to see its observations","Toutes les îles":"All islands","observations":"observations","espèces":"species","îles explorées":"islands explored","îles":"islands","contributeurs":"contributors","cette semaine":"this week",
   "Qu'est-ce qu'un nudibranche ?":"What is a nudibranch?",
   "Une limace de mer sans coquille, souvent minuscule (de quelques millimètres à quelques centimètres) et spectaculairement colorée. Plus de 5 000 espèces dans le monde, surtout dans l'Indo-Pacifique, dont la Polynésie française. La bibliothèque présente aussi quelques cousins mollusques (bulles, lièvres de mer), dont certains gardent une coquille, ainsi qu'un cousin bien plus lointain, souvent confondu avec eux : le ver plat.":"A shell-less sea slug, often tiny (from a few millimetres to a few centimetres) and spectacularly colourful. Over 5,000 species worldwide, mostly in the Indo-Pacific, including French Polynesia. The library also features a few mollusc cousins (bubble snails, sea hares), some of which do keep a shell, plus a much more distant look-alike often mistaken for them: the flatworm.",
   "Pourquoi ça compte ?":"Why it matters",
@@ -1111,12 +1109,12 @@ function renderLandingStats(){
   const countNewFirsts=fm=>Object.values(fm).filter(x=>x>=weekAgo).length;
   const spF=firstMap(o=>o.sp||null), islF=firstMap(o=>(o.island||"").trim()||null), byF=firstMap(o=>(o.by||"").trim()||null);
   const cards=[
-    {ic:'camera', n:obs.length, l:t("observations"), d:obs.filter(o=>ts(o)>=weekAgo).length},
-    {ic:'book',   n:new Set(obs.filter(o=>o.sp).map(o=>o.sp)).size, l:t("espèces"), d:countNewFirsts(spF)},
-    {ic:'map',    n:Object.keys(islF).length || new Set(obs.map(o=>(o.island||"").trim()).filter(Boolean)).size, l:t("îles explorées"), d:countNewFirsts(islF)},
-    {ic:'users',  n:new Set(obs.map(o=>(o.by||"").trim()).filter(Boolean)).size, l:t("contributeurs"), d:countNewFirsts(byF)},
+    {n:obs.length, l:t("observations"), d:obs.filter(o=>ts(o)>=weekAgo).length},
+    {n:new Set(obs.filter(o=>o.sp).map(o=>o.sp)).size, l:t("espèces"), d:countNewFirsts(spF)},
+    {n:Object.keys(islF).length || new Set(obs.map(o=>(o.island||"").trim()).filter(Boolean)).size, l:t("îles"), d:countNewFirsts(islF)},
+    {n:new Set(obs.map(o=>(o.by||"").trim()).filter(Boolean)).size, l:t("contributeurs"), d:countNewFirsts(byF)},
   ];
-  el.innerHTML=cards.map(c=>`<div class="lstat"><div class="lstat-top"><span class="lstat-ic">${icon(c.ic)}</span><span class="lstat-n">${c.n}</span></div><div class="lstat-l">${c.l}</div>${c.d>0?`<div class="lstat-d">+${c.d} ${t("cette semaine")}</div>`:""}</div>`).join("");
+  el.innerHTML=cards.map(c=>`<div class="lstat"><div class="lstat-top"><span class="lstat-n">${c.n}</span>${c.d>0?`<span class="lstat-d">+${c.d}</span>`:""}</div><span class="lstat-l">${esc(c.l)}</span></div>`).join("");
 }
 function popupHTML(o){
   const to=taxoOf(o), st=o.status;
