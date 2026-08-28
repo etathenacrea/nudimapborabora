@@ -673,6 +673,7 @@ const EN = {
   "Avis enregistré.":"Note saved.","Merci ! Ton observation est en attente de validation.":"Thank you! Your observation is awaiting validation.",
   "Choisis l'espèce, ou « Autre » pour en créer une.":"Choose the species, or \"Other\" to create one.","Indique au moins le nom scientifique.":"Enter at least the scientific name.","Cette espèce est déjà dans la bibliothèque :":"This species is already in the library:","Une espèce très proche existe déjà :":"A very similar species already exists:","Choisir cette fiche":"Choose this entry","(évite un doublon)":"(avoids a duplicate)",
   "Observation refusée.":"Observation rejected.","Pose l'épingle sur la carte":"Drop the pin on the map",
+  "Brouillon récupéré":"Draft recovered","On a gardé ton observation en cours — termine-la et envoie.":"We saved your observation in progress — finish it and submit.","Recommencer à zéro":"Start over",
   "Tu as":"You have","réponse(s) à tes observations.":"reply(ies) to your observations.",
   "OBSERVATOIRE PARTICIPATIF DES NUDIBRANCHES":"PARTICIPATORY NUDIBRANCH OBSERVATORY",
   "— classification —":"— classification —",
@@ -1354,7 +1355,42 @@ document.getElementById("modal").addEventListener("click",e=>{ if(e.target.id===
 // ---------- PROPOSER ----------
 let pickMap,pickMarker,pickLatLng=null,pendingPhotos=[],editingObsId=null;
 function renderPhotoPreview(){ const p=document.getElementById("p-preview"); if(!p)return; p.innerHTML=pendingPhotos.map((d,i)=>`<span style="position:relative;display:inline-block;line-height:0"><img src="${d}"><button type="button" aria-label="Retirer" onclick="rmPhoto(${i})" style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;border:0;background:var(--red);color:#fff;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center">×</button></span>`).join(""); }
-function rmPhoto(i){ pendingPhotos.splice(i,1); renderPhotoPreview(); }
+function rmPhoto(i){ pendingPhotos.splice(i,1); renderPhotoPreview(); saveDraft(); }
+// ---------- Brouillon d'observation : ne rien perdre si la page se recharge (Android rouvre l'app après l'appareil photo, faux clic sur « Accueil », mémoire pleine…) ----------
+const DRAFT_KEY="nudimap_draft";
+function draftHasContent(d){ return !!(d && ((d.photos&&d.photos.length)||d.pin||d.depth||d.site||d.siteOther||d.note||d.propose||(d.species&&d.species!=="je-sais-pas"))); }
+function readDraft(){ let d=null; try{ d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"null"); }catch(e){} if(!draftHasContent(d)) return null; if(!d.t || (Date.now()-d.t>86400000)) return null; return d; }  // ignore un brouillon de +24 h
+function clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); }catch(e){} }
+function saveDraft(){
+  if(editingObsId) return;                              // pas de brouillon pour une correction
+  if(!document.getElementById("p-photo")) return;       // formulaire d'observation non affiché
+  try{
+    const d={ t:Date.now(), species:val("p-species"), propose:val("p-propose"), env:val("p-env"),
+      island:val("p-island"), site:val("p-site"), siteOther:val("p-site-other"),
+      date:val("p-date"), time:val("p-time"), depth:val("p-depth"), note:val("p-note"),
+      pin: pickLatLng?{lat:pickLatLng.lat,lng:pickLatLng.lng}:null, photos:(pendingPhotos||[]).slice() };
+    if(!draftHasContent(d)){ clearDraft(); return; }
+    try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); }
+    catch(e){ d.photos=[]; try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); }catch(_){} }   // photos trop lourdes pour le quota → garder au moins le texte + la position
+  }catch(e){}
+}
+function discardDraft(){ clearDraft(); pendingPhotos=[]; pickLatLng=null; pickMarker=null; renderProposer(); window.scrollTo(0,0); }
+function applyDraftToForm(d){
+  try{
+    const set=(id,v)=>{ const el=document.getElementById(id); if(el && v!=null && v!=="") el.value=v; };
+    set("p-island", d.island); renderSiteOptions();
+    const ss=document.getElementById("p-site"); if(ss && d.site!=null && d.site!=="") ss.value=d.site;
+    onSiteChange(); set("p-site-other", d.siteOther);
+    const sp=document.getElementById("p-species"); if(sp && d.species) sp.value=d.species; onSpeciesChange(); set("p-propose", d.propose);
+    set("p-env", d.env); set("p-date", d.date); set("p-time", d.time); set("p-depth", d.depth); set("p-note", d.note);
+    pendingPhotos = Array.isArray(d.photos)? d.photos.slice() : []; renderPhotoPreview();
+    if(d.pin && isFinite(+d.pin.lat) && isFinite(+d.pin.lng)){
+      pickLatLng={lat:+d.pin.lat, lng:+d.pin.lng};
+      const c=document.getElementById("p-coords"); if(c) c.innerHTML=`${icon('pin')} ${pickLatLng.lat.toFixed(4)}, ${pickLatLng.lng.toFixed(4)}`;
+      if(pickMap){ if(pickMarker) pickMarker.setLatLng(pickLatLng); else pickMarker=L.marker(pickLatLng).addTo(pickMap); }
+    }
+  }catch(e){ console.error("applyDraft",e); }
+}
 function renderProposer(){
   const b=document.getElementById("proposer-body");
   if(!state.user){
@@ -1373,7 +1409,9 @@ function renderProposer(){
   const header = editing
     ? `<div class="card" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><b>${icon('edit')} ${t("Correction de ton observation")}</b><div class="hint" style="margin-top:3px">${t("Modifie ce que tu veux, puis enregistre.")}</div></div><button class="btn ghost sm" onclick="cancelEditObs()">${t("Annuler")}</button></div>`
     : (myPending.length ? `<div class="card" style="margin-bottom:16px"><h3 style="margin:0 0 4px;font-size:16px">${icon('sprout')} ${t("Tes observations en attente")}</h3><p class="hint" style="margin:0 0 12px">${t("Tu peux les corriger tant qu'un expert ne les a pas validées.")}</p>${myPending.map(o=>`<div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)"><img src="${obsPhoto(o)}" style="width:46px;height:46px;object-fit:cover;border-radius:8px;flex:none"><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600">${esc(o.site||t("Site ?"))} · ${frDate(o.date)}</div><div style="font-size:12.5px;color:var(--muted)">${o.sp?esc((speciesById(o.sp)||{}).sci||""):(o.proposedName?esc(o.proposedName):t("Espèce indéterminée"))}</div></div><button class="btn ghost sm" onclick="startEditObs('${o.id}')">${icon('edit')} ${t("Corriger")}</button></div>`).join("")}</div>` : "");
-  b.innerHTML=header+`<div class="card">
+  const draft = editing ? null : readDraft();
+  const draftBanner = draft ? `<div class="card" style="margin-bottom:16px;background:#fff7ed;border-color:#f6d5b3;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div style="min-width:0"><b style="font-size:14.5px">${icon('sprout')} ${t("Brouillon récupéré")}</b><div class="hint" style="margin-top:2px">${t("On a gardé ton observation en cours — termine-la et envoie.")}</div></div><button class="btn ghost sm" onclick="discardDraft()">${t("Recommencer à zéro")}</button></div>` : "";
+  b.innerHTML=header+draftBanner+`<div class="card">
     <p style="margin:0 0 16px;font-size:13.5px;color:var(--muted)">${icon('info')} ${t("Pas sûr·e de l'espèce ?")} <a href="#" onclick="goTo('ident');return false">${t("Regarde d'abord la bibliothèque d'identification")}</a> ${t("— elle est peut-être déjà répertoriée.")}</p>
     <div class="form-grid">
       <div class="field full"><label>${t("Photos de l'observation")} <span class="req">*</span></label>
@@ -1418,11 +1456,13 @@ function renderProposer(){
     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19}).addTo(pickMap);
     pickMap.on("click",e=>{ pickLatLng=e.latlng;
       if(pickMarker) pickMarker.setLatLng(e.latlng); else pickMarker=L.marker(e.latlng).addTo(pickMap);
-      document.getElementById("p-coords").innerHTML=`${icon('pin')} ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`; });
+      document.getElementById("p-coords").innerHTML=`${icon('pin')} ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`; saveDraft(); });
     if(pickLatLng){ pickMarker=L.marker([pickLatLng.lat,pickLatLng.lng]).addTo(pickMap); const c=document.getElementById("p-coords"); if(c) c.innerHTML=`${icon('pin')} ${pickLatLng.lat.toFixed(4)}, ${pickLatLng.lng.toFixed(4)}`; }
     pickMap.invalidateSize();
   },60);
-  document.getElementById("p-photo").addEventListener("change",async e=>{ const files=[...e.target.files]; e.target.value=""; for(const f of files){ await new Promise(res=>resizeToDataURL(f,d=>{ if(d){ pendingPhotos.push(d); renderPhotoPreview(); } res(); })); } });
+  document.getElementById("p-photo").addEventListener("change",async e=>{ const files=[...e.target.files]; e.target.value=""; for(const f of files){ await new Promise(res=>resizeToDataURL(f,d=>{ if(d){ pendingPhotos.push(d); renderPhotoPreview(); saveDraft(); } res(); })); } });
+  if(!b._draftBound){ b.addEventListener("input", saveDraft); b.addEventListener("change", saveDraft); b._draftBound=true; }   // sauvegarde continue du brouillon
+  if(draft) applyDraftToForm(draft);
 }
 function onSiteChange(){ document.getElementById("p-site-other").style.display = val("p-site")==="__autre"?"block":"none"; }
 function renderSiteOptions(){
@@ -1476,6 +1516,7 @@ async function submitObs(){
   if(ins&&ins[0]){ markMine(ins[0].id); if(tokenStored) setEditToken(ins[0].id, tokenStored); }
   await loadObservations();
   if(map){ fillFilters(); renderMarkers(); } renderLandingStats();
+  clearDraft();
   toast(t("Merci ! Ton observation est en attente de validation."));
   goTo("home");
 }
