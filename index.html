@@ -571,10 +571,19 @@ const PROD_URL="https://nudi-map.app";
 // ---------- Base partagée (Supabase) ----------
 const SB_URL="https://hlpqqixkwvywekuutmnu.supabase.co";
 const SB_KEY="sb_publishable_J3wEczMZVX7pSp5MBfawJw_VJs-xHx6";
+// Filet de sécurité global : une erreur isolée ne doit plus laisser l'app muette (et aide au diagnostic)
+window.addEventListener('unhandledrejection',e=>{ try{ console.error('[NudiMap] promesse non gérée :', e.reason); }catch(_){} });
+window.addEventListener('error',e=>{ try{ console.error('[NudiMap] erreur :', e.error||e.message); }catch(_){} });
+// Si le script Supabase (CDN) n'a pas pu se charger (réseau instable / VINI / bloqueur…), on l'explique au lieu de planter en silence
+if(!window.supabase || !window.supabase.createClient){
+  document.body.innerHTML='<div style="max-width:520px;margin:60px auto;padding:0 24px;text-align:center;font-family:system-ui,-apple-system,sans-serif;color:#103a44"><h2 style="color:#0a7286;font-family:Georgia,serif">Connexion impossible</h2><p>Impossible de charger l\'application pour le moment (connexion internet instable ?). Vérifie ta connexion, puis recharge la page.</p></div>';
+  throw new Error('supabase-js non chargé');
+}
 const sb = window.supabase.createClient(SB_URL, SB_KEY);
 
 // ---------- i18n : FR par défaut, EN pour les touristes (clé = texte français) ----------
 let LANG = localStorage.getItem("nudimap_lang") || "fr";
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }  // Safari navigation privée / quota plein : ne jamais planter sur une écriture
 const EN = {
   // Navigation / header
   "Accueil":"Home","Carte":"Map","Identification":"Identification","Proposer":"Submit","Espace admin":"Admin",
@@ -687,7 +696,7 @@ const EN = {
   "Corps crème bosselé, tons kaki et lilas, siphons dressés":"Bumpy cream body, khaki and lilac tones, raised siphons","Silhouette unique, presque végétale":"Unique, almost plant-like silhouette","Rencontre rare à Bora Bora — observée avec Dive N' Smile":"A rare sighting in Bora Bora — seen with Dive N' Smile","Même en la regardant droit dans les yeux, on se demande si c'est bien un animal.":"Even looking it straight in the eye, you wonder whether it's really an animal."
 };
 function t(s){ return (LANG==="en" && EN[s]!==undefined) ? EN[s] : s; }
-function setLang(l){ LANG=l; localStorage.setItem("nudimap_lang",l); document.documentElement.lang=l; applyI18n(); }
+function setLang(l){ LANG=l; lsSet("nudimap_lang",l); document.documentElement.lang=l; applyI18n(); }
 function applyI18n(){
   document.querySelectorAll("[data-i18n]").forEach(el=>{ el.textContent=t(el.getAttribute("data-i18n")); });
   document.querySelectorAll("[data-i18n-ph]").forEach(el=>{ el.setAttribute("placeholder", t(el.getAttribute("data-i18n-ph"))); });
@@ -843,7 +852,7 @@ function getFamily(id){ return getList(id); }
 // ---------- État + persistance ----------
 // Identité du déposant : locale à l'appareil (les déposants ne sont pas des comptes)
 function loadUser(){ try{ return JSON.parse(localStorage.getItem("nudimap_user"))||null; }catch(e){ return null; } }
-function saveState(){ localStorage.setItem("nudimap_user", JSON.stringify(state.user||null)); }
+function saveState(){ lsSet("nudimap_user", JSON.stringify(state.user||null)); }
 let state = { user: loadUser(), observations: [], species: JSON.parse(JSON.stringify(DEFAULT_SPECIES)), likes: {} };
 let likesOn = false;
 function clientId(){
@@ -855,15 +864,15 @@ function clientId(){
 // "Vu" des notifications : local à l'appareil (un anonyme ne peut pas modifier les lignes)
 function seenSet(){ try{ return new Set(JSON.parse(localStorage.getItem("nudimap_seen"))||[]); }catch(e){ return new Set(); } }
 function seenHas(id){ return seenSet().has(id); }
-function markSeen(id){ const s=seenSet(); s.add(id); localStorage.setItem("nudimap_seen", JSON.stringify([...s])); }
+function markSeen(id){ const s=seenSet(); s.add(id); lsSet("nudimap_seen", JSON.stringify([...s])); }
 // Observations déposées depuis CET appareil (pour retrouver « les miennes » sans exposer l'email)
 function mineSet(){ try{ return new Set(JSON.parse(localStorage.getItem("nudimap_mine"))||[]); }catch(e){ return new Set(); } }
 function mineHas(id){ return mineSet().has(id); }
-function markMine(id){ const s=mineSet(); s.add(id); localStorage.setItem("nudimap_mine", JSON.stringify([...s])); }
+function markMine(id){ const s=mineSet(); s.add(id); lsSet("nudimap_mine", JSON.stringify([...s])); }
 // clés d'édition : permettent au déposant de corriger SON observation en attente (sans compte, secret gardé sur l'appareil)
 function editMap(){ try{ return JSON.parse(localStorage.getItem("nudimap_edit"))||{}; }catch(e){ return {}; } }
 function getEditToken(id){ return editMap()[id]||null; }
-function setEditToken(id,tok){ const m=editMap(); m[id]=tok; localStorage.setItem("nudimap_edit", JSON.stringify(m)); }
+function setEditToken(id,tok){ const m=editMap(); m[id]=tok; lsSet("nudimap_edit", JSON.stringify(m)); }
 function genEditToken(){ try{ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID(); }catch(e){} return "t"+Date.now()+Math.random().toString(36).slice(2,12); }
 // Observations : base partagée
 function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", expertMessage:r.expert_message||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, createdAt:r.created_at||"", featuredAt:r.featured_at||null, featuredPhoto:r.featured_photo||null, outcomeSeen:seenHas(r.id) }; }
@@ -899,6 +908,7 @@ function getCSS(v){ return getComputedStyle(document.documentElement).getPropert
 const views={home:"view-home",ident:"view-ident",proposer:"view-proposer",classement:"view-ranking",galerie:"view-galerie",admin:"view-admin"};
 document.getElementById("nav").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) goTo(b.dataset.view); });
 function goTo(v){
+  if(!views[v]) v="home";        // garde-fou : un nom de vue inconnu ne doit jamais vider l'écran
   if(movingObsId && v!=="home") cancelMove();
   document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
   Object.values(views).forEach(id=>document.getElementById(id).classList.remove("active"));
@@ -1010,6 +1020,7 @@ document.getElementById("notif-modal").addEventListener("click",e=>{ if(e.target
 let map, markersLayer, movingObsId=null, mapMode="overview", focusIsland=null;
 function ensureMap(){
   if(map) return;
+  if(typeof L==="undefined"){ const el=document.getElementById("map"); if(el) el.innerHTML='<div class="empty" style="padding:26px;text-align:center">'+(LANG==='en'?'The map is momentarily unavailable (connection). Please reload the page.':'La carte est momentanément indisponible (connexion). Recharge la page.')+'</div>'; return; }
   map=L.map("map",{scrollWheelZoom:true}).setView([-17.05,-150.57],7);
   L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {maxZoom:19,attribution:"Imagerie © Esri, Maxar, Earthstar Geographics"}).addTo(map);
@@ -1086,7 +1097,13 @@ function renderMarkers(){
       mk.on("click",()=>enterIslandView(name));
       markersLayer.addLayer(mk);
     });
-    if(pts.length && map){ try{ map.fitBounds(L.latLngBounds(pts).pad(0.35),{padding:[36,36]}); }catch(e){} }
+    if(map && !map._didOverviewFit){
+      try{
+        if(pts.length===1) map.setView(pts[0], 8);
+        else if(pts.length>1) map.fitBounds(L.latLngBounds(pts).pad(0.35),{padding:[36,36]});
+        if(pts.length) map._didOverviewFit=true;   // on cadre l'aperçu UNE fois, sans re-happer la vue de l'utilisateur aux rendus suivants
+      }catch(e){}
+    }
     setTimeout(spreadPins,70);
   } else {
     if(back) back.style.display="";
@@ -1098,9 +1115,12 @@ function renderMarkers(){
       if(fs!=="all"&&o.sp!==fs) return;
       if(fy!=="all"&&o.date.slice(0,4)!==fy) return;
       if(fst!=="all"&&o.status!==fst) return;
-      const mk=L.marker([o.lat,o.lng],{icon:pinIcon(o.status==="validated"?getCSS("--green"):getCSS("--orange"))});
-      mk.bindPopup(popupHTML(o),{minWidth:230});
-      markersLayer.addLayer(mk);
+      const la=+o.lat, ln=+o.lng; if(!isFinite(la)||!isFinite(ln)) return;   // ignore une coordonnée invalide plutôt que de casser toute la carte
+      try{
+        const mk=L.marker([la,ln],{icon:pinIcon(o.status==="validated"?getCSS("--green"):getCSS("--orange"))});
+        mk.bindPopup(popupHTML(o),{minWidth:230});
+        markersLayer.addLayer(mk);
+      }catch(e){ console.error("marker",e); }
     });
   }
   const me=document.getElementById("map-empty");
@@ -1109,6 +1129,7 @@ function renderMarkers(){
 }
 function enterIslandView(name){
   focusIsland=name; mapMode="island";
+  if(map) map._didOverviewFit=false;   // en ressortant vers l'aperçu, on le recadrera une fois
   const fi=document.getElementById("f-island"); if(fi) fi.value=name;
   renderMarkers();
   const isl=islandBy(name); if(isl && map){ setTimeout(()=>{ map.invalidateSize(); map.setView(isl.c,isl.z); },30); }
@@ -1456,7 +1477,7 @@ async function submitObs(){
   await loadObservations();
   if(map){ fillFilters(); renderMarkers(); } renderLandingStats();
   toast(t("Merci ! Ton observation est en attente de validation."));
-  goTo("carte");
+  goTo("home");
 }
 // ---- Correction d'une observation par son déposant (tant qu'elle est en attente) ----
 function myPendingObs(){ return (state.observations||[]).filter(o=> o.status==="pending" && mineHas(o.id) && getEditToken(o.id)); }
@@ -1860,25 +1881,28 @@ document.querySelectorAll(".modal-bg").forEach(bg=>bg.addEventListener("click",e
 
 // ---------- utils ----------
 function resizeToDataURL(file,cb){
-  let done=false; const finish=o=>{ if(done)return; done=true; try{cb(o);}catch(e){} };
+  let done=false, to=null;
+  const finish=o=>{ if(done)return; done=true; if(to)clearTimeout(to); try{cb(o);}catch(e){} };
+  to=setTimeout(()=>finish(null), 15000);   // garde-fou : ne jamais rester bloqué sur une photo illisible
   const draw=(src,w,h)=>{
+    if(!w||!h) return false;
+    const max=1400, sc=Math.min(1, max/Math.max(w,h));
+    const cw=Math.max(1,Math.round(w*sc)), ch=Math.max(1,Math.round(h*sc));
+    const c=document.createElement("canvas"); c.width=cw; c.height=ch;
     try{
-      if(!w||!h) return false;
-      const max=1400, sc=Math.min(1, max/Math.max(w,h));
-      const cw=Math.max(1,Math.round(w*sc)), ch=Math.max(1,Math.round(h*sc));
-      const c=document.createElement("canvas"); c.width=cw; c.height=ch;
       c.getContext("2d").drawImage(src,0,0,cw,ch);
-      const out=c.toDataURL("image/jpeg",0.82); c.width=c.height=0;
-      if(src.close) src.close();
+      const out=c.toDataURL("image/jpeg",0.82);
       if(out && out.length>100){ finish(out); return true; }
     }catch(err){ console.error("resize draw",err); }
+    finally{ c.width=c.height=0; }        // libère le canvas dans tous les cas
     return false;
   };
   const viaReader=()=>{
     const r=new FileReader();
     r.onerror=()=>finish(null);
     r.onload=ev=>{ const raw=ev.target.result;
-      const rawFallback=()=> finish(/^data:image\//.test(raw||"") ? raw : null);   // dernier recours : photo brute
+      // dernier recours : photo brute, mais seulement si lisible ET pas trop lourde (évite d'envoyer un HEIC géant)
+      const rawFallback=()=> finish((/^data:image\/(jpe?g|png|webp)/i.test(raw||"") && raw.length<1500000) ? raw : null);
       const img=new Image();
       img.onerror=rawFallback;
       img.onload=()=>{ if(!draw(img, img.naturalWidth, img.naturalHeight)) rawFallback(); };
@@ -1888,8 +1912,9 @@ function resizeToDataURL(file,cb){
   };
   try{
     if(window.createImageBitmap){
-      createImageBitmap(file, {imageOrientation:'from-image'})
-        .then(bmp=>{ if(!draw(bmp, bmp.width, bmp.height)) viaReader(); })
+      // resizeWidth : downscale PENDANT le décodage → évite d'allouer la photo pleine résolution (crash mémoire Android)
+      createImageBitmap(file, {imageOrientation:'from-image', resizeWidth:1400, resizeQuality:'high'})
+        .then(bmp=>{ let ok=false; try{ ok=draw(bmp, bmp.width, bmp.height); } finally { if(bmp&&bmp.close) bmp.close(); } if(!ok) viaReader(); })
         .catch(()=>viaReader());
     } else viaReader();
   }catch(e){ viaReader(); }
