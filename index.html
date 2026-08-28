@@ -1150,7 +1150,7 @@ function renderLandingStats(){
   const spF=firstMap(o=>o.sp||null), islF=firstMap(o=>(o.island||"").trim()||null), byF=firstMap(o=>(o.by||"").trim()||null);
   const cards=[
     {n:obs.length, l:t("observations"), d:obs.filter(o=>ts(o)>=weekAgo).length},
-    {n:new Set(obs.filter(o=>o.sp).map(o=>o.sp)).size, l:t("espèces"), d:countNewFirsts(spF)},
+    {n:state.species.length, l:t("espèces"), d:countNewFirsts(spF)},   // catalogue de référence (cohérent avec la bibliothèque) — sur les 77, countNewFirsts = nb. nouvellement observées cette semaine
     {n:Object.keys(islF).length || new Set(obs.map(o=>(o.island||"").trim()).filter(Boolean)).size, l:t("îles"), d:countNewFirsts(islF)},
     {n:new Set(obs.map(o=>(o.by||"").trim()).filter(Boolean)).size, l:t("contributeurs"), d:countNewFirsts(byF)},
   ];
