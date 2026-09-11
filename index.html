@@ -1460,7 +1460,17 @@ function renderProposer(){
     if(pickLatLng){ pickMarker=L.marker([pickLatLng.lat,pickLatLng.lng]).addTo(pickMap); const c=document.getElementById("p-coords"); if(c) c.innerHTML=`${icon('pin')} ${pickLatLng.lat.toFixed(4)}, ${pickLatLng.lng.toFixed(4)}`; }
     pickMap.invalidateSize();
   },60);
-  document.getElementById("p-photo").addEventListener("change",async e=>{ const files=[...e.target.files]; e.target.value=""; for(const f of files){ await new Promise(res=>resizeToDataURL(f,d=>{ if(d){ pendingPhotos.push(d); renderPhotoPreview(); saveDraft(); } res(); })); } });
+  document.getElementById("p-photo").addEventListener("change",async e=>{
+    const files=[...e.target.files]; e.target.value="";
+    if(files.length) toast(LANG==='en'?"Reading the photo…":"Lecture de la photo…");
+    let added=0, failed=0;
+    for(const f of files){
+      const ok=await new Promise(res=>resizeToDataURL(f,d=>{ if(d){ pendingPhotos.push(d); res(true); } else res(false); }));
+      ok?added++:failed++;
+    }
+    if(added){ renderPhotoPreview(); saveDraft(); }
+    if(failed) toast(LANG==='en'?"Couldn't read that photo — try another one (or a screenshot).":"Photo illisible, essaie une autre image (ou une capture d'écran).");
+  });
   if(!b._draftBound){ b.addEventListener("input", saveDraft); b.addEventListener("change", saveDraft); b._draftBound=true; }   // sauvegarde continue du brouillon
   if(draft) applyDraftToForm(draft);
 }
