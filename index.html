@@ -1545,9 +1545,15 @@ async function submitObs(){
     obs_date:date, obs_time:val("p-time")||"", depth:depth, note:val("p-note").trim(),
     by_name:state.user.name, by_email:state.user.email, by_phone:state.user.phone||"", status:"pending", edit_token:editToken };
   let tokenStored=editToken;
-  let { data:ins, error } = await sb.from("observations").insert(row).select("id");
-  if(error && /edit_token/.test(error.message||"")){ const r2={...row}; delete r2.edit_token; tokenStored=null; ({ data:ins, error } = await sb.from("observations").insert(r2).select("id")); }
-  if(error){ console.error("insert obs",error); toast(LANG==='en'?"Could not save, please try again.":"Enregistrement impossible, réessaie."); if(btn) btn.disabled=false; return; }
+  let ins, error, rowToInsert=row;
+  for(let attempt=0; attempt<3; attempt++){
+    ({ data:ins, error } = await sb.from("observations").insert(rowToInsert).select("id"));
+    if(!error) break;
+    if(/edit_token/.test(error.message||"")){ rowToInsert={...row}; delete rowToInsert.edit_token; tokenStored=null; continue; }  // colonne edit_token pas encore créée
+    console.error("insert obs (essai "+(attempt+1)+")",error);
+    if(attempt<2) await new Promise(r=>setTimeout(r,900));   // réseau mobile capricieux : petite pause puis on réessaie
+  }
+  if(error){ toast((LANG==='en'?"Couldn't save — try again ":"Enregistrement impossible, réessaie ")+"["+String(error.message||error.code||"?").slice(0,60)+"]"); if(btn) btn.disabled=false; return; }
   if(ins&&ins[0]){ markMine(ins[0].id); if(tokenStored) setEditToken(ins[0].id, tokenStored); }
   await loadObservations();
   if(map){ fillFilters(); renderMarkers(); } renderLandingStats();
