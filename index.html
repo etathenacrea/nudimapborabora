@@ -887,7 +887,32 @@ async function loadObservations(){ try{
   }catch(e){ console.error(e); } }
 function spFromRow(r){ return { id:r.id, sci:r.sci, commonName:r.common_name||"", classification:r.classification||"", family:r.family||"", dayNight:r.day_night||"", rarity:r.rarity||0, size:r.size||"", d:Array.isArray(r.description)?r.description:[], note:r.note||"", photo:r.photo||"", foundBy:r.found_by||"", valBy:r.validated_by||"" }; }
 async function loadSpecies(){ try{ const {data,error}=await sb.from("species").select("*").order("sci"); if(error){ console.error("loadSpecies",error); return; } if(data&&data.length) state.species=data.map(spFromRow); }catch(e){ console.error(e); } }
-async function uploadPhotos(dataUrls){ const out=[]; for(let i=0;i<dataUrls.length;i++){ const blob=await (await fetch(dataUrls[i])).blob(); const path="obs/"+Date.now()+"-"+i+"-"+Math.random().toString(36).slice(2,8)+".jpg"; const {error}=await sb.storage.from("photos").upload(path, blob, {contentType:blob.type||"image/jpeg", upsert:false}); if(error) throw error; out.push(sb.storage.from("photos").getPublicUrl(path).data.publicUrl); } return out; }
+// data URL -> Blob SANS fetch("data:…") : iOS Safari échoue souvent sur fetch d'une data URL (surtout plusieurs d'affilée)
+function dataURLtoBlob(durl){
+  const c=durl.indexOf(","); const head=durl.slice(0,c), b64=durl.slice(c+1);
+  const mime=(head.match(/data:([^;]+)/)||[])[1]||"image/jpeg";
+  const bin=atob(b64); const arr=new Uint8Array(bin.length);
+  for(let j=0;j<bin.length;j++) arr[j]=bin.charCodeAt(j);
+  return new Blob([arr],{type:mime});
+}
+async function uploadPhotos(dataUrls){
+  const out=[];
+  for(let i=0;i<dataUrls.length;i++){
+    const durl=dataUrls[i];
+    let blob;
+    try{ blob = /^data:.*;base64,/.test(durl) ? dataURLtoBlob(durl) : await (await fetch(durl)).blob(); }
+    catch(e){ blob = await (await fetch(durl)).blob(); }   // dernier recours
+    const path="obs/"+Date.now()+"-"+i+"-"+Math.random().toString(36).slice(2,8)+".jpg";
+    let error;
+    for(let attempt=0; attempt<3; attempt++){   // jusqu'à 3 essais : réseau mobile capricieux (VINI)
+      ({error}=await sb.storage.from("photos").upload(path, blob, {contentType:blob.type||"image/jpeg", upsert:true}));
+      if(!error) break;
+    }
+    if(error) throw error;
+    out.push(sb.storage.from("photos").getPublicUrl(path).data.publicUrl);
+  }
+  return out;
+}
 let adminUnlocked=false, adminUser=null, adminTab="validation", editingSpeciesId=null, editorPhoto=null, adminIsOwner=false;
 
 const speciesById = id => state.species.find(x=>x.id===id);
@@ -1513,7 +1538,7 @@ async function submitObs(){
   toast(LANG==='en'?"Sending…":"Envoi en cours…");
   let urls;
   try{ urls = await uploadPhotos(pendingPhotos); }
-  catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed, please try again.":"Échec de l'envoi des photos, réessaie."); if(btn) btn.disabled=false; return; }
+  catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed — check your connection and try again.":"Échec de l'envoi des photos — vérifie ta connexion et réessaie."); if(btn) btn.disabled=false; return; }
   const editToken = genEditToken();
   const row={ species_id:(spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposed_name:proposedName,
     photos:urls, env:val("p-env"), island:val("p-island")||"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
@@ -1567,7 +1592,7 @@ async function saveObsEdit(){
   toast(LANG==='en'?"Saving…":"Enregistrement…");
   let finalPhotos=[];
   try{ for(const p of pendingPhotos){ finalPhotos.push(p.startsWith("data:") ? (await uploadPhotos([p]))[0] : p); } }
-  catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed, please try again.":"Échec de l'envoi des photos, réessaie."); if(btn) btn.disabled=false; return; }
+  catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed — check your connection and try again.":"Échec de l'envoi des photos — vérifie ta connexion et réessaie."); if(btn) btn.disabled=false; return; }
   const patch={ species_id:(spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposed_name:proposedName,
     photos:finalPhotos, env:val("p-env"), island:val("p-island")||"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
     obs_date:date, obs_time:val("p-time")||"", depth:depth, note:val("p-note").trim() };
