@@ -634,7 +634,7 @@ const EN = {
   "Permet aux experts de te contacter en cas de découverte particulière.":"Lets the experts contact you in case of a notable find.",
   "Créer mon accès":"Create my access",
   "Pas sûr·e de l'espèce ?":"Not sure of the species?","Regarde d'abord la bibliothèque d'identification":"Check the identification library first","— elle est peut-être déjà répertoriée.":"— it may already be listed.",
-  "Photos de l'observation":"Observation photos","Une ou plusieurs photos, nettes et bien cadrées.":"One or more photos, sharp and well framed.",
+  "Photos de l'observation":"Observation photos","Une ou plusieurs photos, nettes et bien cadrées.":"One or more photos, sharp and well framed.","Courte vidéo":"Short video","(optionnel, max 5 s)":"(optional, max 5 s)","Une vidéo de quelques secondes aide à l'identification. Elle n'est visible que par les experts.":"A few-second clip helps with identification. Only the experts can see it.",
   "Connais-tu l'espèce ?":"Do you know the species?","Je ne sais pas — à identifier":"I don't know — to be identified",
   "Pas sûr·e ? Laisse « je ne sais pas », les experts trancheront.":"Not sure? Leave \"I don't know\", the experts will decide.",
   "Environnement":"Environment","— optionnel —":"— optional —","Sable, éponges, coraux… (lié à l'alimentation / au comportement).":"Sand, sponges, corals… (linked to diet / behaviour).",
@@ -886,7 +886,7 @@ function getEditToken(id){ return editMap()[id]||null; }
 function setEditToken(id,tok){ const m=editMap(); m[id]=tok; lsSet("nudimap_edit", JSON.stringify(m)); }
 function genEditToken(){ try{ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID(); }catch(e){} return "t"+Date.now()+Math.random().toString(36).slice(2,12); }
 // Observations : base partagée
-function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", expertMessage:r.expert_message||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, createdAt:r.created_at||"", featuredAt:r.featured_at||null, featuredPhoto:r.featured_photo||null, outcomeSeen:seenHas(r.id) }; }
+function obsFromRow(r){ return { id:r.id, sp:r.species_id||null, proposedName:r.proposed_name||"", photos:Array.isArray(r.photos)?r.photos:[], videos:Array.isArray(r.videos)?r.videos:[], env:r.env||"", island:r.island||"", site:r.site||"", lat:r.lat, lng:r.lng, date:r.obs_date||"", time:r.obs_time||"", depth:r.depth, note:r.note||"", by:r.by_name||"", byEmail:r.by_email||"", byPhone:r.by_phone||"", status:r.status||"pending", juvenile:!!r.juvenile, expertNote:r.expert_note||"", expertMessage:r.expert_message||"", validatedBy:r.validated_by||"", reason:r.reason||"", outcome:r.outcome||null, outcomeAt:r.outcome_at||null, createdAt:r.created_at||"", featuredAt:r.featured_at||null, featuredPhoto:r.featured_photo||null, outcomeSeen:seenHas(r.id) }; }
 async function loadObservations(){ try{
     let cols=adminUnlocked?"*":"id,species_id,proposed_name,photos,env,island,site,lat,lng,obs_date,obs_time,depth,note,by_name,status,juvenile,expert_note,expert_message,validated_by,reason,outcome,outcome_at,created_at,featured_at,featured_photo";
     let {data,error}=await sb.from("observations").select(cols).order("created_at",{ascending:true});
@@ -931,6 +931,24 @@ function taxoOf(o){ if(o.sp){ const s=speciesById(o.sp); if(s) return {sci:s.sci
 function obsSci(o){ return taxoOf(o).sci; }
 function obsPhoto(o){ if(o.photos&&o.photos.length) return o.photos[0]; return o.photo || (o.sp?(speciesById(o.sp)?.photo||""):""); }
 function obsPhotos(o){ if(o.photos&&o.photos.length) return o.photos; if(o.photo) return [o.photo]; const s=o.sp&&speciesById(o.sp); return s&&s.photo?[s.photo]:[]; }
+// ---- Vidéos : upload (bucket photos, dossier vid/) ; affichage RÉSERVÉ à l'admin ----
+async function uploadVideos(files){
+  const out=[];
+  for(let i=0;i<files.length;i++){
+    const f=files[i];
+    const ext=(String(f.name||"").split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";
+    const path="vid/"+Date.now()+"-"+i+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
+    let error;
+    for(let a=0;a<3;a++){ ({error}=await sb.storage.from("photos").upload(path, f, {contentType:f.type||"video/mp4", upsert:true})); if(!error) break; }
+    if(error) throw error;
+    out.push(sb.storage.from("photos").getPublicUrl(path).data.publicUrl);
+  }
+  return out;
+}
+function adminVideoHTML(o){
+  if(!o.videos||!o.videos.length) return "";
+  return o.videos.map((u,i)=>`<div style="width:116px;margin-top:3px"><video src="${esc(u)}#t=0.1" controls preload="metadata" playsinline style="width:116px;border-radius:9px;background:#000;display:block"></video><a href="${esc(u)}?download=nudimap-video-${i+1}.mp4" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--sea-deep);margin-top:2px;text-decoration:none">⬇ ${LANG==='en'?'Download':'Télécharger'}</a></div>`).join("");
+}
 function taxoLine(tx){ const p=[]; if(tx.classification)p.push(`<b>${t('Classification')}</b> ${esc(t(tx.classification))}`); if(tx.family)p.push(`<b>${t('Famille')}</b> ${esc(tx.family)}`); if(tx.commonName)p.push(`<b>${t('Nom commun')}</b> ${esc(tx.commonName)}`); return p.join(" · "); }
 function dayNightHtml(dn){ if(!dn) return ""; const ic=dn==="Nuit"?icon('moon'):dn==="Jour"?icon('sun'):icon('sun')+icon('moon'); return `<span class="dn">${ic} ${esc(t(dn))}</span>`; }
 function envHtml(e){ return e?`<span class="env">${esc(e)}</span>`:""; }
@@ -1388,9 +1406,11 @@ function closeModal(){ document.getElementById("modal").classList.remove("open")
 document.getElementById("modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeModal(); });
 
 // ---------- PROPOSER ----------
-let pickMap,pickMarker,pickLatLng=null,pendingPhotos=[],editingObsId=null;
+let pickMap,pickMarker,pickLatLng=null,pendingPhotos=[],pendingVideos=[],editingObsId=null;
 function renderPhotoPreview(){ const p=document.getElementById("p-preview"); if(!p)return; p.innerHTML=pendingPhotos.map((d,i)=>`<span style="position:relative;display:inline-block;line-height:0"><img src="${d}"><button type="button" aria-label="Retirer" onclick="rmPhoto(${i})" style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;border:0;background:var(--red);color:#fff;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center">×</button></span>`).join(""); }
 function rmPhoto(i){ pendingPhotos.splice(i,1); renderPhotoPreview(); saveDraft(); }
+function renderVideoPreview(){ const p=document.getElementById("p-vpreview"); if(!p)return; p.innerHTML=pendingVideos.map((f,i)=>`<span style="position:relative;display:inline-block;line-height:0;margin:4px 6px 0 0"><video src="${URL.createObjectURL(f)}#t=0.1" muted playsinline preload="metadata" style="width:110px;height:84px;object-fit:cover;border-radius:10px;background:#000"></video><button type="button" aria-label="Retirer" onclick="rmVideo(${i})" style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;border:0;background:var(--red);color:#fff;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center">×</button></span>`).join(""); }
+function rmVideo(i){ pendingVideos.splice(i,1); renderVideoPreview(); }
 // ---------- Brouillon d'observation : ne rien perdre si la page se recharge (Android rouvre l'app après l'appareil photo, faux clic sur « Accueil », mémoire pleine…) ----------
 const DRAFT_KEY="nudimap_draft";
 function draftHasContent(d){ return !!(d && ((d.photos&&d.photos.length)||d.pin||d.depth||d.site||d.siteOther||d.note||d.propose||(d.species&&d.species!=="je-sais-pas"))); }
@@ -1453,6 +1473,10 @@ function renderProposer(){
         <input type="file" id="p-photo" accept="image/*" multiple>
         <span class="hint">${t("Une ou plusieurs photos, nettes et bien cadrées.")}</span>
         <div id="p-preview" class="pgal"></div></div>
+      <div class="field full"><label>${t("Courte vidéo")} <span class="hint" style="font-weight:400">${t("(optionnel, max 5 s)")}</span></label>
+        <input type="file" id="p-video" accept="video/*">
+        <span class="hint">${t("Une vidéo de quelques secondes aide à l'identification. Elle n'est visible que par les experts.")}</span>
+        <div id="p-vpreview" class="pgal"></div></div>
       <div class="field"><label>${t("Connais-tu l'espèce ?")}</label>
         <select id="p-species" onchange="onSpeciesChange()"><option value="je-sais-pas">${t("Je ne sais pas — à identifier")}</option>
         ${speciesSorted().map(s=>`<option value="${s.id}">${esc(s.sci)}</option>`).join("")}
@@ -1482,7 +1506,7 @@ function renderProposer(){
       ${editing?`<button class="btn ghost" onclick="cancelEditObs()">${t("Annuler")}</button>`:`<span class="hint"><span class="req">*</span> ${t("requis pour une observation scientifiquement utile.")}</span>`}
     </div>
   </div>`;
-  pickLatLng=null; pendingPhotos=[]; pickMarker=null; if(pickMap){ try{pickMap.remove();}catch(e){} pickMap=null; }
+  pickLatLng=null; pendingPhotos=[]; pendingVideos=[]; pickMarker=null; if(pickMap){ try{pickMap.remove();}catch(e){} pickMap=null; }
   if(editing) prefillProposerForm(editing);
   else renderSiteOptions();
   setTimeout(()=>{
@@ -1505,6 +1529,20 @@ function renderProposer(){
     }
     if(added){ renderPhotoPreview(); saveDraft(); }
     if(failed) toast(LANG==='en'?"Couldn't read that photo — try another one (or a screenshot).":"Photo illisible, essaie une autre image (ou une capture d'écran).");
+  });
+  const vInput=document.getElementById("p-video");
+  if(vInput) vInput.addEventListener("change",e=>{
+    const f=e.target.files&&e.target.files[0]; e.target.value="";
+    if(!f) return;
+    if(f.size > 26*1024*1024){ toast(LANG==='en'?"Video too heavy (max 25 MB).":"Vidéo trop lourde (max 25 Mo)."); return; }
+    const url=URL.createObjectURL(f); const v=document.createElement("video"); v.preload="metadata";
+    v.onloadedmetadata=()=>{ const d=v.duration; try{URL.revokeObjectURL(url);}catch(_){}
+      if(isFinite(d) && d>6){ toast(LANG==='en'?"Too long — keep it under 5 seconds.":"Vidéo trop longue — garde-la sous 5 secondes."); return; }
+      pendingVideos=[f];            // une seule vidéo par observation (on remplace)
+      renderVideoPreview();
+    };
+    v.onerror=()=>{ try{URL.revokeObjectURL(url);}catch(_){}; toast(LANG==='en'?"Can't read this video — try another.":"Vidéo illisible, essaie-en une autre."); };
+    v.src=url;
   });
   if(!b._draftBound){ b.addEventListener("input", saveDraft); b.addEventListener("change", saveDraft); b._draftBound=true; }   // sauvegarde continue du brouillon
   if(draft) applyDraftToForm(draft);
@@ -1549,9 +1587,11 @@ async function submitObs(){
   let urls;
   try{ urls = await uploadPhotos(pendingPhotos); }
   catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed — check your connection and try again.":"Échec de l'envoi des photos — vérifie ta connexion et réessaie."); if(btn) btn.disabled=false; return; }
+  let vurls=[];
+  if(pendingVideos.length){ try{ vurls = await uploadVideos(pendingVideos); }catch(e){ console.error(e); toast(LANG==='en'?"Video upload failed — check your connection.":"Échec de l'envoi de la vidéo — vérifie ta connexion."); if(btn) btn.disabled=false; return; } }
   const editToken = genEditToken();
   const row={ species_id:(spVal==="je-sais-pas"||spVal==="__propose")?null:spVal, proposed_name:proposedName,
-    photos:urls, env:val("p-env"), island:val("p-island")||"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
+    photos:urls, videos:vurls, env:val("p-env"), island:val("p-island")||"", site, lat:pickLatLng.lat, lng:pickLatLng.lng,
     obs_date:date, obs_time:val("p-time")||"", depth:depth, note:val("p-note").trim(),
     by_name:state.user.name, by_email:state.user.email, by_phone:state.user.phone||"", status:"pending", edit_token:editToken };
   let tokenStored=editToken;
@@ -1560,6 +1600,8 @@ async function submitObs(){
     ({ data:ins, error } = await sb.from("observations").insert(rowToInsert).select("id"));
     if(!error) break;
     if(/edit_token/.test(error.message||"")){ rowToInsert={...row}; delete rowToInsert.edit_token; tokenStored=null; continue; }  // colonne edit_token pas encore créée
+    if(/videos/.test(error.message||"")){ delete rowToInsert.videos; continue; }   // colonne videos pas encore créée (SQL à coller) → on enregistre sans
+
     console.error("insert obs (essai "+(attempt+1)+")",error);
     if(attempt<2) await new Promise(r=>setTimeout(r,900));   // réseau mobile capricieux : petite pause puis on réessaie
   }
@@ -1764,7 +1806,7 @@ function setAdminValSort(s){ adminValSort=s; renderAdminValidation(); }
 function queueRow(o){
   const guessed = o.sp?(speciesById(o.sp)?.sci||o.sp) : (o.proposedName ? o.proposedName : t("Espèce inconnue (à identifier)"));
   return `<div class="qrow">
-    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`).join("")}</div>
+    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`).join("")}${adminVideoHTML(o)}</div>
     <div class="qi">
       <div class="t">${o.island?esc(o.island)+" · ":""}${esc(o.site||t("Site ?"))} · ${o.depth?o.depth+" m":t("prof. n.c.")}${o.env?" · "+esc(t(o.env)):""}</div>
       <div class="s">${icon('calendar')} ${frDate(o.date)} ${o.time||""} · ${icon('user')} ${esc(o.by||t("anonyme"))} · ${t("proposé :")} <i>${esc(guessed)}</i>${o.proposedName&&!o.sp?` <b style="color:var(--sea-deep)">(${t("proposition du déposant")})</b>`:""}${o.note?` · « ${esc(o.note)} »`:""}</div>
@@ -1804,7 +1846,7 @@ function setMsg(id,btn){ const el=document.getElementById("msg-"+id); if(el){ el
 function doneRow(o,rejected){
   const tx=taxoOf(o);
   return `<div class="qrow">
-    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`).join("")}</div>
+    <div style="flex:none;display:flex;flex-wrap:wrap;gap:5px;width:120px">${obsPhotos(o).map(p=>`<img class="zoomable" src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`).join("")}${adminVideoHTML(o)}</div>
     <div class="qi">
       <div class="t" style="font-style:italic">${esc(tx.sci)} ${rejected?'<span class="badge r">'+t("refusée")+'</span>':'<span class="badge v">'+icon('check')+'</span>'}${o.juvenile?' <span class="juv">'+icon('sprout')+' '+t("juvénile")+'</span>':""} ${!rejected?starsHtml(tx.rarity):""}</div>
       <div class="s">${taxoLine(tx)?taxoLine(tx)+" · ":""}${esc(o.site||t("Site ?"))}${o.env?" · "+esc(t(o.env)):""} · ${frDate(o.date)} · ${icon('user')} ${esc(o.by||t("anonyme"))}${o.validatedBy?` · ${t("par")} ${esc(o.validatedBy)}`:""}${o.reason?` · ${t("motif :")} ${esc(o.reason)}`:""}</div>
