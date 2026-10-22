@@ -1040,9 +1040,37 @@ async function uploadVideos(files){
   }
   return out;
 }
+function videoExt(u){ const clean=String(u||"").split("?")[0].split("#")[0]; const e=(clean.split(".").pop()||"").toLowerCase().replace(/[^a-z0-9]/g,""); return (e && e.length<=5)?e:"mp4"; }
 function adminVideoHTML(o){
   if(!o.videos||!o.videos.length) return "";
-  return o.videos.map((u,i)=>`<div style="width:116px;margin-top:3px"><video src="${esc(u)}#t=0.1" controls preload="metadata" playsinline style="width:116px;border-radius:9px;background:#000;display:block"></video><a href="${esc(u)}?download=nudimap-video-${i+1}.mp4" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--sea-deep);margin-top:2px;text-decoration:none">⬇ ${LANG==='en'?'Download':'Télécharger'}</a></div>`).join("");
+  return o.videos.map((u,i)=>`<div style="width:116px;margin-top:3px"><video src="${esc(u)}#t=0.1" controls preload="metadata" playsinline style="width:116px;border-radius:9px;background:#000;display:block"></video><a href="${esc(u)}?download=nudimap-video-${i+1}.${videoExt(u)}" onclick="downloadVideo(this.href,${i+1});return false" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--sea-deep);margin-top:2px;text-decoration:none">⬇ ${LANG==='en'?'Download':'Télécharger'}</a></div>`).join("");
+}
+// Téléchargement vidéo fiable multi-appareils : sur téléphone, ouvre le menu de
+// partage natif (« Enregistrer la vidéo » / vers Instagram…) ; sur ordinateur,
+// téléchargement direct ; replis successifs si l'un échoue.
+async function downloadVideo(url, idx){
+  const name="nudimap-video-"+(idx||1)+"."+videoExt(url);
+  const isTouch=(navigator.maxTouchPoints||0)>0 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent||"");
+  toast(LANG==='en'?"Preparing the video…":"Préparation de la vidéo…");
+  try{
+    const res=await fetch(url,{mode:"cors"});
+    if(!res.ok) throw new Error("http "+res.status);
+    const blob=await res.blob();
+    const file=new File([blob], name, {type:blob.type||"video/mp4"});
+    if(isTouch && navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file]}); return; }
+      catch(e){ if(e && e.name==="AbortError") return; }
+    }
+    const burl=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=burl; a.download=name; a.style.display="none";
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ try{a.remove(); URL.revokeObjectURL(burl);}catch(e){} }, 15000);
+    toast(LANG==='en'?"Video saved ⬇":"Vidéo enregistrée ⬇");
+  }catch(err){
+    try{ window.open(url+(url.indexOf("?")>-1?"&":"?")+"download="+encodeURIComponent(name), "_blank"); }catch(e){}
+    toast(LANG==='en'?"If it opens instead of saving: long-press the video → Save.":"Si elle s'ouvre au lieu de s'enregistrer : appui long sur la vidéo → Enregistrer.");
+  }
 }
 function taxoLine(tx){ const p=[]; if(tx.classification)p.push(`<b>${t('Classification')}</b> ${esc(t(tx.classification))}`); if(tx.family)p.push(`<b>${t('Famille')}</b> ${esc(tx.family)}`); if(tx.commonName)p.push(`<b>${t('Nom commun')}</b> ${esc(tx.commonName)}`); return p.join(" · "); }
 function dayNightHtml(dn){ if(!dn) return ""; const ic=dn==="Nuit"?icon('moon'):dn==="Jour"?icon('sun'):icon('sun')+icon('moon'); return `<span class="dn">${ic} ${esc(t(dn))}</span>`; }
