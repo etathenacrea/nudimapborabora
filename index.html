@@ -634,7 +634,7 @@ const EN = {
   "Permet aux experts de te contacter en cas de découverte particulière.":"Lets the experts contact you in case of a notable find.",
   "Créer mon accès":"Create my access",
   "Pas sûr·e de l'espèce ?":"Not sure of the species?","Regarde d'abord la bibliothèque d'identification":"Check the identification library first","— elle est peut-être déjà répertoriée.":"— it may already be listed.",
-  "Photos de l'observation":"Observation photos","Une ou plusieurs photos, nettes et bien cadrées.":"One or more photos, sharp and well framed.","Courte vidéo":"Short video","(optionnel, max 5 s)":"(optional, max 5 s)","Une vidéo de quelques secondes aide à l'identification. Elle n'est visible que par les experts.":"A few-second clip helps with identification. Only the experts can see it.",
+  "Photos de l'observation":"Observation photos","Une ou plusieurs photos, nettes et bien cadrées.":"One or more photos, sharp and well framed.","Courte vidéo":"Short video","(optionnel)":"(optional)","Une courte vidéo (quelques secondes) aide à l'identification — et peut remplacer la photo si tu n'en as pas. Visible seulement par les experts.":"A short clip (a few seconds) helps with identification — and can stand in for the photo if you don't have one. Visible to experts only.",
   "Connais-tu l'espèce ?":"Do you know the species?","Je ne sais pas — à identifier":"I don't know — to be identified",
   "Pas sûr·e ? Laisse « je ne sais pas », les experts trancheront.":"Not sure? Leave \"I don't know\", the experts will decide.",
   "Environnement":"Environment","— optionnel —":"— optional —","Sable, éponges, coraux… (lié à l'alimentation / au comportement).":"Sand, sponges, corals… (linked to diet / behaviour).",
@@ -677,7 +677,7 @@ const EN = {
   "Tu as":"You have","réponse(s) à tes observations.":"reply(ies) to your observations.",
   "OBSERVATOIRE PARTICIPATIF DES NUDIBRANCHES":"PARTICIPATORY NUDIBRANCH OBSERVATORY",
   "— classification —":"— classification —",
-  "Il manque :":"Missing:","au moins une photo":"at least one photo","le lieu":"the location","l'emplacement sur la carte":"the spot on the map","la date":"the date","la profondeur":"the depth",
+  "Il manque :":"Missing:","au moins une photo":"at least one photo","au moins une photo ou une vidéo":"at least one photo or video","le lieu":"the location","l'emplacement sur la carte":"the spot on the map","la date":"the date","la profondeur":"the depth",
   "ex. Hypselodoris bullockii":"e.g. Hypselodoris bullockii","ex. Doris de Kunié":"e.g. a common name","ex. 2 à 4 cm":"e.g. 2 to 4 cm","Le petit plus à savoir…":"The little thing worth knowing…",
   // Descriptions des 15 espèces (conférence J. Certain)
   "Cérates irisées bleu/blanc sur un corps brun-orange":"Iridescent blue/white cerata on a brown-orange body","Se nourrit d'hydroïdes":"Feeds on hydroids","Présente sur les éponges et récifs de Bora Bora":"Found on the sponges and reefs of Bora Bora","Ses cérates contiennent les cellules urticantes de ses proies — elle se défend avec leur propre arsenal.":"Its cerata hold the stinging cells of its prey — it defends itself with their own arsenal.",
@@ -1024,8 +1024,9 @@ const speciesById = id => state.species.find(x=>x.id===id);
 const speciesSorted = () => [...state.species].sort((a,b)=>String(a.sci||"").localeCompare(String(b.sci||""),"fr",{sensitivity:"base"}));
 function taxoOf(o){ if(o.sp){ const s=speciesById(o.sp); if(s) return {sci:s.sci,commonName:s.commonName||"",classification:s.classification||"",family:s.family||"",rarity:s.rarity||0}; } return {sci:o.scientific||"Espèce indéterminée",commonName:o.commonName||"",classification:o.classification||"",family:o.family||"",rarity:o.rarity||0}; }
 function obsSci(o){ return taxoOf(o).sci; }
-function obsPhoto(o){ if(o.photos&&o.photos.length) return o.photos[0]; return o.photo || (o.sp?(speciesById(o.sp)?.photo||""):""); }
-function obsPhotos(o){ if(o.photos&&o.photos.length) return o.photos; if(o.photo) return [o.photo]; const s=o.sp&&speciesById(o.sp); return s&&s.photo?[s.photo]:[]; }
+const VID_THUMB="data:image/svg+xml;utf8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><rect width="140" height="140" fill="#0e6675"/><circle cx="70" cy="70" r="30" fill="#ffffff" fill-opacity="0.92"/><path d="M60 54 L90 70 L60 86 Z" fill="#0e6675"/></svg>');
+function obsPhoto(o){ if(o.photos&&o.photos.length) return o.photos[0]; if(o.photo) return o.photo; const sp=o.sp&&speciesById(o.sp); if(sp&&sp.photo) return sp.photo; if(o.videos&&o.videos.length) return VID_THUMB; return ""; }
+function obsPhotos(o){ if(o.photos&&o.photos.length) return o.photos; if(o.photo) return [o.photo]; const s=o.sp&&speciesById(o.sp); if(s&&s.photo) return [s.photo]; if(o.videos&&o.videos.length) return [VID_THUMB]; return []; }
 // ---- Vidéos : upload (bucket photos, dossier vid/) ; affichage RÉSERVÉ à l'admin ----
 async function uploadVideos(files){
   const out=[];
@@ -1041,6 +1042,29 @@ async function uploadVideos(files){
   return out;
 }
 function videoExt(u){ const clean=String(u||"").split("?")[0].split("#")[0]; const e=(clean.split(".").pop()||"").toLowerCase().replace(/[^a-z0-9]/g,""); return (e && e.length<=5)?e:"mp4"; }
+// Extrait une image (1re frame) d'un fichier vidéo → dataURL JPEG, pour servir
+// de miniature quand le déposant n'a joint QUE la vidéo. Renvoie null si échec.
+function videoPosterDataURL(file, cb){
+  let called=false; const done=d=>{ if(called)return; called=true; cb(d||null); };
+  try{
+    const url=URL.createObjectURL(file);
+    const v=document.createElement("video");
+    v.muted=true; v.playsInline=true; v.preload="auto";
+    const cleanup=()=>{ try{URL.revokeObjectURL(url);}catch(_){} };
+    const grab=()=>{ try{
+        const w=v.videoWidth,h=v.videoHeight; if(!w||!h){ cleanup(); done(null); return; }
+        const sc=Math.min(1,1400/Math.max(w,h)); const cw=Math.max(1,Math.round(w*sc)), ch=Math.max(1,Math.round(h*sc));
+        const c=document.createElement("canvas"); c.width=cw; c.height=ch;
+        c.getContext("2d").drawImage(v,0,0,cw,ch);
+        const d=c.toDataURL("image/jpeg",0.82); cleanup(); done(d);
+      }catch(_){ cleanup(); done(null); } };
+    v.onseeked=grab;
+    v.onloadeddata=()=>{ try{ const tt=Math.min(0.1,(isFinite(v.duration)&&v.duration>0)?v.duration/2:0.1); if(Math.abs((v.currentTime||0)-tt)>0.001){ v.currentTime=tt; } else grab(); }catch(_){ grab(); } };
+    v.onerror=()=>{ cleanup(); done(null); };
+    setTimeout(()=>{ cleanup(); done(null); }, 9000);
+    v.src=url;
+  }catch(_){ done(null); }
+}
 function adminVideoHTML(o){
   if(!o.videos||!o.videos.length) return "";
   return o.videos.map((u,i)=>`<div style="width:116px;margin-top:3px"><video src="${esc(u)}#t=0.1" controls preload="metadata" playsinline style="width:116px;border-radius:9px;background:#000;display:block"></video><a href="${esc(u)}?download=nudimap-video-${i+1}.${videoExt(u)}" onclick="downloadVideo(this.href,${i+1});return false" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--sea-deep);margin-top:2px;text-decoration:none">⬇ ${LANG==='en'?'Download':'Télécharger'}</a></div>`).join("");
@@ -1596,9 +1620,9 @@ function renderProposer(){
         <input type="file" id="p-photo" accept="image/*" multiple>
         <span class="hint">${t("Une ou plusieurs photos, nettes et bien cadrées.")}</span>
         <div id="p-preview" class="pgal"></div></div>
-      <div class="field full"><label>${t("Courte vidéo")} <span class="hint" style="font-weight:400">${t("(optionnel, max 5 s)")}</span></label>
+      <div class="field full"><label>${t("Courte vidéo")} <span class="hint" style="font-weight:400">${t("(optionnel)")}</span></label>
         <input type="file" id="p-video" accept="video/*">
-        <span class="hint">${t("Une vidéo de quelques secondes aide à l'identification. Elle n'est visible que par les experts.")}</span>
+        <span class="hint">${t("Une courte vidéo (quelques secondes) aide à l'identification — et peut remplacer la photo si tu n'en as pas. Visible seulement par les experts.")}</span>
         <div id="p-vpreview" class="pgal"></div></div>
       <div class="field"><label>${t("Connais-tu l'espèce ?")}</label>
         <select id="p-species" onchange="onSpeciesChange()"><option value="je-sais-pas">${t("Je ne sais pas — à identifier")}</option>
@@ -1657,10 +1681,10 @@ function renderProposer(){
   if(vInput) vInput.addEventListener("change",e=>{
     const f=e.target.files&&e.target.files[0]; e.target.value="";
     if(!f) return;
-    if(f.size > 26*1024*1024){ toast(LANG==='en'?"Video too heavy (max 25 MB).":"Vidéo trop lourde (max 25 Mo)."); return; }
+    if(f.size > 48*1024*1024){ toast(LANG==='en'?"Video too heavy (max 48 MB).":"Vidéo trop lourde (max 48 Mo)."); return; }
     const url=URL.createObjectURL(f); const v=document.createElement("video"); v.preload="metadata";
     v.onloadedmetadata=()=>{ const d=v.duration; try{URL.revokeObjectURL(url);}catch(_){}
-      if(isFinite(d) && d>6){ toast(LANG==='en'?"Too long — keep it under 5 seconds.":"Vidéo trop longue — garde-la sous 5 secondes."); return; }
+      if(isFinite(d) && d>10){ toast(LANG==='en'?"Too long — keep it short (a few seconds).":"Vidéo trop longue — garde-la courte (quelques secondes)."); return; }
       pendingVideos=[f];            // une seule vidéo par observation (on remplace)
       renderVideoPreview();
     };
@@ -1698,7 +1722,7 @@ async function submitObs(){
   const siteSel=val("p-site"); let site = siteSel==="__autre"? val("p-site-other").trim() : siteSel;
   const date=val("p-date"), depth=parseDepth(val("p-depth"));
   const miss=[];
-  if(!pendingPhotos.length) miss.push(t("au moins une photo"));
+  if(!pendingPhotos.length && !pendingVideos.length) miss.push(t("au moins une photo ou une vidéo"));
   if(!siteSel || (siteSel==="__autre"&&!site)) miss.push(t("le lieu"));
   if(!pickLatLng) miss.push(t("l'emplacement sur la carte"));
   if(!date) miss.push(t("la date"));
@@ -1708,7 +1732,9 @@ async function submitObs(){
   const btn=document.getElementById("p-submit"); if(btn){ btn.disabled=true; }
   toast(LANG==='en'?"Sending…":"Envoi en cours…");
   let urls;
-  try{ urls = await uploadPhotos(pendingPhotos); }
+  let photoData = pendingPhotos;
+  if(!photoData.length && pendingVideos.length){ const poster = await new Promise(r=>videoPosterDataURL(pendingVideos[0], r)); if(poster) photoData=[poster]; }
+  try{ urls = await uploadPhotos(photoData); }
   catch(e){ console.error(e); toast(LANG==='en'?"Photo upload failed — check your connection and try again.":"Échec de l'envoi des photos — vérifie ta connexion et réessaie."); if(btn) btn.disabled=false; return; }
   let vurls=[];
   if(pendingVideos.length){ try{ vurls = await uploadVideos(pendingVideos); }catch(e){ console.error(e); toast(LANG==='en'?"Video upload failed — check your connection.":"Échec de l'envoi de la vidéo — vérifie ta connexion."); if(btn) btn.disabled=false; return; } }
@@ -1762,7 +1788,7 @@ async function saveObsEdit(){
   const siteSel=val("p-site"); let site = siteSel==="__autre"? val("p-site-other").trim() : siteSel;
   const date=val("p-date"), depth=parseDepth(val("p-depth"));
   const miss=[];
-  if(!pendingPhotos.length) miss.push(t("au moins une photo"));
+  if(!pendingPhotos.length && !(o.videos&&o.videos.length)) miss.push(t("au moins une photo ou une vidéo"));
   if(!siteSel || (siteSel==="__autre"&&!site)) miss.push(t("le lieu"));
   if(!pickLatLng) miss.push(t("l'emplacement sur la carte"));
   if(!date) miss.push(t("la date"));
